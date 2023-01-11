@@ -1,14 +1,45 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitController : MonoBehaviour
 {
+    public float Speed;
+
+    public float Awareness;
+
+    private float secondsSinceLastGoalCheck;
+
     private GoalController selectedGoal;
 
-    private void FixedUpdate()
+    private void Awake()
+    {
+        this.Speed = Random.Range(1.0f, 2.0f);
+        this.Awareness = Random.Range(1.0f, 8.0f);
+        this.secondsSinceLastGoalCheck = 0;
+    }
+
+    private void Update()
+    {
+        this.secondsSinceLastGoalCheck += Time.deltaTime;
+
+        if(this.secondsSinceLastGoalCheck > this.Awareness)
+        {
+            this.secondsSinceLastGoalCheck -= this.Awareness;
+            this.SelectGoal();
+        }
+
+        if (this.selectedGoal == null)
+        {
+            return;
+        }
+
+        transform.LookAt(this.selectedGoal.transform);
+        transform.position += this.Speed * Time.deltaTime * transform.forward;
+    }
+
+    private void SelectGoal()
     {
         GoalController[] goals = Object.FindObjectsOfType<GoalController>();
-        if(goals != null && goals.Length > 0)
+        if (goals != null && goals.Length > 0)
         {
             GoalController bestGoal = null;
             foreach (GoalController goalController in goals)
@@ -20,13 +51,14 @@ public class UnitController : MonoBehaviour
                     {
                         bestGoal = goalController;
                     }
-                } else
+                }
+                else
                 {
                     Debug.LogError("Goal controller is null.");
                 }
             }
             this.selectedGoal = bestGoal;
-            Debug.Log("Goal Score: " + this.GetGoalScore(this.selectedGoal).ToString());
+            //Debug.Log("Goal Score: " + this.GetGoalScore(this.selectedGoal).ToString());
         }
     }
 
@@ -38,8 +70,8 @@ public class UnitController : MonoBehaviour
             return 0;
         }
         float distance = Vector3.Distance(goal.transform.position, this.transform.position) + 1.0f;
-        Debug.Log("Goal Distance: " + distance.ToString());
-        Debug.Log("Goal Amount: " + goal.GoalAmount.ToString());
+        //Debug.Log("Goal Distance: " + distance.ToString());
+        //Debug.Log("Goal Amount: " + goal.GoalAmount.ToString());
         return (float)goal.GoalAmount / distance;
     }
 }
