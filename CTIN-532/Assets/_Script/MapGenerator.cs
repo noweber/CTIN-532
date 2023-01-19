@@ -1,18 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class MapGenerator : Singleton<MapGenerator>
 {
     enum TileType
     {
         empty = 0,
-        floor,
+        floor = 1,
         wall,
         door
     }
 
-    struct index {
+    struct index
+    {
         public int x, y;
         public index(int x, int y)
         {
@@ -121,6 +122,35 @@ public class MapGenerator : Singleton<MapGenerator>
         mapLoad();
     }
 
+    /// <summary>
+    /// This function exposed the underlying map data as a 2D array of integers.
+    /// </summary>
+    /// <returns>Returns a 2D array of bools representing the map data where true means the tile is blocked by an obstacle, wall, or not part of the map.</returns>
+    public bool[,] GetBinaryTilemap()
+    {
+        bool[,] tilemap = new bool[map_width, map_height];
+        if (_map == null)
+        {
+            return tilemap;
+        }
+
+        for (int i = 0; i < _map.GetLength(0); i++)
+        {
+            for (int j = 0; j < _map.GetLength(1); j++)
+            {
+                if(_map[i, j] == TileType.floor || _map[i, j] == TileType.door)
+                {
+                    tilemap[i, j] = true;
+                } else
+                {
+                    tilemap[i, j] = false;
+                }
+            }
+        }
+
+        return tilemap;
+    }
+
     private void generateRoomMap()
     {
         // For Debug
@@ -159,7 +189,7 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             int chances = Random.Range(0, 100);
             // Find Open Direction
-            index p = indexOfWall[Random.Range(0, indexOfWall.Count)]; 
+            index p = indexOfWall[Random.Range(0, indexOfWall.Count)];
             // 0 - left, 1 - up, 2 - right, 3 - down
             int direction = 5;
 
@@ -191,7 +221,7 @@ public class MapGenerator : Singleton<MapGenerator>
             }
 
             // No enough space
-            if(direction == 5)
+            if (direction == 5)
             {
                 Debug.Log("No open wall");
                 return;
@@ -214,10 +244,10 @@ public class MapGenerator : Singleton<MapGenerator>
                 }
             }
 
-            if(numE == num_of_elements) {break; }
+            if (numE == num_of_elements) { break; }
 
         }
-        Debug.Log("Room: "+ room + " //Cor: " + cor);
+        Debug.Log("Room: " + room + " //Cor: " + cor);
     }
 
     public void generateCaveMap()
@@ -247,18 +277,19 @@ public class MapGenerator : Singleton<MapGenerator>
     public void mapLoad()
     {
         grid = new GameObject();
-        grid.transform.position= position;
+        grid.transform.position = position;
 
-        float x = position.x , y = position.y , z = position.z;
+        float x = position.x, y = position.y, z = position.z;
 
-        for(int i = 0; i< map_width; i++)
+        for (int i = 0; i < map_width; i++)
         {
-            for(int j = 0; j< map_height; j++) {
+            for (int j = 0; j < map_height; j++)
+            {
 
                 switch (_map[i, j])
                 {
                     case TileType.floor:
-                        Instantiate(elements[0],new Vector3(x, y, z),Quaternion.identity,grid.transform); 
+                        Instantiate(elements[0], new Vector3(x, y, z), Quaternion.identity, grid.transform);
                         break;
                     case TileType.wall:
                         Instantiate(elements[1], new Vector3(x, y, z), Quaternion.identity, grid.transform);
@@ -279,15 +310,20 @@ public class MapGenerator : Singleton<MapGenerator>
 
 
     #region Help Funcs
+    public void PrintMapLocation(int x, int y)
+    {
+        Debug.Log("Generated map location (" + x + ", " + y + "): " + _map[x, y]);
+    }
+
     private void printMap()
     {
-        
-        for(int i = 0; i< map_width; i++)
+
+        for (int i = 0; i < map_width; i++)
         {
             string res = "";
             for (int j = 0; j < map_height; j++)
             {
-                switch(_map[i,j])
+                switch (_map[i, j])
                 {
                     case TileType.empty:
                         res += " ";
@@ -303,7 +339,7 @@ public class MapGenerator : Singleton<MapGenerator>
                         break;
                 }
             }
-            res+= "\n";
+            res += "\n";
             Debug.Log(res);
         }
     }
@@ -404,7 +440,7 @@ public class MapGenerator : Singleton<MapGenerator>
             case 0:
                 xStart = pos.x - length - 1;
                 xEnd = pos.x;
-                yStart = pos.y - corridor_width/2 - 1;
+                yStart = pos.y - corridor_width / 2 - 1;
                 yEnd = pos.y + (corridor_width - corridor_width / 2);
                 break;
             case 1:
@@ -488,15 +524,15 @@ public class MapGenerator : Singleton<MapGenerator>
     private int checkNeighborFloor(int x, int y, int range)
     {
         int res = 0;
-        for(int i = x - range; i <= x + range; i++)
+        for (int i = x - range; i <= x + range; i++)
         {
-            if(i > 0 && i < map_width)
+            if (i > 0 && i < map_width)
             {
                 for (int j = y - range; j <= y + range; j++)
                 {
-                    if(j > 0 && j < map_height)
+                    if (j > 0 && j < map_height)
                     {
-                        if (_map[i,j]==TileType.floor) { res++; }
+                        if (_map[i, j] == TileType.floor) { res++; }
                     }
                 }
             }
@@ -520,7 +556,7 @@ public class MapGenerator : Singleton<MapGenerator>
                     }
                     else
                     {
-                        _map[i, j] = TileType.wall ;
+                        _map[i, j] = TileType.wall;
                     }
                 }
                 else
