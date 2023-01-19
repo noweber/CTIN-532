@@ -9,9 +9,48 @@ using Random = UnityEngine.Random;
 /// </summary>
 public class LevelGenerator : MonoBehaviour
 {
+    /// <summary>
+    /// A prefab for the player HQs.
+    /// </summary>
     public GameObject HeadquartersPrefab;
 
+    /// <summary>
+    /// A reference to the material for objects owned by Player One.
+    /// </summary>
+    public Material PlayerOneMaterial;
+
+    /// <summary>
+    /// A reference to the material for objects owned by Player Two.
+    /// </summary>
+    public Material PlayerTwoMaterial;
+
+    /// <summary>
+    /// An offset for any level objects' y-position to move them above the map layer.
+    /// </summary>
     public float LevelmapWorldSpaceYPosition = 1;
+
+    /// <summary>
+    /// The minimum number of tiles to skip when searching for positions to place new level objects.
+    /// </summary>
+    [Range(0, 255)]
+    public int MinimumSearchPositionTolerance = 8;
+
+    /// <summary>
+    /// The maximum number of tiles to skip when searching for positions to place new level objects.
+    /// </summary>
+    [Range(0, 255)]
+    public int MaximumSearchPositionTolerance = 64;
+
+    /// <summary>
+    /// The chance to skip a searched tile when placing new level objects betweenthe min/max range.
+    /// </summary>
+    [Range(0, 1)]
+    public float SearchPositionToleranceChance = 0.05f;
+
+    /// <summary>
+    /// This keeps track of how many tiles searched have been passed on when determining the position of level objects such as the players' HQs.
+    /// </summary>
+    private int searchPositionsPassedOn;
 
     /// <summary>
     /// This is the game object which will serve as the parent node to all game objects in the level.
@@ -33,7 +72,7 @@ public class LevelGenerator : MonoBehaviour
     /// This 2D array stores the positions of level entites on top of the map data such as player headquarters.
     /// </summary>
     private int[,] levelmap;
-    
+
     enum LevelTileType
     {
         invalid = -1,
@@ -49,6 +88,10 @@ public class LevelGenerator : MonoBehaviour
         tilemap = null;
         levelmap = null;
         levelGameObject = new GameObject("The Level");
+        if (MinimumSearchPositionTolerance > MaximumSearchPositionTolerance)
+        {
+            MinimumSearchPositionTolerance = MaximumSearchPositionTolerance;
+        }
     }
 
     /// <summary>
@@ -110,22 +153,26 @@ public class LevelGenerator : MonoBehaviour
         {
             Debug.LogError("Tilemap data is null.");
             return;
-        } else
+        }
+        else
         {
             // Recreate the levelmap and destroy any current gameobjects:
             levelmap = new int[tilemap.GetLength(0), tilemap.GetLength(1)];
-            foreach (Transform child in levelGameObject.transform) {
+            foreach (Transform child in levelGameObject.transform)
+            {
                 GameObject.Destroy(child.gameObject);
             }
 
             // Block any cells in the level map which are inpassable in the tilemap:
-            for (int i = 0; i < tilemap.GetLength(0); i++) {
+            for (int i = 0; i < tilemap.GetLength(0); i++)
+            {
                 for (int j = 0; j < tilemap.GetLength(1); j++)
                 {
-                    if(tilemap[i, j])
+                    if (tilemap[i, j])
                     {
                         levelmap[i, j] = 0;
-                    } else
+                    }
+                    else
                     {
                         levelmap[i, j] = -1;
                     }
@@ -144,7 +191,7 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     private void placePlayerHeadquarters()
     {
-        if(tilemap == null)
+        if (tilemap == null)
         {
             Debug.LogError("Tilemap data is null.");
             return;
@@ -155,7 +202,7 @@ public class LevelGenerator : MonoBehaviour
         // Each player needs to be in a different corner of the map:
         int playerOneCornerIndex = (int)math.floor(Random.Range(0, 4));
         int playerTwoCornerIndex;
-        switch(playerOneCornerIndex)
+        switch (playerOneCornerIndex)
         {
             case 0:
                 playerTwoCornerIndex = 2;
@@ -175,7 +222,7 @@ public class LevelGenerator : MonoBehaviour
         Debug.Log("Placing player two's HQ in corner: " + playerTwoCornerIndex);
         Tuple<int, int> playerOneCornerPosition = convertCornerIndexToXYTuple(playerOneCornerIndex);
         Tuple<int, int> playerTwoCornerPosition = convertCornerIndexToXYTuple(playerTwoCornerIndex);
-        if(playerOneCornerPosition == null || playerTwoCornerPosition == null)
+        if (playerOneCornerPosition == null || playerTwoCornerPosition == null)
         {
             Debug.LogError("Failed to select corners for player positions.");
             return;
@@ -194,7 +241,7 @@ public class LevelGenerator : MonoBehaviour
         Debug.Log("Tilemap (" + playerOneHqTilemapPosition.Item1 + ", " + playerOneHqTilemapPosition.Item2 + ") is: " + tilemap[playerOneHqTilemapPosition.Item1, playerOneHqTilemapPosition.Item2]);
         Debug.Log("Nearest passable tile for player two's HQ is: " + playerTwoHqTilemapPosition);
         Debug.Log("Tilemap (" + playerTwoHqTilemapPosition.Item1 + ", " + playerTwoHqTilemapPosition.Item2 + ") is: " + tilemap[playerTwoHqTilemapPosition.Item1, playerTwoHqTilemapPosition.Item2]);
-        if(mapGenerator != null)
+        if (mapGenerator != null)
         {
             mapGenerator.PrintMapLocation(playerOneHqTilemapPosition.Item1, playerOneHqTilemapPosition.Item2);
             mapGenerator.PrintMapLocation(playerTwoHqTilemapPosition.Item1, playerTwoHqTilemapPosition.Item2);
@@ -202,14 +249,31 @@ public class LevelGenerator : MonoBehaviour
 
         if (HeadquartersPrefab != null)
         {
-            Vector3 playerOnePosition = getLevelmapPositionInWorldSpace(playerOneHqTilemapPosition);
-            Instantiate(HeadquartersPrefab, playerOnePosition, Quaternion.identity, levelGameObject.transform);
-            Vector3 playerTwoPosition = getLevelmapPositionInWorldSpace(playerTwoHqTilemapPosition);
-            Instantiate(HeadquartersPrefab, playerTwoPosition, Quaternion.identity, levelGameObject.transform);
-        } else
+            // Place Player One's HQ:
+            placePlayerHQ(playerOneHqTilemapPosition, PlayerOneMaterial);
+
+            // Place Player Two's HQ:
+            placePlayerHQ(playerTwoHqTilemapPosition, PlayerTwoMaterial);
+        }
+        else
         {
             Debug.LogWarning("Headquarters prefab is null.");
         }
+    }
+
+    private void placePlayerHQ(Tuple<int, int> tilemapPosition, Material playermaterial)
+    {
+        Vector3 hqPosition = getLevelmapPositionInWorldSpace(tilemapPosition);
+        GameObject playerHq = Instantiate(HeadquartersPrefab, hqPosition, Quaternion.identity, levelGameObject.transform);
+        if (playermaterial != null)
+        {
+            playerHq.GetComponent<Renderer>().material = playermaterial;
+        }
+        else
+        {
+            Debug.LogWarning("Player material is null.");
+        }
+        playerHq.transform.parent = levelGameObject.transform;
     }
 
     private Vector3 getLevelmapPositionInWorldSpace(Tuple<int, int> tilemapPosition)
@@ -270,11 +334,14 @@ public class LevelGenerator : MonoBehaviour
             return null;
         }
 
-        if(tilemap.GetLength(0) != levelmap.GetLength(0) || tilemap.GetLength(1) != levelmap.GetLength(1))
+        if (tilemap.GetLength(0) != levelmap.GetLength(0) || tilemap.GetLength(1) != levelmap.GetLength(1))
         {
             Debug.LogError("Levelmap dimensions do not match tilemap dimenstions.");
             return null;
         }
+
+        // Reset the number of search positions that have been ignored to allow for some randomness:
+        searchPositionsPassedOn = 0;
 
         // Create a queue to keep track of which tiles to search from next:
         Queue<Tuple<int, int>> searchFrontier = new();
@@ -285,9 +352,9 @@ public class LevelGenerator : MonoBehaviour
         // Initialize the BFS by setting the start tile as 'visited' and queueing it on the search frontier:
         cellsVisited[tilemapSearchStartPostiion.Item1, tilemapSearchStartPostiion.Item2] = true;
         searchFrontier.Enqueue(tilemapSearchStartPostiion);
-        
+
         // Continue with BFS until a passable tile is found:
-        while(searchFrontier.Count != 0)
+        while (searchFrontier.Count != 0)
         {
             Tuple<int, int> nextTileToSearch = searchFrontier.Peek();
             int x = nextTileToSearch.Item1;
@@ -295,9 +362,17 @@ public class LevelGenerator : MonoBehaviour
             searchFrontier.Dequeue();
 
             // If the tile is passable, then the tile being searched for has been found:
-            if(levelmap[x, y] != -1)
+            if (levelmap[x, y] != -1)
             {
-                return new Tuple<int, int>(x, y);
+                searchPositionsPassedOn++;
+                if (searchPositionsPassedOn >= MinimumSearchPositionTolerance)
+                {
+                    if (searchPositionsPassedOn >= MaximumSearchPositionTolerance || Random.Range(0.0f, 1.0f) < SearchPositionToleranceChance)
+                    {
+                        Debug.Log("Tiles skipped in search: " + searchPositionsPassedOn);
+                        return new Tuple<int, int>(x, y);
+                    }
+                }
             }
 
             // Find the four adjacent tiles in the cardinal directions and, if any are valid, queue them for further search:
@@ -324,7 +399,7 @@ public class LevelGenerator : MonoBehaviour
             // Check if any of the adjacent tiles are valid for continuation of the search: 
             foreach (Tuple<int, int> pair in adjacentTiles)
             {
-                if(isCellValidForContinuingSearch(cellsVisited, pair.Item1, pair.Item2))
+                if (isCellValidForContinuingSearch(cellsVisited, pair.Item1, pair.Item2))
                 {
                     searchFrontier.Enqueue(pair);
                     cellsVisited[pair.Item1, pair.Item2] = true;
