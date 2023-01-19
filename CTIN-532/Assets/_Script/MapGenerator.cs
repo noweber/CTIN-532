@@ -12,8 +12,8 @@ public class MapGenerator : Singleton<MapGenerator>
         door
     }
 
-    struct index { 
-        public int x, y; 
+    struct index {
+        public int x, y;
         public index(int x, int y)
         {
             this.x = x;
@@ -54,7 +54,7 @@ public class MapGenerator : Singleton<MapGenerator>
     public GameObject[] elements;
 
     [Tooltip("The size of tiles created for the map.")]
-    public int TileSize = 10;
+    public int TileSize { get; private set; } = 10;
 
     private TileType[,] _map;
     private GameObject grid;
