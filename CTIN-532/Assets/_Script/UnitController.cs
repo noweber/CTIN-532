@@ -2,29 +2,46 @@ using UnityEngine;
 
 public class UnitController : MonoBehaviour
 {
+    [Min(1.0f)]
     public float Speed;
 
     public float Awareness;
 
+    public bool IsHumanUnit = true;
+
     private float secondsSinceLastGoalCheck;
 
-    private GoalController selectedGoal;
+    private Transform selectedGoal;
 
     private void Awake()
     {
-        this.Speed = Random.Range(1.0f, 2.0f);
+        this.Speed = Random.Range(1.0f, Mathf.Max(8.0f, Speed));
         this.Awareness = Random.Range(1.0f, 8.0f);
         this.secondsSinceLastGoalCheck = 0;
     }
 
     private void Update()
     {
-        this.secondsSinceLastGoalCheck += Time.deltaTime;
-
-        if(this.secondsSinceLastGoalCheck > this.Awareness)
+        if (IsHumanUnit)
         {
-            this.secondsSinceLastGoalCheck -= this.Awareness;
-            this.SelectGoal();
+            this.secondsSinceLastGoalCheck += Time.deltaTime;
+
+            if (this.secondsSinceLastGoalCheck > this.Awareness)
+            {
+                this.secondsSinceLastGoalCheck -= this.Awareness;
+                this.SelectGoal();
+            }
+        } else if(this.selectedGoal == null)
+        {
+            // Find the human HQ and just move towards that.
+            HeadquartersController[] hqControllers = Object.FindObjectsOfType<HeadquartersController>();
+            foreach(HeadquartersController hq in hqControllers)
+            {
+                if(hq.IsControlledByHuman)
+                {
+                    this.selectedGoal = hq.transform;
+                }
+            }
         }
 
         if (this.selectedGoal == null)
@@ -57,7 +74,7 @@ public class UnitController : MonoBehaviour
                     Debug.LogError("Goal controller is null.");
                 }
             }
-            this.selectedGoal = bestGoal;
+            this.selectedGoal = bestGoal.transform;
             //Debug.Log("Goal Score: " + this.GetGoalScore(this.selectedGoal).ToString());
         }
     }
@@ -73,5 +90,25 @@ public class UnitController : MonoBehaviour
         //Debug.Log("Goal Distance: " + distance.ToString());
         //Debug.Log("Goal Amount: " + goal.GoalAmount.ToString());
         return (float)goal.GoalAmount / distance;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // If an AI unit collides wtih a human unit, randomly destroy one of them.
+        UnitController unitController = other.GetComponent<UnitController>();
+        if (unitController != null)
+        {
+            if (unitController.IsHumanUnit && !this.IsHumanUnit)
+            {
+                Debug.Log("Human to AI unit collision detected!");
+                if (Random.Range(0.0f, 1.0f) > 0.5f)
+                {
+                    Destroy(gameObject);
+                } else
+                {
+                    Destroy(other.transform.gameObject);
+                }
+            }
+        }
     }
 }

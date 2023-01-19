@@ -129,9 +129,7 @@ public class LevelGenerator : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.C))
             {
-                mapGenerator.RegenerateCaveMap();
-                tilemap = mapGenerator.GetBinaryTilemap();
-                regenerateLevel();
+                regenerateCaveMap();
             }
         }
 
@@ -141,7 +139,18 @@ public class LevelGenerator : MonoBehaviour
             {
                 regenerateLevel();
             }
+        } else
+        {
+            // Generate a cave map by default:
+            regenerateCaveMap();
         }
+    }
+
+    private void regenerateCaveMap()
+    {
+        mapGenerator.RegenerateCaveMap();
+        tilemap = mapGenerator.GetBinaryTilemap();
+        regenerateLevel();
     }
 
     /// <summary>
@@ -250,7 +259,7 @@ public class LevelGenerator : MonoBehaviour
         if (HeadquartersPrefab != null)
         {
             // Place Player One's HQ:
-            placePlayerHQ(playerOneHqTilemapPosition, PlayerOneMaterial);
+            placePlayerHQ(playerOneHqTilemapPosition, PlayerOneMaterial, true);
 
             // Place Player Two's HQ:
             placePlayerHQ(playerTwoHqTilemapPosition, PlayerTwoMaterial);
@@ -261,7 +270,7 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    private void placePlayerHQ(Tuple<int, int> tilemapPosition, Material playermaterial)
+    private void placePlayerHQ(Tuple<int, int> tilemapPosition, Material playermaterial, bool isHumanPlayerHq = false)
     {
         Vector3 hqPosition = getLevelmapPositionInWorldSpace(tilemapPosition);
         GameObject playerHq = Instantiate(HeadquartersPrefab, hqPosition, Quaternion.identity, levelGameObject.transform);
@@ -274,6 +283,10 @@ public class LevelGenerator : MonoBehaviour
             Debug.LogWarning("Player material is null.");
         }
         playerHq.transform.parent = levelGameObject.transform;
+        if(isHumanPlayerHq)
+        {
+            playerHq.GetComponent<HeadquartersController>().IsControlledByHuman = true;
+        }
     }
 
     private Vector3 getLevelmapPositionInWorldSpace(Tuple<int, int> tilemapPosition)
