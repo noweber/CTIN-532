@@ -53,45 +53,75 @@ public class MapGenerator : Singleton<MapGenerator>
     */
     public GameObject[] elements;
 
+    [Tooltip("The size of tiles created for the map.")]
+    public int TileSize = 10;
+
     private TileType[,] _map;
     private GameObject grid;
 
+    [Header("Map Generation Input Response")]
+    [Tooltip("Whether or not this map generator will responsd to keyboard input for generating maps.")]
+    public bool RespondsToInputSystem;
+
     #endregion
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    private void Awake()
+    {
+        RespondsToInputSystem = true;
+        _map = new TileType[map_width, map_height];
+        indexOfWall = new List<index>();
+    }
+
+    /// <summary>
+    /// Start is called before the first frame update.
+    /// </summary>
     void Start()
     {
         Debug.Log("Press P to Generate Pathos Type Map");
         Debug.Log("Press C to Generate Cave Type Map");
         Debug.Log("Press R to Clear the Board");
-
-        _map = new TileType[map_width, map_height];
-        indexOfWall= new List<index>();
     }
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.P))
+        if (RespondsToInputSystem)
         {
-            clearMap();
-            mapGenerate();
-            mapLoad();
-        }
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                RegenerateRoomMap();
+            }
 
-        if(Input.GetKeyDown(KeyCode.C))
-        {
-            clearMap();
-            caveMapGenerate();
-            mapLoad();
-        }
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                RegenerateCaveMap();
+            }
 
-        if(Input.GetKeyDown(KeyCode.R))
-        {
-            clearMap();
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                clearMap();
+            }
         }
     }
 
-    public void mapGenerate()
+    public void RegenerateRoomMap()
+    {
+        clearMap();
+        generateRoomMap();
+        mapLoad();
+    }
+
+    public void RegenerateCaveMap()
+    {
+
+        clearMap();
+        generateCaveMap();
+        mapLoad();
+    }
+
+    private void generateRoomMap()
     {
         // For Debug
         int room = 0, cor = 0;
@@ -190,7 +220,7 @@ public class MapGenerator : Singleton<MapGenerator>
         Debug.Log("Room: "+ room + " //Cor: " + cor);
     }
 
-    public void caveMapGenerate()
+    public void generateCaveMap()
     {
         // init the map
         for (int i = 0; i < map_width; i++)
@@ -219,8 +249,6 @@ public class MapGenerator : Singleton<MapGenerator>
         grid = new GameObject();
         grid.transform.position= position;
 
-        int tileSize = 10;
-
         float x = position.x , y = position.y , z = position.z;
 
         for(int i = 0; i< map_width; i++)
@@ -242,10 +270,10 @@ public class MapGenerator : Singleton<MapGenerator>
                         Instantiate(elements[3], new Vector3(x, y, z), Quaternion.identity, grid.transform);
                         break;
                 }
-                z += tileSize;
+                z += TileSize;
             }
             z = position.z;
-            x += tileSize;
+            x += TileSize;
         }
     }
 
