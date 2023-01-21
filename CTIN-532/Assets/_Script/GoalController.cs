@@ -34,6 +34,17 @@ public class GoalController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // Only allow human-controlled units to trigger goals.
+        UnitController unitController = other.GetComponent<UnitController>();
+        if(unitController != null)
+        {
+            if(!unitController.IsHumanUnit)
+            {
+                return;
+            }
+        }
+
+        // Play the trigger sound and delte the game object:
         if (this.TriggerSound != null)
         {
             this.TriggerSound.Play();
