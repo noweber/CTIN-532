@@ -50,7 +50,9 @@ public class UnitController : MonoBehaviour
         }
 
         transform.LookAt(this.selectedGoal.transform);
-        transform.position += this.Speed * Time.deltaTime * transform.forward;
+        Vector3 forward = transform.forward;
+        forward.y = 0;
+        transform.position += this.Speed * Time.deltaTime * forward; // The unit should only move along the xz-plane.
     }
 
     private void SelectGoal()

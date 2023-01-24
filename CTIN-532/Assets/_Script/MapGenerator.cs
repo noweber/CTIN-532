@@ -55,7 +55,7 @@ public class MapGenerator : Singleton<MapGenerator>
     public GameObject[] elements;
 
     [Tooltip("The size of tiles created for the map.")]
-    public int TileSize { get; private set; } = 10;
+    public int TileSize { get; private set; } = 1;
 
     private TileType[,] _map;
     private GameObject grid;
