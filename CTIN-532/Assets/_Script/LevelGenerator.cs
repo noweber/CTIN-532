@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using static MapNodeController;
 using Random = UnityEngine.Random;
 
 /// <summary>
@@ -13,16 +14,6 @@ public class LevelGenerator : MonoBehaviour
     /// A prefab for the player HQs.
     /// </summary>
     public GameObject HeadquartersPrefab;
-
-    /// <summary>
-    /// A reference to the material for objects owned by Player One.
-    /// </summary>
-    public Material PlayerOneMaterial;
-
-    /// <summary>
-    /// A reference to the material for objects owned by Player Two.
-    /// </summary>
-    public Material PlayerTwoMaterial;
 
     /// <summary>
     /// An offset for any level objects' y-position to move them above the map layer.
@@ -73,6 +64,8 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     private int[,] levelmap;
 
+    private PlayerSelectionController humanPlayerController;
+
     enum LevelTileType
     {
         invalid = -1,
@@ -99,6 +92,16 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     void Start()
     {
+        // Find the human player selection controller:
+        PlayerSelectionController[] controllers = FindObjectsOfType<PlayerSelectionController>();
+        foreach (var controller in controllers)
+        {
+            if (controller.Owner == MapNodeController.Player.Human)
+            {
+                humanPlayerController = controller;
+            }
+        }
+
         // Search the scene for a reference to the map generator:
         mapGenerator = FindObjectOfType<MapGenerator>();
 
@@ -139,7 +142,8 @@ public class LevelGenerator : MonoBehaviour
             {
                 regenerateLevel();
             }
-        } else
+        }
+        else
         {
             // Generate a cave map by default:
             regenerateCaveMap();
@@ -259,10 +263,10 @@ public class LevelGenerator : MonoBehaviour
         if (HeadquartersPrefab != null)
         {
             // Place Player One's HQ:
-            placePlayerHQ(playerOneHqTilemapPosition, PlayerOneMaterial, true);
+            placePlayerHQ(playerOneHqTilemapPosition, true);
 
             // Place Player Two's HQ:
-            placePlayerHQ(playerTwoHqTilemapPosition, PlayerTwoMaterial);
+            placePlayerHQ(playerTwoHqTilemapPosition);
         }
         else
         {
@@ -270,23 +274,28 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    private void placePlayerHQ(Tuple<int, int> tilemapPosition, Material playermaterial, bool isHumanPlayerHq = false)
+    private void placePlayerHQ(Tuple<int, int> tilemapPosition, bool isHumanPlayerHq = false)
     {
         Vector3 hqPosition = getLevelmapPositionInWorldSpace(tilemapPosition);
         GameObject playerHq = Instantiate(HeadquartersPrefab, hqPosition, Quaternion.identity, levelGameObject.transform);
-        if (playermaterial != null)
+        MapNodeController hqController = playerHq.GetComponent<MapNodeController>();
+        if (isHumanPlayerHq)
         {
-            playerHq.GetComponent<Renderer>().material = playermaterial;
-        }
-        else
+            hqController.SetOwner(Player.Human);
+            if (humanPlayerController != null)
+            {
+                humanPlayerController.SelectedMapNode = hqController;
+            }
+            else
+            {
+                Debug.LogError("The controller for the human player is null when trying to assign a newly placed HQ map node as the player's selection default.");
+            }
+        } else
         {
-            Debug.LogWarning("Player material is null.");
+            hqController.SetOwner(Player.AI);
         }
+
         playerHq.transform.parent = levelGameObject.transform;
-        if(isHumanPlayerHq)
-        {
-            playerHq.GetComponent<HeadquartersController>().IsControlledByHuman = true;
-        }
     }
 
     private Vector3 getLevelmapPositionInWorldSpace(Tuple<int, int> tilemapPosition)

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1303486019930469327}
   - component: {fileID: 6589952227621368072}
   - component: {fileID: 324897644208317874}
+  - component: {fileID: 6149043121710213374}
   m_Layer: 0
   m_Name: Player Unit
   m_TagString: Untagged
@@ -62,8 +63,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 4
-  Awareness: 0
-  IsHumanUnit: 1
+  Owner: 0
 --- !u!54 &1303486019930469327
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -144,3 +144,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd2c607540a5f8240ac68caf34f8d174, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &6149043121710213374
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303486019930469317}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}

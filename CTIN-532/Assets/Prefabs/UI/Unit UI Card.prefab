@@ -527,6 +527,7 @@ GameObject:
   - component: {fileID: 2462549096986816951}
   - component: {fileID: 7361148093461973236}
   - component: {fileID: 2299490634503543665}
+  - component: {fileID: 3975006903221355201}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -711,3 +712,33 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 3975006903221355201}
+          m_TargetAssemblyTypeName: SetPrefabSelectionOnClick, Assembly-CSharp
+          m_MethodName: SelectCard
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!114 &3975006903221355201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5645553103532316442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f0bbeb37ca10434e86b20a1ed3cbb01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UnitPrefab: {fileID: 1303486019930469317, guid: 4332fe75773c75b48b42d70fbf7c0dbb, type: 3}
+  UiRootElementForDeletion: {fileID: 3261758846592326687}
