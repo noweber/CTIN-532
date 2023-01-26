@@ -54,24 +54,13 @@ public class UnitController : MonoBehaviour
             mapNodeControllers[countAwaitingShuffle] = node;
         }
 
-        // Select the nearest node owned by a different player:
-        float bestNodeDistance = float.MaxValue;
+        // Select the first node owned by a different player:
         foreach (MapNodeController nodeController in mapNodeControllers)
         {
             if (nodeController.Owner != Owner)
             {
-                Debug.Log("Unit is checking node as a potential goal.");
-                float distance = Vector3.Distance(nodeController.transform.position, transform.position);
-                if (distance < bestNodeDistance)
-                {
-                    bestNodeDistance = distance;
-                    selectedGoalNode = nodeController;
-                    Debug.Log("The unit has selected its goal. Distance: " + bestNodeDistance);
-                }
-            }
-            else
-            {
-                Debug.Log("Unit and map node share the same owner..");
+                selectedGoalNode = nodeController;
+                break;
             }
         }
 
@@ -104,7 +93,7 @@ public class UnitController : MonoBehaviour
                 // TODO: Play a sound.
                 // TODO: Create particle effects.
                 Debug.Log("Human to AI unit collision detected!");
-                if (Random.Range(0.0f, 1.0f) > 0.5f)
+                if (Random.Range(0.0f, 1.0f) > 0.25f)
                 {
                     Destroy(gameObject);
                 }

@@ -275,7 +275,7 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    private void placePlayerHQ(Tuple<int, int> tilemapPosition, bool isHumanPlayerHq = false)
+    private void placePlayerHQ(Tuple<int, int> tilemapPosition, bool isHumanPlayerHq = false, bool isAiPlayerHq = false)
     {
         Vector3 hqPosition = getLevelmapPositionInWorldSpace(tilemapPosition);
         GameObject playerHq = Instantiate(HeadquartersPrefab, hqPosition, Quaternion.identity, levelGameObject.transform);
@@ -291,7 +291,12 @@ public class LevelGenerator : MonoBehaviour
             {
                 Debug.LogError("The controller for the human player is null when trying to assign a newly placed HQ map node as the player's selection default.");
             }
-        } else
+        }
+        else if (isAiPlayerHq)
+        {
+            hqController.SetOwner(Player.Neutral);
+        }
+        else
         {
             hqController.SetOwner(Player.AI);
         }
@@ -502,7 +507,7 @@ public class LevelGenerator : MonoBehaviour
         Tuple<int, int> nodeTilemapPosition_5 = findNearestPassableTileBfs(
             new Tuple<int, int>(middlePosx, middlePosy)); // Middle Nodes
 
-        if (nodeTilemapPosition_1 == null || nodeTilemapPosition_2 == null 
+        if (nodeTilemapPosition_1 == null || nodeTilemapPosition_2 == null
             || nodeTilemapPosition_3 == null || nodeTilemapPosition_4 == null || nodeTilemapPosition_5 == null)
         {
             Debug.LogError("Failed to select headquarter positions for the player positions.");
@@ -511,11 +516,11 @@ public class LevelGenerator : MonoBehaviour
 
         if (HeadquartersPrefab != null)
         {
-            placePlayerHQ(nodeTilemapPosition_1, PlayerOneMaterial);
-            placePlayerHQ(nodeTilemapPosition_2, PlayerOneMaterial);
-            placePlayerHQ(nodeTilemapPosition_3, PlayerTwoMaterial);
-            placePlayerHQ(nodeTilemapPosition_4, PlayerTwoMaterial);
-            placePlayerHQ(nodeTilemapPosition_5, PlayerTwoMaterial);
+            placePlayerHQ(nodeTilemapPosition_1, isHumanPlayerHq:true);
+            placePlayerHQ(nodeTilemapPosition_2, isAiPlayerHq:true );
+            placePlayerHQ(nodeTilemapPosition_3);
+            placePlayerHQ(nodeTilemapPosition_4);
+            placePlayerHQ(nodeTilemapPosition_5);
         }
         else
         {

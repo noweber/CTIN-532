@@ -26,8 +26,7 @@ public class SetPrefabSelectionOnClick : MonoBehaviour
         {
             if (UnitPrefab != null)
             {
-                playerSelection.SelectedUnitPrefab = UnitPrefab;
-                playerSelection.SelectedUnitSprite = UiRootElementForDeletion.GetComponent<UnitUiController>().Character.sprite;
+                playerSelection.SelectUnit(UnitPrefab, UiRootElementForDeletion.GetComponent<UnitUiController>().Character.sprite);
             }
             else
             {
