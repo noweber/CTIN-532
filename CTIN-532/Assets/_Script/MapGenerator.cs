@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -59,10 +61,15 @@ public class MapGenerator : Singleton<MapGenerator>
 
     private TileType[,] _map;
     private GameObject grid;
+    private bool[,] _mainIsland;
+    private bool islandFilled = false;
 
     [Header("Map Generation Input Response")]
     [Tooltip("Whether or not this map generator will responsd to keyboard input for generating maps.")]
     public bool RespondsToInputSystem;
+
+    // main island debug
+    private GameObject highlightGrid;
 
     #endregion
 
@@ -73,6 +80,7 @@ public class MapGenerator : Singleton<MapGenerator>
     {
         RespondsToInputSystem = true;
         _map = new TileType[map_width, map_height];
+        _mainIsland = new bool[map_width,map_height];
         indexOfWall = new List<index>();
     }
 
@@ -104,6 +112,20 @@ public class MapGenerator : Singleton<MapGenerator>
             {
                 clearMap();
             }
+
+            // mainIsland Debug
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                isOnMainIsland(0, 0);
+                MainislandLoad();
+            }
+
+
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                MainIslandDestory();
+            }
+
         }
     }
 
@@ -149,6 +171,17 @@ public class MapGenerator : Singleton<MapGenerator>
         }
 
         return tilemap;
+    }
+
+    public bool isOnMainIsland(int x, int y)
+    {
+        if (!islandFilled)
+        {
+            findMainIsland();
+            islandFilled = true;
+        }
+
+        return _mainIsland[x, y];
     }
 
     private void generateRoomMap()
@@ -277,6 +310,7 @@ public class MapGenerator : Singleton<MapGenerator>
     public void mapLoad()
     {
         grid = new GameObject();
+        grid.name = "grid";
         grid.transform.position = position;
 
         float x = position.x, y = position.y, z = position.z;
@@ -308,42 +342,8 @@ public class MapGenerator : Singleton<MapGenerator>
         }
     }
 
-
     #region Help Funcs
-    public void PrintMapLocation(int x, int y)
-    {
-        Debug.Log("Generated map location (" + x + ", " + y + "): " + _map[x, y]);
-    }
-
-    private void printMap()
-    {
-
-        for (int i = 0; i < map_width; i++)
-        {
-            string res = "";
-            for (int j = 0; j < map_height; j++)
-            {
-                switch (_map[i, j])
-                {
-                    case TileType.empty:
-                        res += " ";
-                        break;
-                    case TileType.floor:
-                        res += "F";
-                        break;
-                    case TileType.wall:
-                        res += "#";
-                        break;
-                    case TileType.door:
-                        res += "D";
-                        break;
-                }
-            }
-            res += "\n";
-            Debug.Log(res);
-        }
-    }
-
+    
     private bool addRoom(index pos, int direction)
     {
         int roomH = Random.Range(room_height_min, room_height_max);
@@ -519,6 +519,7 @@ public class MapGenerator : Singleton<MapGenerator>
         }
         Destroy(grid);
         indexOfWall.Clear();
+        islandFilled = false;
     }
 
     private int checkNeighborFloor(int x, int y, int range)
@@ -574,5 +575,126 @@ public class MapGenerator : Singleton<MapGenerator>
             }
         }
     }
+
+    private void findMainIsland()
+    {
+        int maxSize = 0;
+        int maxX = 0, maxY = 0;
+
+        for(int i = 0; i<map_width; i++)
+        {
+            for(int j = 0; j<map_height; j++)
+            {
+                if (isOpen(i,j) && _mainIsland[i,j] == false)
+                {
+                    int size = 0;
+                    dfs(i, j,ref size);
+                    if (size >= maxSize)
+                    {
+                        maxSize = size;
+                        maxX = i;
+                        maxY = j;
+                    }
+                }
+            }
+        }
+
+        // reset _mainIsland
+        for (int i = 0; i < map_width; i++)
+        {
+            for (int j = 0; j < map_height; j++)
+            {
+                _mainIsland[i, j] = false;
+            }
+        }
+
+        // mark the main island
+        dfs(maxX, maxY, ref maxSize);
+    }
+
+    private void dfs(int i, int j, ref int size)
+    {
+        size++;
+        _mainIsland[i, j] = true;
+
+        if (i - 1 >= 0 && isOpen(i - 1, j) && _mainIsland[i - 1, j] == false) dfs(i - 1, j,ref size);
+        
+        if (i + 1 < map_width && isOpen(i+1,j) && _mainIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
+
+        if (j - 1 >= 0 && isOpen(i, j-1) && _mainIsland[i , j - 1] == false) dfs(i, j - 1, ref size);
+        
+        if (j + 1 < map_height && isOpen(i, j+1) && _mainIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
+    }
+
+    private bool isOpen(int i, int j)
+    {
+        return _map[i, j] == TileType.floor || _map[i, j] == TileType.door;
+    }
+    #endregion
+
+    #region Debug Tools
+    private void MainislandLoad()
+    {
+        if (highlightGrid != null) return;
+        highlightGrid = new GameObject();
+        float x = position.x, y = position.y+1, z = position.z;
+
+        for (int i = 0; i < map_width; i++)
+        {
+            for (int j = 0; j < map_height; j++)
+            {
+
+                switch (_mainIsland[i, j])
+                {
+                    case true:
+                        Instantiate(elements[4], new Vector3(x, y, z), Quaternion.identity, highlightGrid.transform);
+                        break;
+                    case false:
+                        Instantiate(elements[5], new Vector3(x, y, z), Quaternion.identity, highlightGrid.transform);
+                        break;
+                }
+                z += TileSize;
+            }
+            z = position.z;
+            x += TileSize;
+        }
+    }
+
+    private void MainIslandDestory() { Destroy(highlightGrid); }
+
+    public void PrintMapLocation(int x, int y)
+    {
+        Debug.Log("Generated map location (" + x + ", " + y + "): " + _map[x, y]);
+    }
+
+    private void printMap()
+    {
+
+        for (int i = 0; i < map_width; i++)
+        {
+            string res = "";
+            for (int j = 0; j < map_height; j++)
+            {
+                switch (_map[i, j])
+                {
+                    case TileType.empty:
+                        res += " ";
+                        break;
+                    case TileType.floor:
+                        res += "F";
+                        break;
+                    case TileType.wall:
+                        res += "#";
+                        break;
+                    case TileType.door:
+                        res += "D";
+                        break;
+                }
+            }
+            res += "\n";
+            Debug.Log(res);
+        }
+    }
+
     #endregion
 }
