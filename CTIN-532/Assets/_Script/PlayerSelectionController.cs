@@ -15,7 +15,7 @@ public class PlayerSelectionController : MonoBehaviour
 
     private float secondsSinceLastSpawn;
 
-    public float BurstSpawnDuration = 2.0f;
+    public float BurstSpawnDuration = 1.0f;
 
     [Min(1)]
     public int BurstSpawnRate = 4;
