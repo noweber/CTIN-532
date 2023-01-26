@@ -194,7 +194,8 @@ public class LevelGenerator : MonoBehaviour
         }
 
         Debug.Log("Regenerating the level.");
-        placePlayerHeadquarters();
+        //placePlayerHeadquarters();
+        placeNodes();
     }
 
     /// <summary>
@@ -467,5 +468,58 @@ public class LevelGenerator : MonoBehaviour
         }
 
         return true;
+    }
+
+
+    private void placeNodes()
+    {
+        if (tilemap == null)
+        {
+            Debug.LogError("Tilemap data is null.");
+            return;
+        }
+
+        Debug.Log("Placing 5 nodes within the level.");
+
+        Tuple<int, int> CornerNodePosition_1 = convertCornerIndexToXYTuple(0);
+        Tuple<int, int> CornerNodePosition_2 = convertCornerIndexToXYTuple(1);
+        Tuple<int, int> CornerNodePosition_3 = convertCornerIndexToXYTuple(2);
+        Tuple<int, int> CornerNodePosition_4 = convertCornerIndexToXYTuple(3);
+        if (CornerNodePosition_1 == null || CornerNodePosition_2 == null || CornerNodePosition_3 == null || CornerNodePosition_4 == null)
+        {
+            Debug.LogError("Failed to select corners for player positions.");
+            return;
+        }
+
+        // The corner tiles might not be passable, so a search must execute to find the nearest passable tile.
+        Tuple<int, int> nodeTilemapPosition_1 = findNearestPassableTileBfs(CornerNodePosition_1);
+        Tuple<int, int> nodeTilemapPosition_2 = findNearestPassableTileBfs(CornerNodePosition_2);
+        Tuple<int, int> nodeTilemapPosition_3 = findNearestPassableTileBfs(CornerNodePosition_3);
+        Tuple<int, int> nodeTilemapPosition_4 = findNearestPassableTileBfs(CornerNodePosition_4);
+        int middleOffset = 5;
+        int middlePosx = Random.Range((tilemap.GetLength(0) - 1) / 2 - middleOffset, (tilemap.GetLength(0) - 1) / 2 + middleOffset);
+        int middlePosy = Random.Range((tilemap.GetLength(1) - 1) / 2 - middleOffset, (tilemap.GetLength(1) - 1) / 2 + middleOffset);
+        Tuple<int, int> nodeTilemapPosition_5 = findNearestPassableTileBfs(
+            new Tuple<int, int>(middlePosx, middlePosy)); // Middle Nodes
+
+        if (nodeTilemapPosition_1 == null || nodeTilemapPosition_2 == null 
+            || nodeTilemapPosition_3 == null || nodeTilemapPosition_4 == null || nodeTilemapPosition_5 == null)
+        {
+            Debug.LogError("Failed to select headquarter positions for the player positions.");
+            return;
+        }
+
+        if (HeadquartersPrefab != null)
+        {
+            placePlayerHQ(nodeTilemapPosition_1, PlayerOneMaterial);
+            placePlayerHQ(nodeTilemapPosition_2, PlayerOneMaterial);
+            placePlayerHQ(nodeTilemapPosition_3, PlayerTwoMaterial);
+            placePlayerHQ(nodeTilemapPosition_4, PlayerTwoMaterial);
+            placePlayerHQ(nodeTilemapPosition_5, PlayerTwoMaterial);
+        }
+        else
+        {
+            Debug.LogWarning("Headquarters prefab is null.");
+        }
     }
 }
