@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using static MapNodeController;
 
 public class PlayerSelectionController : MonoBehaviour
@@ -16,11 +15,26 @@ public class PlayerSelectionController : MonoBehaviour
 
     private float secondsSinceLastSpawn;
 
+    public float BurstSpawnDuration = 2.0f;
+
+    [Min(1)]
+    public int BurstSpawnRate = 4;
+
+    private float secondsLeftInSpawningBurst;
+
     // Start is called before the first frame update
     void Start()
     {
         SecondsBetweenSpawns = 0.5f;
         secondsSinceLastSpawn = 0;
+        secondsLeftInSpawningBurst = 0;
+    }
+
+    public void SelectUnit(GameObject prefab, Sprite sprite)
+    {
+        SelectedUnitPrefab = prefab;
+        SelectedUnitSprite = sprite;
+        secondsLeftInSpawningBurst = BurstSpawnDuration;
     }
 
     // Update is called once per frame
@@ -36,7 +50,15 @@ public class PlayerSelectionController : MonoBehaviour
                 {
                     if (SelectedMapNode.Owner == Owner)
                     {
-                        SelectedMapNode.SpawnUnit(SelectedUnitPrefab, SelectedUnitSprite, transform);
+                        int spawnCount = 1;
+                        if (secondsLeftInSpawningBurst > 0)
+                        {
+                            spawnCount = BurstSpawnRate;
+                        }
+                        for (int i = 0; i < spawnCount; i++)
+                        {
+                            SelectedMapNode.SpawnUnit(SelectedUnitPrefab, SelectedUnitSprite, transform);
+                        }
                     }
                 }
             }
@@ -68,6 +90,11 @@ public class PlayerSelectionController : MonoBehaviour
 
                 }
             }
+        }
+
+        if (secondsLeftInSpawningBurst > 0)
+        {
+            secondsLeftInSpawningBurst -= Time.deltaTime;
         }
     }
 }
