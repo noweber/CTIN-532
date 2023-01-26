@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6212767972623595795}
   - component: {fileID: 6212767972623595794}
   - component: {fileID: 6212767972623595805}
-  - component: {fileID: 7457262262563165568}
+  - component: {fileID: 4131759658787409891}
   m_Layer: 0
   m_Name: Headquarters
   m_TagString: Untagged
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 6212767972623595804}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 2, z: 10}
+  m_LocalScale: {x: 1, y: 0.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -99,7 +99,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &7457262262563165568
+--- !u!114 &4131759658787409891
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -111,6 +111,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a113348859323443ba0f8bf5d404bf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AiSpawnerPrefab: {fileID: 4641629901484663172, guid: 5dc1fcbbe860bac4d98dec557a7dca4a, type: 3}
-  HumanSpawnerPrefab: {fileID: 6425089467640677545, guid: c59f73608cd18f14ab3bf0d4da100486, type: 3}
-  IsControlledByHuman: 0
+  Owner: 0
+  OwnerMaterialsMap:
+  - {fileID: 2100000, guid: 0db6abcb2997faf4794f05d062cac739, type: 2}
+  - {fileID: 2100000, guid: 6571162cfc1ff0242a432ce84c8915dc, type: 2}
+  - {fileID: 2100000, guid: 26855b5a8f8a4184781e768389b1ba8d, type: 2}

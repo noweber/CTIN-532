@@ -25,11 +25,6 @@ public class UnitSpawner : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        /*if (this.spawnCount >= 15)
-        {
-            return;
-        }*/
-
         if (this.spawnPrefab == null)
         {
             Debug.Log("Spawn prefab is null");

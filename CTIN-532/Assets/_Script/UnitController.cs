@@ -1,110 +1,114 @@
 using UnityEngine;
+using static MapNodeController;
 
 public class UnitController : MonoBehaviour
 {
     [Min(1.0f)]
     public float Speed;
 
-    public float Awareness;
+    public Player Owner;
 
-    public bool IsHumanUnit = true;
-
-    private float secondsSinceLastGoalCheck;
-
-    private Transform selectedGoal;
+    private MapNodeController selectedGoalNode;
 
     private void Awake()
     {
-        this.Speed = Random.Range(1.0f, Mathf.Max(8.0f, Speed));
-        this.Awareness = Random.Range(1.0f, 8.0f);
-        this.secondsSinceLastGoalCheck = 0;
+        this.Speed = Random.Range(2.0f, 4.0f);
     }
 
-    private void Update()
+    public void SetSprite(Sprite unitSprite)
     {
-        if (IsHumanUnit)
-        {
-            this.secondsSinceLastGoalCheck += Time.deltaTime;
+        GetComponent<SpriteRenderer>().sprite = unitSprite;
+    }
 
-            if (this.secondsSinceLastGoalCheck > this.Awareness)
-            {
-                this.secondsSinceLastGoalCheck -= this.Awareness;
-                this.SelectGoal();
-            }
-        } else if(this.selectedGoal == null)
+    public void Update()
+    {
+        if (selectedGoalNode == null)
         {
-            // Find the human HQ and just move towards that.
-            HeadquartersController[] hqControllers = Object.FindObjectsOfType<HeadquartersController>();
-            foreach(HeadquartersController hq in hqControllers)
-            {
-                if(hq.IsControlledByHuman)
-                {
-                    this.selectedGoal = hq.transform;
-                }
-            }
-        }
-
-        if (this.selectedGoal == null)
-        {
+            SelectGoal();
             return;
         }
 
-        transform.LookAt(this.selectedGoal.transform);
-        transform.position += this.Speed * Time.deltaTime * transform.forward;
+        // Move towards the goal:
+        Quaternion rotationBeforeLookat = transform.rotation;
+        transform.LookAt(selectedGoalNode.transform);
+        Vector3 forward = transform.forward;
+        forward.y = 0;
+        transform.position += this.Speed * Time.deltaTime * forward; // The unit should only move along the xz-plane.
+        transform.rotation = rotationBeforeLookat;
     }
 
     private void SelectGoal()
     {
-        GoalController[] goals = Object.FindObjectsOfType<GoalController>();
-        if (goals != null && goals.Length > 0)
+        // Select a random node not owned by this unit's player:
+        MapNodeController[] mapNodeControllers = Object.FindObjectsOfType<MapNodeController>();
+
+        // Shuffle the nodes randomly
+        System.Random randomNumberGenerator = new();
+        int countAwaitingShuffle = mapNodeControllers.Length;
+        while (countAwaitingShuffle > 1)
         {
-            GoalController bestGoal = null;
-            foreach (GoalController goalController in goals)
+            countAwaitingShuffle--;
+            int nextIndex = randomNumberGenerator.Next(countAwaitingShuffle + 1);
+            MapNodeController node = mapNodeControllers[nextIndex];
+            mapNodeControllers[nextIndex] = mapNodeControllers[countAwaitingShuffle];
+            mapNodeControllers[countAwaitingShuffle] = node;
+        }
+
+        // Select the nearest node owned by a different player:
+        float bestNodeDistance = float.MaxValue;
+        foreach (MapNodeController nodeController in mapNodeControllers)
+        {
+            if (nodeController.Owner != Owner)
             {
-                if (goalController != null)
+                Debug.Log("Unit is checking node as a potential goal.");
+                float distance = Vector3.Distance(nodeController.transform.position, transform.position);
+                if (distance < bestNodeDistance)
                 {
-                    float goalScore = this.GetGoalScore(goalController);
-                    if (bestGoal == null || goalScore > this.GetGoalScore(bestGoal))
-                    {
-                        bestGoal = goalController;
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Goal controller is null.");
+                    bestNodeDistance = distance;
+                    selectedGoalNode = nodeController;
+                    Debug.Log("The unit has selected its goal. Distance: " + bestNodeDistance);
                 }
             }
-            this.selectedGoal = bestGoal.transform;
-            //Debug.Log("Goal Score: " + this.GetGoalScore(this.selectedGoal).ToString());
+            else
+            {
+                Debug.Log("Unit and map node share the same owner..");
+            }
         }
-    }
 
-    private float GetGoalScore(GoalController goal)
-    {
-        if (goal == null || goal.transform == null || goal.transform.position == null)
+        if (selectedGoalNode == null)
         {
-            Debug.LogError("Goal is null.");
-            return 0;
+            Debug.LogError("Failed to select a goal node");
         }
-        float distance = Vector3.Distance(goal.transform.position, this.transform.position) + 1.0f;
-        //Debug.Log("Goal Distance: " + distance.ToString());
-        //Debug.Log("Goal Amount: " + goal.GoalAmount.ToString());
-        return (float)goal.GoalAmount / distance;
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider other)
     {
+        // On collision with a node, select the next node to move to by deleting the goal node:
+        MapNodeController nodeController = other.GetComponent<MapNodeController>();
+        if (nodeController != null)
+        {
+            Debug.Log("Node conversion collision detected!");
+            if (nodeController.Owner != Owner)
+            {
+                selectedGoalNode = null;
+                Debug.Log("The unit has cleared its goal.");
+            }
+        }
+
         // If an AI unit collides wtih a human unit, randomly destroy one of them.
         UnitController unitController = other.GetComponent<UnitController>();
         if (unitController != null)
         {
-            if (unitController.IsHumanUnit && !this.IsHumanUnit)
+            if (unitController.Owner != Owner)
             {
+                // TODO: Play a sound.
+                // TODO: Create particle effects.
                 Debug.Log("Human to AI unit collision detected!");
                 if (Random.Range(0.0f, 1.0f) > 0.5f)
                 {
                     Destroy(gameObject);
-                } else
+                }
+                else
                 {
                     Destroy(other.transform.gameObject);
                 }

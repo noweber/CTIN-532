@@ -34,6 +34,7 @@ public class GoalController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        /*
         // Only allow human-controlled units to trigger goals.
         UnitController unitController = other.GetComponent<UnitController>();
         if(unitController != null)
@@ -49,6 +50,6 @@ public class GoalController : MonoBehaviour
         {
             this.TriggerSound.Play();
         }
-        Destroy(this.transform.gameObject, this.TriggerSound.clip.length);
+        Destroy(this.transform.gameObject, this.TriggerSound.clip.length);*/
     }
 }
