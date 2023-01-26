@@ -904,7 +904,7 @@ MonoBehaviour:
   SelectedUnitSprite: {fileID: 1352663794, guid: c05b044666732a644b440151cea9056a, type: 3}
   SelectedMapNode: {fileID: 0}
   Owner: 2
-  SecondsBetweenSpawns: 0.05
+  SecondsBetweenSpawns: 0.025
   BurstSpawnDuration: 2
   BurstSpawnRate: 4
 --- !u!4 &2136319963
