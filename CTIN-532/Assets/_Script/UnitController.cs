@@ -22,7 +22,7 @@ public class UnitController : MonoBehaviour
 
     public void Update()
     {
-        if (selectedGoalNode == null)
+        if (selectedGoalNode == null || selectedGoalNode.Owner == Owner)
         {
             SelectGoal();
             return;

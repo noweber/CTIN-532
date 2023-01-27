@@ -56,7 +56,7 @@ public class MapNodeController : MonoBehaviour
                     {
                         if (Owner == Player.Human)
                         {
-                            Debug.Log("A node was selected by the player via clicking.");
+                            Debug.LogError("A node was selected by the player via clicking.");
                             playerSelection.SelectedMapNode = this;
                         }
                     }
