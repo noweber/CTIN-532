@@ -11,7 +11,7 @@ public class PlayerSelectionController : MonoBehaviour
 
     public Player Owner;
 
-    public float SecondsBetweenSpawns;
+    public float SecondsBetweenSpawns = 0.5f;
 
     private float secondsSinceLastSpawn;
 
@@ -25,7 +25,6 @@ public class PlayerSelectionController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SecondsBetweenSpawns = 0.5f;
         secondsSinceLastSpawn = 0;
         secondsLeftInSpawningBurst = 0;
     }
