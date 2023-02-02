@@ -157,11 +157,9 @@ public class BaseUnitController : MonoBehaviour
         {
             if (Owner == Player.Human && unitController.Owner != Owner)
             {
-                // TODO: Play a sound.
-                // TODO: Create particle effects.
-                // Debug.Log("Human to AI unit collision detected!");
                 if (Random.Range(0.0f, 1.0f) > (PercentChanceToWinFight / 100))
                 {
+                    AudioManager.Instance.PlaySFX(AudioManager.Instance.FightSound.clip, 0.5f);
                     Destroy(gameObject);
                 }
                 else

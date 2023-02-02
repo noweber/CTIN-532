@@ -8,7 +8,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Nicholas-Week-2-Prototype.unity
     guid: cc6f6e9a9bc08c64dadb6402226b5cbf
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/PlayGame.unity
     guid: 20816660d85421c499e7f7399be47696
+  - enabled: 1
+    path: Assets/Scenes/Week4-Jackie.unity
+    guid: 08c820f0f4be6ca4d8073cbfe9c460d9
   m_configObjects: {}

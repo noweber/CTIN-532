@@ -81,11 +81,13 @@ public class MapNodeController : MonoBehaviour
             if (unitController.Owner == Player.Human && Owner != Player.Human)
             {
                 SetOwner(Player.Human);
+                AudioManager.Instance.PlaySFX(AudioManager.Instance.GainNodeSound.clip, 1.0f);
                 //gameManager.enermyRefreshGoal = true;
                 //gameManager.refreshGoal = true;
             }
             else if (unitController.Owner == Player.AI && Owner != Player.AI)
             {
+                AudioManager.Instance.PlaySFX(AudioManager.Instance.LoseNodeSound.clip, 1.0f);
                 SetOwner(Player.AI);
                 //gameManager.enermyRefreshGoal = true;
                 //gameManager.refreshGoal = true;
@@ -96,6 +98,7 @@ public class MapNodeController : MonoBehaviour
 
     private void toggleSelect()
     {
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.SelectSound.clip, 1.0f);
         if (isSelected)
         {
             gameManager.Selected_Nodes.Remove(this);

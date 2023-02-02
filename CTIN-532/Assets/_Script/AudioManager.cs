@@ -8,7 +8,18 @@ public class AudioManager : Singleton<AudioManager>
 
     private float min_pitch = -0.9f;
     private float max_pitch = 1.1f;
-    
+
+    // TODO: Remove these. These were added to get prototype 4 working ASAP.
+    public AudioSource SpawnSound;
+
+    public AudioSource FightSound;
+
+    public AudioSource SelectSound;
+
+    public AudioSource GainNodeSound;
+
+    public AudioSource LoseNodeSound;
+
     // Used for UI
     public void PlaySFX(AudioClip audioClip, float volume)
     {
