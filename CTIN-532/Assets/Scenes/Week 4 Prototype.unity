@@ -123,6 +123,56 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &68385515
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 68385516}
+  - component: {fileID: 68385517}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &68385516
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68385515}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &68385517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68385515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a72f30b126eccc4db6c6438636dd692, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Selected_Nodes: []
+  All_Nodes: []
+  Player_Units: []
+  Enermy_Units: []
+  refreshGoal: 1
+  enermyRefreshGoal: 1
 --- !u!1 &510067277
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,7 +202,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &820317340 stripped
 GameObject:
@@ -257,7 +307,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!114 &1105245558
 MonoBehaviour:
@@ -313,7 +363,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1254196831
 GameObject:
@@ -398,7 +448,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 40, y: 0, z: 0}
 --- !u!114 &1254196835
 MonoBehaviour:
@@ -537,7 +587,7 @@ RectTransform:
   m_Children:
   - {fileID: 1910156322}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -607,7 +657,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1589649556
 MonoBehaviour:
@@ -623,12 +673,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UnitCardPrefab: {fileID: 3261758846592326687, guid: 61923fd151d68e446940d8c8ec1bac51, type: 3}
   CardSprites:
-  - {fileID: 2008082818, guid: c05b044666732a644b440151cea9056a, type: 3}
-  - {fileID: 569151702, guid: c05b044666732a644b440151cea9056a, type: 3}
-  - {fileID: 602532629, guid: c05b044666732a644b440151cea9056a, type: 3}
-  - {fileID: 439083993, guid: c05b044666732a644b440151cea9056a, type: 3}
   - {fileID: -1196532911, guid: c05b044666732a644b440151cea9056a, type: 3}
+  - {fileID: 2008082818, guid: c05b044666732a644b440151cea9056a, type: 3}
   - {fileID: 1134917048, guid: c05b044666732a644b440151cea9056a, type: 3}
+  - {fileID: 602532629, guid: c05b044666732a644b440151cea9056a, type: 3}
   CardSlots:
   - {fileID: 892590898}
   - {fileID: 1170554477}
@@ -662,7 +710,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0211ba3705c41c4428b9248faa2ddfe6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SelectedUnitPrefab: {fileID: 1303486019930469317, guid: 4332fe75773c75b48b42d70fbf7c0dbb, type: 3}
+  list_Of_UnitPrefab:
+  - {fileID: 1303486019930469317, guid: b2040f3eb3ff34f47ad6efa347a97950, type: 3}
+  - {fileID: 1303486019930469317, guid: a91ee99354da161438dc6fa859c31f34, type: 3}
+  - {fileID: 1303486019930469317, guid: b6d53942c6503834dae4e2e9b8710dc1, type: 3}
+  - {fileID: 1303486019930469317, guid: 27d42ee0c2031564db0e3d8c7708852e, type: 3}
+  SelectedUnitPrefab: {fileID: 1303486019930469317, guid: ed7114223bda99042b42c760ca589f4d, type: 3}
   SelectedUnitSprite: {fileID: 0}
   SelectedMapNode: {fileID: 0}
   Owner: 1
@@ -735,7 +788,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1801971859
 GameObject:
@@ -767,7 +820,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1801971861
 MonoBehaviour:
@@ -848,7 +901,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &1910156322 stripped
 RectTransform:
@@ -900,13 +953,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0211ba3705c41c4428b9248faa2ddfe6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SelectedUnitPrefab: {fileID: 1303486019930469317, guid: 4332fe75773c75b48b42d70fbf7c0dbb, type: 3}
+  list_Of_UnitPrefab: []
+  SelectedUnitPrefab: {fileID: 1303486019930469317, guid: ed7114223bda99042b42c760ca589f4d, type: 3}
   SelectedUnitSprite: {fileID: 1352663794, guid: c05b044666732a644b440151cea9056a, type: 3}
   SelectedMapNode: {fileID: 0}
   Owner: 2
   SecondsBetweenSpawns: 0.4
   BurstSpawnDuration: 2
-  BurstSpawnRate: 4
+  BurstSpawnRate: 1
 --- !u!4 &2136319963
 Transform:
   m_ObjectHideFlags: 0
@@ -920,7 +974,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2014010276414092106
 PrefabInstance:
