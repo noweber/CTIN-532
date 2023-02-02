@@ -25,7 +25,11 @@ public class BaseUnitController : MonoBehaviour
         {
             m_gameManager.Enermy_Units.Add(this);
         }
-        SelectGoal();
+    }
+
+    protected virtual void Start()
+    {
+        SelectStarterGoal();
     }
 
     protected void OnDestroy()
@@ -42,7 +46,7 @@ public class BaseUnitController : MonoBehaviour
 
     public void Update()
     {
-        if(selectedGoalNode == null)
+        if (selectedGoalNode == null)
         {
             SelectGoal();
         }
@@ -55,7 +59,32 @@ public class BaseUnitController : MonoBehaviour
         transform.rotation = rotationBeforeLookat;
     }
 
+    public virtual void SelectStarterGoal()
+    {
+        if (Owner == Player.Human)
+        {
+            var randomSelectedNode = m_gameManager.getRandomSelectedNode();
+            if (randomSelectedNode == null)
+            {
+                SelectRandomNodeOwnedByOpponent();
+            }
+            else
+            {
+                selectedGoalNode = randomSelectedNode.transform;
+            }
+        }
+        else
+        {
+            SelectRandomNodeOwnedByOpponent();
+        }
+    }
+
     public virtual void SelectGoal()
+    {
+        SelectRandomNodeOwnedByOpponent();
+    }
+
+    private void SelectRandomNodeOwnedByOpponent()
     {
         // Select a random node not owned by this unit's player:
         MapNodeController[] mapNodeControllers = Object.FindObjectsOfType<MapNodeController>();
@@ -87,6 +116,7 @@ public class BaseUnitController : MonoBehaviour
             Debug.LogError("Failed to select a goal node");
         }
     }
+
 
     public virtual void OnTriggerEnter(Collider other)
     {

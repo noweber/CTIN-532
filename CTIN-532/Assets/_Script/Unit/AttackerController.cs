@@ -12,6 +12,5 @@ public class AttackerController : BaseUnitController
         }
         Debug.Log(target);
         selectedGoalNode = target.transform;
-        
     }
 }

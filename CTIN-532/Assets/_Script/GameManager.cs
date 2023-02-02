@@ -28,6 +28,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public MapNodeController getRandomSelectedNode()
+    {
+        if (Selected_Nodes.Count == 0) return null;
+        return Selected_Nodes[Random.Range(0, Selected_Nodes.Count)];
+    }
+
     public MapNodeController closestSelected(Vector3 pos, MapNodeController.Player owner, bool isAlly)
     {
         if(Selected_Nodes.Count == 0) return null;
