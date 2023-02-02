@@ -170,7 +170,7 @@ MonoBehaviour:
   Selected_Nodes: []
   All_Nodes: []
   Player_Units: []
-  Enermy_Units: []
+  Enemy_Units: []
   refreshGoal: 1
   enermyRefreshGoal: 1
 --- !u!1 &510067277
@@ -418,7 +418,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 1
+  orthographic: 0
   orthographic size: 25
   m_Depth: -1
   m_CullingMask:
@@ -958,7 +958,7 @@ MonoBehaviour:
   SelectedUnitSprite: {fileID: 1352663794, guid: c05b044666732a644b440151cea9056a, type: 3}
   SelectedMapNode: {fileID: 0}
   Owner: 2
-  SecondsBetweenSpawns: 0.6
+  SecondsBetweenSpawns: 0.5
   BurstSpawnDuration: 2
   BurstSpawnRate: 1
 --- !u!4 &2136319963
