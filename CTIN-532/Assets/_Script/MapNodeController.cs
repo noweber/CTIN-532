@@ -7,6 +7,13 @@ public class MapNodeController : MonoBehaviour
 
     public Material[] OwnerMaterialsMap;
 
+    public GameObject Select_Sphere;
+
+    [HideInInspector]
+    public bool isSelected = false;
+
+    private GameManager gameManager;
+
     public enum Player
     {
         Neutral = 0,
@@ -18,6 +25,7 @@ public class MapNodeController : MonoBehaviour
 
     public void Start()
     {
+        gameManager = FindObjectOfType<GameManager>();
         PlayerSelectionController[] controllers = FindObjectsOfType<PlayerSelectionController>();
         foreach (var controller in controllers)
         {
@@ -44,7 +52,7 @@ public class MapNodeController : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        /*if (Input.GetMouseButtonDown(0))
         {
             RaycastHit raycastHit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -62,6 +70,18 @@ public class MapNodeController : MonoBehaviour
                     }
                 }
             }
+        }*/
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit raycastHit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out raycastHit))
+            {
+                if (raycastHit.transform.gameObject == gameObject)
+                {
+                    toggleSelect();
+                }
+            }
         }
     }
 
@@ -69,25 +89,47 @@ public class MapNodeController : MonoBehaviour
     {
         GameObject spawnedUnit = Instantiate(unitPrefab, transform);
         spawnedUnit.transform.parent = parent;
-        UnitController unitController = spawnedUnit.GetComponent<UnitController>();
+        /*UnitController unitController = spawnedUnit.GetComponent<UnitController>();
         unitController.Owner = Owner;
-        unitController.SetSprite(unitSprite);
+        unitController.SetSprite(unitSprite);*/
     }
 
     public void OnTriggerEnter(Collider other)
     {
         // Convert the node to a team on collision with a unit:
-        UnitController unitController = other.GetComponent<UnitController>();
+        BaseUnitController unitController = other.GetComponent<BaseUnitController>();
         if (unitController != null)
         {
             if (unitController.Owner == Player.Human && Owner != Player.Human)
             {
                 SetOwner(Player.Human);
+                gameManager.enermyRefreshGoal = true;
+                gameManager.refreshGoal = true;
             }
             else if (unitController.Owner == Player.AI && Owner != Player.AI)
             {
                 SetOwner(Player.AI);
+                gameManager.enermyRefreshGoal = true;
+                gameManager.refreshGoal = true;
             }
         }
+
+    }
+
+    private void toggleSelect()
+    {
+        if (isSelected)
+        {
+            gameManager.Selected_Nodes.Remove(this);
+            Select_Sphere.SetActive(false);
+            isSelected = false;
+        }
+        else
+        {
+            gameManager.Selected_Nodes.Add(this);
+            Select_Sphere.SetActive(true);
+            isSelected = true;
+        }
+        gameManager.refreshGoal = true;
     }
 }
