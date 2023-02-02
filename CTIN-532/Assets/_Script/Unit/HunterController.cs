@@ -4,11 +4,14 @@ public class HunterController : BaseUnitController
 {
     public override void SelectGoal()
     {
-        BaseUnitController target = m_gameManager.closestEnermy(transform.position);
-        if (target == null)
+        if (m_gameManager.Enemy_Units != null)
         {
-            selectedGoalNode = m_gameManager.closestNode(transform.position, Owner, false).transform;
+            BaseUnitController target = m_gameManager.Enemy_Units[Random.Range(0, m_gameManager.Enemy_Units.Count)];
+            if (target == null)
+            {
+                selectedGoalNode = m_gameManager.closestNode(transform.position, Owner, false).transform;
+            }
+            selectedGoalNode = target.transform;
         }
-        selectedGoalNode = target.transform;
     }
 }

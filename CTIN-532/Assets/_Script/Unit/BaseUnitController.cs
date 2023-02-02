@@ -31,7 +31,7 @@ public class BaseUnitController : MonoBehaviour
         }
         else
         {
-            m_gameManager.Enermy_Units.Add(this);
+            m_gameManager.Enemy_Units.Add(this);
         }
     }
 
@@ -48,7 +48,7 @@ public class BaseUnitController : MonoBehaviour
         }
         else
         {
-            m_gameManager.Enermy_Units.Remove(this);
+            m_gameManager.Enemy_Units.Remove(this);
         }
     }
 
@@ -97,7 +97,7 @@ public class BaseUnitController : MonoBehaviour
         SelectRandomNodeOwnedByOpponent();
     }
 
-    private void SelectRandomNodeOwnedByOpponent()
+    protected void SelectRandomNodeOwnedByOpponent()
     {
         // Select a random node not owned by this unit's player:
         MapNodeController[] mapNodeControllers = Object.FindObjectsOfType<MapNodeController>();

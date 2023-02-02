@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public MapNodeController[] All_Nodes;
 
     public List<BaseUnitController> Player_Units;
-    public List<BaseUnitController> Enermy_Units;
+    public List<BaseUnitController> Enemy_Units;
 
     public bool refreshGoal = true;
     public bool enermyRefreshGoal = true;
@@ -77,16 +77,16 @@ public class GameManager : MonoBehaviour
 
     public BaseUnitController closestEnermy(Vector3 pos)
     {
-        if (Enermy_Units.Count == 0) return null;
+        if (Enemy_Units.Count == 0) return null;
         BaseUnitController res = null;
         float dist = float.MaxValue;
-        for (int i = 0; i < Enermy_Units.Count; i++)
+        for (int i = 0; i < Enemy_Units.Count; i++)
         {
-            float cur = Vector3.Distance(Enermy_Units[i].transform.position, pos);
+            float cur = Vector3.Distance(Enemy_Units[i].transform.position, pos);
             if (cur < dist)
             {
                 dist = cur;
-                res = Enermy_Units[i];
+                res = Enemy_Units[i];
             }
         }
         return res;
@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviour
         if (enermyRefreshGoal)
         {
             Debug.Log("refresh enermy");
-            foreach (BaseUnitController i in Enermy_Units)
+            foreach (BaseUnitController i in Enemy_Units)
             {
                 i.SelectGoal();
             }
