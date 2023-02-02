@@ -173,6 +173,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 203cfaeab44532d4ea0fae995a443fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 0
+  MinSpeed: 3
+  MaxSpeed: 5
+  PercentChanceToWinFight: 40
   Owner: 1
   selectedGoalNode: {fileID: 0}

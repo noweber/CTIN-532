@@ -142,7 +142,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.1
+  m_Radius: 0.15
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &283412644196913775
 MonoBehaviour:
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1303486019930469317}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6227bdcc2e2f9ec4f9c1f46fcee8d8a4, type: 3}
   m_Name: 
@@ -173,6 +173,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edfce2cdc95bb7242b674a43d80802fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 0
+  MinSpeed: 1
+  MaxSpeed: 2
+  PercentChanceToWinFight: 50
   Owner: 1
   selectedGoalNode: {fileID: 0}

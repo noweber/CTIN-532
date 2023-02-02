@@ -52,25 +52,6 @@ public class MapNodeController : MonoBehaviour
 
     public void Update()
     {
-        /*if (Input.GetMouseButtonDown(0))
-        {
-            RaycastHit raycastHit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out raycastHit, 256.0f))
-            {
-                if (raycastHit.transform != null)
-                {
-                    if (transform.gameObject == raycastHit.transform.gameObject && playerSelection != null)
-                    {
-                        if (Owner == Player.Human)
-                        {
-                            Debug.LogError("A node was selected by the player via clicking.");
-                            playerSelection.SelectedMapNode = this;
-                        }
-                    }
-                }
-            }
-        }*/
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit raycastHit;
@@ -89,9 +70,6 @@ public class MapNodeController : MonoBehaviour
     {
         GameObject spawnedUnit = Instantiate(unitPrefab, transform);
         spawnedUnit.transform.parent = parent;
-        /*UnitController unitController = spawnedUnit.GetComponent<UnitController>();
-        unitController.Owner = Owner;
-        unitController.SetSprite(unitSprite);*/
     }
 
     public void OnTriggerEnter(Collider other)
@@ -103,14 +81,14 @@ public class MapNodeController : MonoBehaviour
             if (unitController.Owner == Player.Human && Owner != Player.Human)
             {
                 SetOwner(Player.Human);
-                gameManager.enermyRefreshGoal = true;
-                gameManager.refreshGoal = true;
+                //gameManager.enermyRefreshGoal = true;
+                //gameManager.refreshGoal = true;
             }
             else if (unitController.Owner == Player.AI && Owner != Player.AI)
             {
                 SetOwner(Player.AI);
-                gameManager.enermyRefreshGoal = true;
-                gameManager.refreshGoal = true;
+                //gameManager.enermyRefreshGoal = true;
+                //gameManager.refreshGoal = true;
             }
         }
 
@@ -130,6 +108,6 @@ public class MapNodeController : MonoBehaviour
             Select_Sphere.SetActive(true);
             isSelected = true;
         }
-        gameManager.refreshGoal = true;
+        //gameManager.refreshGoal = true;
     }
 }

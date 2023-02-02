@@ -17,12 +17,12 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        Selected_Nodes= new List<MapNodeController>();
+        Selected_Nodes = new List<MapNodeController>();
     }
 
     public void loadNodes()
     {
-        if(All_Nodes.Length == 0)
+        if (All_Nodes.Length == 0)
         {
             All_Nodes = FindObjectsOfType<MapNodeController>();
         }
@@ -36,15 +36,15 @@ public class GameManager : MonoBehaviour
 
     public MapNodeController closestSelected(Vector3 pos, MapNodeController.Player owner, bool isAlly)
     {
-        if(Selected_Nodes.Count == 0) return null;
+        if (Selected_Nodes.Count == 0) return null;
         MapNodeController res = null;
         float dist = float.MaxValue;
-        for(int i = 0; i<Selected_Nodes.Count; i++)
+        for (int i = 0; i < Selected_Nodes.Count; i++)
         {
             if ((Selected_Nodes[i].Owner == owner) == isAlly)
             {
                 float cur = Vector3.Distance(Selected_Nodes[i].transform.position, pos);
-                if(cur < dist)
+                if (cur < dist)
                 {
                     dist = cur;
                     res = Selected_Nodes[i];
@@ -94,9 +94,9 @@ public class GameManager : MonoBehaviour
 
     public void Update()
     {
-        if(refreshGoal)
+        if (refreshGoal)
         {
-            foreach(BaseUnitController i in Player_Units)
+            foreach (BaseUnitController i in Player_Units)
             {
                 i.SelectGoal();
             }
