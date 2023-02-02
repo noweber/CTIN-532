@@ -3,6 +3,8 @@ using static MapNodeController;
 
 public class PlayerSelectionController : MonoBehaviour
 {
+    public GameObject[] list_Of_UnitPrefab;
+
     public GameObject SelectedUnitPrefab;
 
     public Sprite SelectedUnitSprite;
@@ -22,6 +24,8 @@ public class PlayerSelectionController : MonoBehaviour
 
     private float secondsLeftInSpawningBurst;
 
+    private int type;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,10 +33,11 @@ public class PlayerSelectionController : MonoBehaviour
         secondsLeftInSpawningBurst = 0;
     }
 
-    public void SelectUnit(GameObject prefab, Sprite sprite)
+    public void SelectUnit(GameObject prefab, Sprite sprite,int type)
     {
         SelectedUnitPrefab = prefab;
         SelectedUnitSprite = sprite;
+        this.type = type;
         secondsLeftInSpawningBurst = BurstSpawnDuration;
     }
 
@@ -56,7 +61,7 @@ public class PlayerSelectionController : MonoBehaviour
                         }
                         for (int i = 0; i < spawnCount; i++)
                         {
-                            SelectedMapNode.SpawnUnit(SelectedUnitPrefab, SelectedUnitSprite, transform);
+                            SelectedMapNode.SpawnUnit(list_Of_UnitPrefab[type], SelectedUnitSprite, transform);
                         }
                     }
                 }

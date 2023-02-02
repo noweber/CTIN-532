@@ -8,4 +8,6 @@ public class UnitUiController : MonoBehaviour
     public Image Number;
 
     public Image Jewel;
+
+    public int type;
 }

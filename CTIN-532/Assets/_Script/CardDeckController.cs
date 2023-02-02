@@ -75,7 +75,10 @@ public class CardDeckController : MonoBehaviour
                     UnitUiController unitUiController = unitCards[i].GetComponent<UnitUiController>();
                     if (unitUiController != null)
                     {
-                        unitUiController.Character.sprite = CardSprites[Random.Range(0, CardSprites.Count)];
+                        Random.InitState(System.DateTime.Now.Millisecond);
+                        int type = Random.Range(0, CardSprites.Count);
+                        unitUiController.Character.sprite = CardSprites[type];
+                        unitUiController.type= type;
                     }
                 }
                 return;
