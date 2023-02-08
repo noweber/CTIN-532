@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 6589952227621368072}
   - component: {fileID: 324897644208317874}
   - component: {fileID: 6149043121710213374}
-  - component: {fileID: 283412644196913775}
   - component: {fileID: 4816704669226913969}
   m_Layer: 0
   m_Name: EnermyBaseUnit
@@ -131,6 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd2c607540a5f8240ac68caf34f8d174, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  secondsDelayBetweenCameraFace: 2
 --- !u!135 &6149043121710213374
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -144,23 +144,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &283412644196913775
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1303486019930469317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6227bdcc2e2f9ec4f9c1f46fcee8d8a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  XAxisMeander: 1
-  YAxisMeander: 0
-  ZAxisMeander: 1
-  MaxMeanderMagnitude: {x: 0.25, y: 0.25, z: 0.25}
-  MaxMeanderSpeed: {x: 0.25, y: 0.25, z: 0.25}
 --- !u!114 &4816704669226913969
 MonoBehaviour:
   m_ObjectHideFlags: 0
