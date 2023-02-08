@@ -10,35 +10,41 @@ public class GameManager : MonoBehaviour
     public MapNodeController[] All_Nodes;
 
     public List<BaseUnitController> Player_Units;
-    public List<BaseUnitController> Enermy_Units;
+    public List<BaseUnitController> Enemy_Units;
 
     public bool refreshGoal = true;
     public bool enermyRefreshGoal = true;
 
     private void Awake()
     {
-        Selected_Nodes= new List<MapNodeController>();
+        Selected_Nodes = new List<MapNodeController>();
     }
 
     public void loadNodes()
     {
-        if(All_Nodes.Length == 0)
+        if (All_Nodes.Length == 0)
         {
             All_Nodes = FindObjectsOfType<MapNodeController>();
         }
     }
 
+    public MapNodeController getRandomSelectedNode()
+    {
+        if (Selected_Nodes.Count == 0) return null;
+        return Selected_Nodes[Random.Range(0, Selected_Nodes.Count)];
+    }
+
     public MapNodeController closestSelected(Vector3 pos, MapNodeController.Player owner, bool isAlly)
     {
-        if(Selected_Nodes.Count == 0) return null;
+        if (Selected_Nodes.Count == 0) return null;
         MapNodeController res = null;
         float dist = float.MaxValue;
-        for(int i = 0; i<Selected_Nodes.Count; i++)
+        for (int i = 0; i < Selected_Nodes.Count; i++)
         {
             if ((Selected_Nodes[i].Owner == owner) == isAlly)
             {
                 float cur = Vector3.Distance(Selected_Nodes[i].transform.position, pos);
-                if(cur < dist)
+                if (cur < dist)
                 {
                     dist = cur;
                     res = Selected_Nodes[i];
@@ -71,16 +77,16 @@ public class GameManager : MonoBehaviour
 
     public BaseUnitController closestEnermy(Vector3 pos)
     {
-        if (Enermy_Units.Count == 0) return null;
+        if (Enemy_Units.Count == 0) return null;
         BaseUnitController res = null;
         float dist = float.MaxValue;
-        for (int i = 0; i < Enermy_Units.Count; i++)
+        for (int i = 0; i < Enemy_Units.Count; i++)
         {
-            float cur = Vector3.Distance(Enermy_Units[i].transform.position, pos);
+            float cur = Vector3.Distance(Enemy_Units[i].transform.position, pos);
             if (cur < dist)
             {
                 dist = cur;
-                res = Enermy_Units[i];
+                res = Enemy_Units[i];
             }
         }
         return res;
@@ -88,9 +94,9 @@ public class GameManager : MonoBehaviour
 
     public void Update()
     {
-        if(refreshGoal)
+        if (refreshGoal)
         {
-            foreach(BaseUnitController i in Player_Units)
+            foreach (BaseUnitController i in Player_Units)
             {
                 i.SelectGoal();
             }
@@ -100,7 +106,7 @@ public class GameManager : MonoBehaviour
         if (enermyRefreshGoal)
         {
             Debug.Log("refresh enermy");
-            foreach (BaseUnitController i in Enermy_Units)
+            foreach (BaseUnitController i in Enemy_Units)
             {
                 i.SelectGoal();
             }

@@ -151,7 +151,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1303486019930469317}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6227bdcc2e2f9ec4f9c1f46fcee8d8a4, type: 3}
   m_Name: 
@@ -173,6 +173,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1646b14e8638834c86480a025e17bbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 4
+  MinSpeed: 2
+  MaxSpeed: 4
+  PercentChanceToWinFight: 50
   Owner: 2
   selectedGoalNode: {fileID: 0}

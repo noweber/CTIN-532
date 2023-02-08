@@ -1,40 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public class HunterController : BaseUnitController
 {
     public override void SelectGoal()
     {
-        BaseUnitController target = m_gameManager.closestEnermy(transform.position);
-        if (target == null)
+        if (m_gameManager.Enemy_Units != null)
         {
-            selectedGoalNode = m_gameManager.closestNode(transform.position, Owner, false).transform;
-        }
-        selectedGoalNode = target.transform;
-    }
-
-    public override void OnTriggerEnter(Collider other)
-    {
-        // If an AI unit collides wtih a human unit, randomly destroy one of them.
-        BaseUnitController unitController = other.GetComponent<BaseUnitController>();
-        if (unitController != null)
-        {
-            if (unitController.Owner != Owner)
+            BaseUnitController target = m_gameManager.Enemy_Units[Random.Range(0, m_gameManager.Enemy_Units.Count)];
+            if (target == null)
             {
-                // TODO: Play a sound.
-                // TODO: Create particle effects.
-                // Debug.Log("Human to AI unit collision detected!");
-                if (Random.Range(0.0f, 1.0f) > 0.25f)
-                {
-                    Destroy(gameObject);
-                }
-                else
-                {
-                    Destroy(other.transform.gameObject);
-                }
+                selectedGoalNode = m_gameManager.closestNode(transform.position, Owner, false).transform;
             }
+            selectedGoalNode = target.transform;
         }
     }
 }

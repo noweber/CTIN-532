@@ -5,7 +5,15 @@ using static MapNodeController;
 public class BaseUnitController : MonoBehaviour
 {
     [Min(1.0f)]
-    public float Speed;
+    public float MinSpeed = 2.0f;
+
+    [Min(1.0f)]
+    public float MaxSpeed = 4.0f;
+
+    private float Speed;
+
+    [Range(0, 100)]
+    public float PercentChanceToWinFight = 50;
 
     public Player Owner;
 
@@ -15,7 +23,7 @@ public class BaseUnitController : MonoBehaviour
 
     protected virtual void Awake()
     {
-        this.Speed = Random.Range(2.0f, 4.0f);
+        this.Speed = Random.Range(Mathf.Min(MinSpeed, MaxSpeed), Mathf.Max(MinSpeed, MaxSpeed));
         m_gameManager = FindObjectOfType<GameManager>();
         if (Owner == Player.Human)
         {
@@ -23,9 +31,13 @@ public class BaseUnitController : MonoBehaviour
         }
         else
         {
-            m_gameManager.Enermy_Units.Add(this);
+            m_gameManager.Enemy_Units.Add(this);
         }
-        SelectGoal();
+    }
+
+    protected virtual void Start()
+    {
+        SelectStarterGoal();
     }
 
     protected void OnDestroy()
@@ -36,26 +48,56 @@ public class BaseUnitController : MonoBehaviour
         }
         else
         {
-            m_gameManager.Enermy_Units.Remove(this);
+            m_gameManager.Enemy_Units.Remove(this);
         }
     }
 
-    public void Update()
+    public void FixedUpdate()
     {
-        if(selectedGoalNode == null)
+        if (selectedGoalNode == null)
         {
             SelectGoal();
         }
+        Move(Time.fixedDeltaTime);
+    }
+
+    protected virtual void Move(float deltaTime)
+    {
         // Move towards the goal:
         Quaternion rotationBeforeLookat = transform.rotation;
         transform.LookAt(selectedGoalNode);
         Vector3 forward = transform.forward;
         forward.y = 0;
-        transform.position += this.Speed * Time.deltaTime * forward; // The unit should only move along the xz-plane.
+        transform.position += this.Speed * deltaTime * forward; // The unit should only move along the xz-plane.
         transform.rotation = rotationBeforeLookat;
     }
 
+    public virtual void SelectStarterGoal()
+    {
+        if (Owner == Player.Human)
+        {
+            var randomSelectedNode = m_gameManager.getRandomSelectedNode();
+            if (randomSelectedNode == null)
+            {
+                SelectRandomNodeOwnedByOpponent();
+            }
+            else
+            {
+                selectedGoalNode = randomSelectedNode.transform;
+            }
+        }
+        else
+        {
+            SelectRandomNodeOwnedByOpponent();
+        }
+    }
+
     public virtual void SelectGoal()
+    {
+        SelectRandomNodeOwnedByOpponent();
+    }
+
+    protected void SelectRandomNodeOwnedByOpponent()
     {
         // Select a random node not owned by this unit's player:
         MapNodeController[] mapNodeControllers = Object.FindObjectsOfType<MapNodeController>();
@@ -88,36 +130,41 @@ public class BaseUnitController : MonoBehaviour
         }
     }
 
+
     public virtual void OnTriggerEnter(Collider other)
     {
-        // On collision with a node, select the next node to move to by deleting the goal node:
-        MapNodeController nodeController = other.GetComponent<MapNodeController>();
-        if (nodeController != null)
+        HandleCollisionWithUnit(other);
+        HandleCollisionWithGoal(other);
+    }
+
+    protected virtual void HandleCollisionWithGoal(Collider possibleGoal)
+    {
+        // On collision with its goal, set the goal to null (so that it will find a new goal during next update):
+        if (possibleGoal != null)
         {
-            // Debug.Log("Node conversion collision detected!");
-            if (nodeController.Owner != Owner)
+            if (possibleGoal != null && possibleGoal.transform == selectedGoalNode)
             {
                 selectedGoalNode = null;
-                Debug.Log("The unit has cleared its goal.");
             }
         }
+    }
 
+    protected virtual void HandleCollisionWithUnit(Collider possibleUnit)
+    {
         // If an AI unit collides wtih a human unit, randomly destroy one of them.
-        BaseUnitController unitController = other.GetComponent<BaseUnitController>();
+        BaseUnitController unitController = possibleUnit.GetComponent<BaseUnitController>();
         if (unitController != null)
         {
-            if (unitController.Owner != Owner)
+            if (Owner == Player.Human && unitController.Owner != Owner)
             {
-                // TODO: Play a sound.
-                // TODO: Create particle effects.
-                // Debug.Log("Human to AI unit collision detected!");
-                if (Random.Range(0.0f, 1.0f) > 0.25f)
+                if (Random.Range(0.0f, 1.0f) > (PercentChanceToWinFight / 100))
                 {
+                    AudioManager.Instance.PlaySFX(AudioManager.Instance.FightSound.clip, 0.5f);
                     Destroy(gameObject);
                 }
                 else
                 {
-                    Destroy(other.transform.gameObject);
+                    Destroy(possibleUnit.transform.gameObject);
                 }
             }
         }

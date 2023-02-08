@@ -90,9 +90,6 @@ public class UnitController : MonoBehaviour
         {
             if (unitController.Owner != Owner)
             {
-                // TODO: Play a sound.
-                // TODO: Create particle effects.
-                // Debug.Log("Human to AI unit collision detected!");
                 if (Random.Range(0.0f, 1.0f) > 0.25f)
                 {
                     Destroy(gameObject);

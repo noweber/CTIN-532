@@ -10,4 +10,9 @@ public class UnitUiController : MonoBehaviour
     public Image Jewel;
 
     public int type;
+
+    public void OnDestroy()
+    {
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.SpawnSound.clip, 1.0f);
+    }
 }
