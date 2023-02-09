@@ -84,7 +84,7 @@ public class Card : MonoBehaviour
             if (UnitWorldSpacePrefab != null)
             {
                 // TODO: remove this hard-coding of unity type values and just push it to the unit prefabs instead of the player selection
-                playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, sprite, UnitType);
+                playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, UnitType);
             }
             else
             {

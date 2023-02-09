@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd2c607540a5f8240ac68caf34f8d174, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  secondsDelayBetweenCameraFace: 2
+  secondsDelayBetweenCameraFace: 0.5
 --- !u!135 &6149043121710213374
 SphereCollider:
   m_ObjectHideFlags: 0

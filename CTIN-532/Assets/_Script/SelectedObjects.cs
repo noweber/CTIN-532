@@ -7,8 +7,6 @@ public class SelectedObjects : MonoBehaviour
 
     public GameObject SelectedUnitPrefab;
 
-    public Sprite SelectedUnitSprite;
-
     public MapNodeController SelectedMapNode { get; private set; }
 
     private MapNodeController firstNodeSelected;
@@ -41,7 +39,8 @@ public class SelectedObjects : MonoBehaviour
         if (nodeController == null)
         {
             SelectedMapNode = firstNodeSelected;
-        } else
+        }
+        else
         {
             SelectedMapNode = nodeController;
         }
@@ -54,10 +53,9 @@ public class SelectedObjects : MonoBehaviour
         secondsLeftInSpawningBurst = 0;
     }
 
-    public void SelectUnitToSpawn(GameObject prefab, Sprite sprite, int type)
+    public void SelectUnitToSpawn(GameObject prefab, int type)
     {
         SelectedUnitPrefab = prefab;
-        SelectedUnitSprite = sprite;
         this.type = type;
         secondsLeftInSpawningBurst = BurstSpawnDuration;
     }
@@ -71,7 +69,7 @@ public class SelectedObjects : MonoBehaviour
             secondsSinceLastSpawn -= SecondsBetweenSpawns;
             if (Owner == Player.Human)
             {
-                if (SelectedUnitPrefab != null && SelectedMapNode != null && SelectedUnitSprite != null)
+                if (SelectedUnitPrefab != null && SelectedMapNode != null)
                 {
                     if (SelectedMapNode.Owner == Owner)
                     {
@@ -82,14 +80,14 @@ public class SelectedObjects : MonoBehaviour
                         }
                         for (int i = 0; i < spawnCount; i++)
                         {
-                            SelectedMapNode.SpawnUnit(list_Of_UnitPrefab[type], SelectedUnitSprite, transform);
+                            SpawnUnit(list_Of_UnitPrefab[type], SelectedMapNode.transform);
                         }
                     }
                 }
             }
             else if (Owner == Player.AI)
             {
-                if (SelectedUnitPrefab != null && SelectedUnitSprite != null)
+                if (SelectedUnitPrefab != null)
                 {
 
                     // Select a random node owned by the AI player:
@@ -108,7 +106,7 @@ public class SelectedObjects : MonoBehaviour
                     {
                         if (nodeController.Owner == Owner)
                         {
-                            nodeController.SpawnUnit(SelectedUnitPrefab, SelectedUnitSprite, transform);
+                            SpawnUnit(SelectedUnitPrefab, nodeController.transform);
                             break;
                         }
                     }
@@ -121,5 +119,10 @@ public class SelectedObjects : MonoBehaviour
         {
             secondsLeftInSpawningBurst -= Time.deltaTime;
         }
+    }
+
+    private void SpawnUnit(GameObject unitPrefab, Transform parent)
+    {
+        Instantiate(unitPrefab, parent.transform);
     }
 }

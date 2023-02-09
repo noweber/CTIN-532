@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using static MapNodeController;
 
@@ -6,8 +5,14 @@ public class BaseUnitController : MonoBehaviour
 {
     public AudioClip FightSound;
 
-    
-    public float hitPoints { get; private set; }
+    [SerializeField]
+    public float HitPoints { get; private set; }
+
+    [SerializeField]
+    public float AttackPoints { get; private set; }
+
+    [SerializeField]
+    public float SpeedPoints { get; private set; }
 
     [Min(1.0f)]
     public float MinSpeed = 2.0f;
@@ -25,6 +30,14 @@ public class BaseUnitController : MonoBehaviour
     public Transform selectedGoalNode;
 
     protected GameManager m_gameManager;
+
+    public void SetUnitStats(float hitPoints, float attackPoints, float speedPoints)
+    {
+        // TODO: validate inputs
+        HitPoints = hitPoints;
+        AttackPoints = attackPoints;
+        SpeedPoints = speedPoints;
+    }
 
     protected virtual void Awake()
     {
@@ -134,7 +147,6 @@ public class BaseUnitController : MonoBehaviour
             Debug.LogError("Failed to select a goal node");
         }
     }
-
 
     public virtual void OnTriggerEnter(Collider other)
     {

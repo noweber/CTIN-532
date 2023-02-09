@@ -68,12 +68,6 @@ public class MapNodeController : MonoBehaviour
         }
     }
 
-    public void SpawnUnit(GameObject unitPrefab, Sprite unitSprite, Transform parent)
-    {
-        GameObject spawnedUnit = Instantiate(unitPrefab, transform);
-        spawnedUnit.transform.parent = parent;
-    }
-
     public void OnTriggerEnter(Collider other)
     {
         // Convert the node to a team on collision with a unit:
@@ -101,17 +95,20 @@ public class MapNodeController : MonoBehaviour
 
     public void ToggleSelect()
     {
-        AudioManager.Instance.PlaySFX(SelectSound, 1.0f);
-        if (isSelected)
+        if (Owner == Player.Human)
         {
-            playerSelection.SetSelectedMapNode(null);
-            Deselect();
-        }
-        else
-        {
-            playerSelection.SetSelectedMapNode(this);
-            Select_Sphere.SetActive(true);
-            isSelected = true;
+            AudioManager.Instance.PlaySFX(SelectSound, 1.0f);
+            if (isSelected)
+            {
+                playerSelection.SetSelectedMapNode(null);
+                Deselect();
+            }
+            else
+            {
+                playerSelection.SetSelectedMapNode(this);
+                Select_Sphere.SetActive(true);
+                isSelected = true;
+            }
         }
     }
 }
