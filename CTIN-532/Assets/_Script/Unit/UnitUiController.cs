@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class UnitUiController : MonoBehaviour
 {
+    public AudioClip SpawnSound;
     public Image Character;
 
     public Image Number;
@@ -13,6 +14,6 @@ public class UnitUiController : MonoBehaviour
 
     public void OnDestroy()
     {
-        AudioManager.Instance.PlaySFX(AudioManager.Instance.SpawnSound.clip, 1.0f);
+        AudioManager.Instance.PlaySFX(SpawnSound, 1.0f);
     }
 }
