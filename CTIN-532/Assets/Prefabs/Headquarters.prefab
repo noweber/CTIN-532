@@ -98,6 +98,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a113348859323443ba0f8bf5d404bf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GainNodeSound: {fileID: 8300000, guid: ff2e393f165109a49a3d3df2257a35ee, type: 3}
+  LoseNodeSound: {fileID: 8300000, guid: 860d9c7900bdd8947a672c6155cb2e6e, type: 3}
+  SelectSound: {fileID: 8300000, guid: 6d39753d073fe2c4d95a3f688537c466, type: 3}
   Owner: 0
   OwnerMaterialsMap:
   - {fileID: 2100000, guid: 0db6abcb2997faf4794f05d062cac739, type: 2}

@@ -3,6 +3,10 @@ using UnityEngine.UI;
 
 public class MapNodeController : MonoBehaviour
 {
+    public AudioClip GainNodeSound;
+    public AudioClip LoseNodeSound;
+    public AudioClip SelectSound;
+
     public Player Owner;
 
     public Material[] OwnerMaterialsMap;
@@ -79,11 +83,11 @@ public class MapNodeController : MonoBehaviour
             if (unitController.Owner == Player.Human && Owner != Player.Human)
             {
                 SetOwner(Player.Human);
-                AudioManager.Instance.PlaySFX(AudioManager.Instance.GainNodeSound.clip, 1.0f);
+                AudioManager.Instance.PlaySFX(GainNodeSound, 1.0f);
             }
             else if (unitController.Owner == Player.AI && Owner != Player.AI)
             {
-                AudioManager.Instance.PlaySFX(AudioManager.Instance.LoseNodeSound.clip, 1.0f);
+                AudioManager.Instance.PlaySFX(LoseNodeSound, 1.0f);
                 SetOwner(Player.AI);
             }
         }
@@ -95,12 +99,9 @@ public class MapNodeController : MonoBehaviour
         isSelected = false;
     }
 
-    public void ToggleSelect(bool withSound = true)
+    public void ToggleSelect()
     {
-        if (withSound)
-        {
-            AudioManager.Instance.PlaySFX(AudioManager.Instance.SelectSound.clip, 1.0f);
-        }
+        AudioManager.Instance.PlaySFX(SelectSound, 1.0f);
         if (isSelected)
         {
             playerSelection.SetSelectedMapNode(null);
