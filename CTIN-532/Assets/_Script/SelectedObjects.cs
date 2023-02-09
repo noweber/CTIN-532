@@ -6,10 +6,12 @@ public class SelectedObjects : MonoBehaviour
     public GameObject[] list_Of_UnitPrefab;
 
     public GameObject SelectedUnitPrefab;
+
+
     // TODO: refactor these stats when SpawnUnit() is refactored.
-    private float hitPoints;
-    private float attackPoints;
-    private float speedPoints;
+    public float hitPoints;
+    public float attackPoints;
+    public float speedPoints;
 
     public MapNodeController SelectedMapNode { get; private set; }
 

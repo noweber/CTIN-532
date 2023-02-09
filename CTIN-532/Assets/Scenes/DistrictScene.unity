@@ -1393,7 +1393,9 @@ MonoBehaviour:
   - {fileID: 1303486019930469317, guid: b6d53942c6503834dae4e2e9b8710dc1, type: 3}
   - {fileID: 1303486019930469317, guid: 27d42ee0c2031564db0e3d8c7708852e, type: 3}
   SelectedUnitPrefab: {fileID: 1303486019930469317, guid: ed7114223bda99042b42c760ca589f4d, type: 3}
-  SelectedUnitSprite: {fileID: 0}
+  hitPoints: 0
+  attackPoints: 0
+  speedPoints: 0
   Owner: 1
   SecondsBetweenSpawns: 0.8
   BurstSpawnDuration: 2
@@ -1628,7 +1630,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   list_Of_UnitPrefab: []
   SelectedUnitPrefab: {fileID: 1303486019930469317, guid: ed7114223bda99042b42c760ca589f4d, type: 3}
-  SelectedUnitSprite: {fileID: 1352663794, guid: c05b044666732a644b440151cea9056a, type: 3}
+  hitPoints: 16
+  attackPoints: 4
+  speedPoints: 2.5
   Owner: 2
   SecondsBetweenSpawns: 0.5
   BurstSpawnDuration: 2

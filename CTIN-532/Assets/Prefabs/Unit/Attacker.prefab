@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 1303486019930469326}
   - component: {fileID: 1303486019930469323}
   - component: {fileID: 1303486019930469327}
-  - component: {fileID: 6589952227621368072}
-  - component: {fileID: 324897644208317874}
   - component: {fileID: 6149043121710213374}
   - component: {fileID: -203060880061671539}
+  - component: {fileID: 5385152679667699354}
   m_Layer: 0
   m_Name: Attacker
   m_TagString: Untagged
@@ -67,7 +66,38 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!212 &6589952227621368072
+--- !u!135 &6149043121710213374
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303486019930469317}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-203060880061671539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303486019930469317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c3c2c35c957137489da5d1b1e2c94fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FightSound: {fileID: 8300000, guid: f64aa2273cd03bd4d95b4f5d6b3f23fc, type: 3}
+  maxHp: 0
+  attackPoints: 0
+  speedPoints: 0
+  Owner: 1
+  selectedGoalNode: {fileID: 0}
+--- !u!212 &5385152679667699354
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,53 +149,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &324897644208317874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1303486019930469317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd2c607540a5f8240ac68caf34f8d174, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  secondsDelayBetweenCameraFace: 0.5
---- !u!135 &6149043121710213374
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1303486019930469317}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.1
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-203060880061671539
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1303486019930469317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c3c2c35c957137489da5d1b1e2c94fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FightSound: {fileID: 8300000, guid: f64aa2273cd03bd4d95b4f5d6b3f23fc, type: 3}
-  hitPoints: 0
-  attackPoints: 0
-  speedPoints: 0
-  MinSpeed: 3
-  MaxSpeed: 5
-  PercentChanceToWinFight: 40
-  Owner: 1
-  selectedGoalNode: {fileID: 0}
 --- !u!1001 &9164291920543786092
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -6,24 +6,14 @@ public class BaseUnitController : MonoBehaviour
     public AudioClip FightSound;
 
     [SerializeField]
-    private float hitPoints;
+    private float maxHp;
+    private float currentHp;
 
     [SerializeField]
     private float attackPoints;
 
     [SerializeField]
     private float speedPoints;
-
-    [Min(1.0f)]
-    public float MinSpeed = 2.0f;
-
-    [Min(1.0f)]
-    public float MaxSpeed = 4.0f;
-
-    private float Speed;
-
-    [Range(0, 100)]
-    public float PercentChanceToWinFight = 50;
 
     public Player Owner;
 
@@ -34,14 +24,14 @@ public class BaseUnitController : MonoBehaviour
     public void SetUnitStats(float hitPoints, float attackPoints, float speedPoints)
     {
         // TODO: validate inputs
-        this.hitPoints = hitPoints;
+        this.maxHp = hitPoints;
+        this.currentHp = hitPoints;
         this.attackPoints = attackPoints;
         this.speedPoints = speedPoints;
     }
 
     protected virtual void Awake()
     {
-        this.Speed = Random.Range(Mathf.Min(MinSpeed, MaxSpeed), Mathf.Max(MinSpeed, MaxSpeed));
         m_gameManager = FindObjectOfType<GameManager>();
         if (Owner == Player.Human)
         {
@@ -86,7 +76,7 @@ public class BaseUnitController : MonoBehaviour
         transform.LookAt(selectedGoalNode);
         Vector3 forward = transform.forward;
         forward.y = 0;
-        transform.position += this.Speed * deltaTime * forward; // The unit should only move along the xz-plane.
+        transform.position += this.speedPoints * deltaTime * forward;  // The unit should only move along the xz-plane.
         transform.rotation = rotationBeforeLookat;
     }
 
@@ -169,21 +159,42 @@ public class BaseUnitController : MonoBehaviour
     protected virtual void HandleCollisionWithUnit(Collider possibleUnit)
     {
         // If an AI unit collides wtih a human unit, randomly destroy one of them.
-        BaseUnitController unitController = possibleUnit.GetComponent<BaseUnitController>();
-        if (unitController != null)
+        BaseUnitController otherUnit = possibleUnit.GetComponent<BaseUnitController>();
+        if (otherUnit != null)
         {
-            if (Owner == Player.Human && unitController.Owner != Owner)
+            if (Owner == Player.Human && Owner != otherUnit.Owner)
             {
-                if (Random.Range(0.0f, 1.0f) > (PercentChanceToWinFight / 100))
-                {
-                    AudioManager.Instance.PlaySFX(FightSound, 0.5f);
-                    Destroy(gameObject);
-                }
-                else
-                {
-                    Destroy(possibleUnit.transform.gameObject);
-                }
+                AudioManager.Instance.PlaySFX(FightSound, 0.5f);
+
+                // Adjust HP:
+                UpdateUnitHp(this, otherUnit.attackPoints);
+                UpdateUnitHp(otherUnit, attackPoints);
+
+                // Push Back:
+                //PushUnitBack(this);
+                //PushUnitBack(otherUnit);
             }
+        }
+    }
+
+    private void PushUnitBack(BaseUnitController unit)
+    {
+        Vector3 forward = unit.transform.forward;
+        forward.y = 0;
+        unit.transform.position = forward * unit.speedPoints / 10.0f;
+    }
+
+    private void UpdateUnitHp(BaseUnitController unit, float damage)
+    {
+        unit.currentHp -= damage;
+        if (unit.currentHp <= 0)
+        {
+            Destroy(unit.gameObject);
+        }
+        else
+        {
+            var hpBar = unit.GetComponentInChildren<Hpbar>();
+            hpBar.updateHpBar(unit.maxHp, unit.currentHp);
         }
     }
 }
