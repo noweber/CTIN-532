@@ -4,6 +4,7 @@ using static MapNodeController;
 
 public class BaseUnitController : MonoBehaviour
 {
+    public AudioClip FightSound;
     [Min(1.0f)]
     public float MinSpeed = 2.0f;
 
@@ -159,7 +160,7 @@ public class BaseUnitController : MonoBehaviour
             {
                 if (Random.Range(0.0f, 1.0f) > (PercentChanceToWinFight / 100))
                 {
-                    AudioManager.Instance.PlaySFX(AudioManager.Instance.FightSound.clip, 0.5f);
+                    AudioManager.Instance.PlaySFX(FightSound, 0.5f);
                     Destroy(gameObject);
                 }
                 else

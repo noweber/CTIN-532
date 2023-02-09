@@ -174,6 +174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edfce2cdc95bb7242b674a43d80802fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FightSound: {fileID: 8300000, guid: f64aa2273cd03bd4d95b4f5d6b3f23fc, type: 3}
   MinSpeed: 1
   MaxSpeed: 2
   PercentChanceToWinFight: 50
