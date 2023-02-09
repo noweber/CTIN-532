@@ -123,7 +123,7 @@ public class LevelGenerator : MonoBehaviour
     {
         if (mapGenerator != null)
         {
-            if (Input.GetKeyDown(KeyCode.P))
+            if (Input.GetKeyDown(KeyCode.O))
             {
                 mapGenerator.RegenerateRoomMap();
                 tilemap = mapGenerator.GetBinaryTilemap();

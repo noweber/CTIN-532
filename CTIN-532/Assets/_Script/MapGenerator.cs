@@ -98,7 +98,7 @@ public class MapGenerator : Singleton<MapGenerator>
     {
         if (RespondsToInputSystem)
         {
-            if (Input.GetKeyDown(KeyCode.P))
+            if (Input.GetKeyDown(KeyCode.R))
             {
                 RegenerateRoomMap();
             }

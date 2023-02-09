@@ -5,6 +5,10 @@ using static MapNodeController;
 public class BaseUnitController : MonoBehaviour
 {
     public AudioClip FightSound;
+
+    
+    public float hitPoints { get; private set; }
+
     [Min(1.0f)]
     public float MinSpeed = 2.0f;
 
