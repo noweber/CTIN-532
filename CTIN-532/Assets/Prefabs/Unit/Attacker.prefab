@@ -158,6 +158,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FightSound: {fileID: 8300000, guid: f64aa2273cd03bd4d95b4f5d6b3f23fc, type: 3}
+  hitPoints: 0
+  attackPoints: 0
+  speedPoints: 0
   MinSpeed: 3
   MaxSpeed: 5
   PercentChanceToWinFight: 40
