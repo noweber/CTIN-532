@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6212767972623595795}
   - component: {fileID: 6212767972623595794}
   - component: {fileID: 4131759658787409891}
-  - component: {fileID: -7961336782374196209}
+  - component: {fileID: 8703065350162745709}
   m_Layer: 0
   m_Name: Headquarters
   m_TagString: Untagged
@@ -108,8 +108,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 26855b5a8f8a4184781e768389b1ba8d, type: 2}
   Select_Sphere: {fileID: 7524841462064950219}
   isSelected: 0
---- !u!135 &-7961336782374196209
-SphereCollider:
+--- !u!65 &8703065350162745709
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -119,7 +119,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.5
+  m_Size: {x: 2, y: 4, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7524841462064950219
 GameObject:
