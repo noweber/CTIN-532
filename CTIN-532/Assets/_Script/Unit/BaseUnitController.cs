@@ -6,13 +6,13 @@ public class BaseUnitController : MonoBehaviour
     public AudioClip FightSound;
 
     [SerializeField]
-    public float HitPoints { get; private set; }
+    private float hitPoints;
 
     [SerializeField]
-    public float AttackPoints { get; private set; }
+    private float attackPoints;
 
     [SerializeField]
-    public float SpeedPoints { get; private set; }
+    private float speedPoints;
 
     [Min(1.0f)]
     public float MinSpeed = 2.0f;
@@ -34,9 +34,9 @@ public class BaseUnitController : MonoBehaviour
     public void SetUnitStats(float hitPoints, float attackPoints, float speedPoints)
     {
         // TODO: validate inputs
-        HitPoints = hitPoints;
-        AttackPoints = attackPoints;
-        SpeedPoints = speedPoints;
+        this.hitPoints = hitPoints;
+        this.attackPoints = attackPoints;
+        this.speedPoints = speedPoints;
     }
 
     protected virtual void Awake()

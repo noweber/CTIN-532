@@ -6,6 +6,10 @@ public class SelectedObjects : MonoBehaviour
     public GameObject[] list_Of_UnitPrefab;
 
     public GameObject SelectedUnitPrefab;
+    // TODO: refactor these stats when SpawnUnit() is refactored.
+    private float hitPoints;
+    private float attackPoints;
+    private float speedPoints;
 
     public MapNodeController SelectedMapNode { get; private set; }
 
@@ -53,11 +57,14 @@ public class SelectedObjects : MonoBehaviour
         secondsLeftInSpawningBurst = 0;
     }
 
-    public void SelectUnitToSpawn(GameObject prefab, int type)
+    public void SelectUnitToSpawn(GameObject prefab, int type, float hp, float attack, float speed)
     {
         SelectedUnitPrefab = prefab;
         this.type = type;
         secondsLeftInSpawningBurst = BurstSpawnDuration;
+        hitPoints = hp;
+        attackPoints = attack;
+        speedPoints = speed;
     }
 
     // Update is called once per frame
@@ -123,6 +130,10 @@ public class SelectedObjects : MonoBehaviour
 
     private void SpawnUnit(GameObject unitPrefab, Transform parent)
     {
-        Instantiate(unitPrefab, parent.transform);
+        var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, transform);
+
+        // TODO: Refactor this so that the prefab contains the stat data and the UI card reads that instead of the UI card passing it to the prefab.
+        var controller = unit.GetComponent<BaseUnitController>();
+        controller.SetUnitStats(hitPoints, attackPoints, speedPoints);
     }
 }
