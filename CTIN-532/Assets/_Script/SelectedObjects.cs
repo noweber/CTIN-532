@@ -1,7 +1,7 @@
 using UnityEngine;
 using static MapNodeController;
 
-public class PlayerSelectionController : MonoBehaviour
+public class SelectedObjects : MonoBehaviour
 {
     public GameObject[] list_Of_UnitPrefab;
 
@@ -9,7 +9,9 @@ public class PlayerSelectionController : MonoBehaviour
 
     public Sprite SelectedUnitSprite;
 
-    public MapNodeController SelectedMapNode;
+    public MapNodeController SelectedMapNode { get; private set; }
+
+    private MapNodeController firstNodeSelected;
 
     public Player Owner;
 
@@ -26,6 +28,25 @@ public class PlayerSelectionController : MonoBehaviour
 
     private int type;
 
+    public void SetSelectedMapNode(MapNodeController nodeController)
+    {
+        if (SelectedMapNode != null)
+        {
+            SelectedMapNode.Deselect();
+        }
+        if (firstNodeSelected == null)
+        {
+            firstNodeSelected = SelectedMapNode;
+        }
+        if (nodeController == null)
+        {
+            SelectedMapNode = firstNodeSelected;
+        } else
+        {
+            SelectedMapNode = nodeController;
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,7 +54,7 @@ public class PlayerSelectionController : MonoBehaviour
         secondsLeftInSpawningBurst = 0;
     }
 
-    public void SelectUnit(GameObject prefab, Sprite sprite,int type)
+    public void SelectUnitToSpawn(GameObject prefab, Sprite sprite, int type)
     {
         SelectedUnitPrefab = prefab;
         SelectedUnitSprite = sprite;

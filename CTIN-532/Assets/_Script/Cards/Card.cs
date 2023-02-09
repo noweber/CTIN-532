@@ -31,7 +31,7 @@ public class Card : MonoBehaviour
     // TODO: remove this when refactoring SelectCard() below!
     public int UnitType;
 
-    private PlayerSelectionController playerSelection;
+    private SelectedObjects playerSelection;
 
     private void Awake()
     {
@@ -67,7 +67,7 @@ public class Card : MonoBehaviour
 
         // TODO: Check this code for errors with debug statements
         // TODO: Refactor this to make it re-usable by other classes.. probably has PSController or a game manager be able to provde the human controller.
-        PlayerSelectionController[] controllers = FindObjectsOfType<PlayerSelectionController>();
+        SelectedObjects[] controllers = FindObjectsOfType<SelectedObjects>();
         foreach (var controller in controllers)
         {
             if (controller.Owner == MapNodeController.Player.Human)
@@ -84,7 +84,7 @@ public class Card : MonoBehaviour
             if (UnitWorldSpacePrefab != null)
             {
                 // TODO: remove this hard-coding of unity type values and just push it to the unit prefabs instead of the player selection
-                playerSelection.SelectUnit(UnitWorldSpacePrefab, sprite, UnitType);
+                playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, sprite, UnitType);
             }
             else
             {
