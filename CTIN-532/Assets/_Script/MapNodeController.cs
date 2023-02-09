@@ -16,7 +16,7 @@ public class MapNodeController : MonoBehaviour
     [HideInInspector]
     public bool isSelected = false;
 
-    private GameManager gameManager;
+    private SelectedObjects playerSelection;
 
     public enum Player
     {
@@ -25,12 +25,10 @@ public class MapNodeController : MonoBehaviour
         AI = 2
     };
 
-    private PlayerSelectionController playerSelection;
-
     public void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
-        PlayerSelectionController[] controllers = FindObjectsOfType<PlayerSelectionController>();
+        playerSelection = FindObjectOfType<SelectedObjects>();
+        SelectedObjects[] controllers = FindObjectsOfType<SelectedObjects>();
         foreach (var controller in controllers)
         {
             if (controller.Owner == MapNodeController.Player.Human)
@@ -64,7 +62,7 @@ public class MapNodeController : MonoBehaviour
             {
                 if (raycastHit.transform.gameObject == gameObject)
                 {
-                    toggleSelect();
+                    ToggleSelect();
                 }
             }
         }
@@ -86,35 +84,34 @@ public class MapNodeController : MonoBehaviour
             {
                 SetOwner(Player.Human);
                 AudioManager.Instance.PlaySFX(GainNodeSound, 1.0f);
-                //gameManager.enermyRefreshGoal = true;
-                //gameManager.refreshGoal = true;
             }
             else if (unitController.Owner == Player.AI && Owner != Player.AI)
             {
                 AudioManager.Instance.PlaySFX(LoseNodeSound, 1.0f);
                 SetOwner(Player.AI);
-                //gameManager.enermyRefreshGoal = true;
-                //gameManager.refreshGoal = true;
             }
         }
-
     }
 
-    private void toggleSelect()
+    public void Deselect()
+    {
+        Select_Sphere.SetActive(false);
+        isSelected = false;
+    }
+
+    public void ToggleSelect()
     {
         AudioManager.Instance.PlaySFX(SelectSound, 1.0f);
         if (isSelected)
         {
-            gameManager.Selected_Nodes.Remove(this);
-            Select_Sphere.SetActive(false);
-            isSelected = false;
+            playerSelection.SetSelectedMapNode(null);
+            Deselect();
         }
         else
         {
-            gameManager.Selected_Nodes.Add(this);
+            playerSelection.SetSelectedMapNode(this);
             Select_Sphere.SetActive(true);
             isSelected = true;
         }
-        //gameManager.refreshGoal = true;
     }
 }

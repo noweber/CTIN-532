@@ -91,26 +91,4 @@ public class GameManager : MonoBehaviour
         }
         return res;
     }
-
-    public void Update()
-    {
-        if (refreshGoal)
-        {
-            foreach (BaseUnitController i in Player_Units)
-            {
-                i.SelectGoal();
-            }
-            refreshGoal = false;
-        }
-
-        if (enermyRefreshGoal)
-        {
-            Debug.Log("refresh enermy");
-            foreach (BaseUnitController i in Enemy_Units)
-            {
-                i.SelectGoal();
-            }
-            enermyRefreshGoal = false;
-        }
-    }
 }

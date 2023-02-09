@@ -64,7 +64,7 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     private int[,] levelmap;
 
-    private PlayerSelectionController humanPlayerController;
+    private SelectedObjects humanPlayerController;
 
     enum LevelTileType
     {
@@ -93,7 +93,7 @@ public class LevelGenerator : MonoBehaviour
     void Start()
     {
         // Find the human player selection controller:
-        PlayerSelectionController[] controllers = FindObjectsOfType<PlayerSelectionController>();
+        SelectedObjects[] controllers = FindObjectsOfType<SelectedObjects>();
         foreach (var controller in controllers)
         {
             if (controller.Owner == MapNodeController.Player.Human)
@@ -285,7 +285,7 @@ public class LevelGenerator : MonoBehaviour
             hqController.SetOwner(Player.Human);
             if (humanPlayerController != null)
             {
-                humanPlayerController.SelectedMapNode = hqController;
+                humanPlayerController.SetSelectedMapNode(hqController);
             }
             else
             {
@@ -294,11 +294,11 @@ public class LevelGenerator : MonoBehaviour
         }
         else if (isAiPlayerHq)
         {
-            hqController.SetOwner(Player.Neutral);
+            hqController.SetOwner(Player.AI);
         }
         else
         {
-            hqController.SetOwner(Player.AI);
+            hqController.SetOwner(Player.Neutral);
         }
 
         playerHq.transform.parent = levelGameObject.transform;
@@ -516,9 +516,9 @@ public class LevelGenerator : MonoBehaviour
 
         if (HeadquartersPrefab != null)
         {
-            placePlayerHQ(nodeTilemapPosition_1, isHumanPlayerHq:true);
-            placePlayerHQ(nodeTilemapPosition_2, isAiPlayerHq:true );
-            placePlayerHQ(nodeTilemapPosition_3);
+            placePlayerHQ(nodeTilemapPosition_1, isHumanPlayerHq: true);
+            placePlayerHQ(nodeTilemapPosition_2);
+            placePlayerHQ(nodeTilemapPosition_3, isAiPlayerHq: true);
             placePlayerHQ(nodeTilemapPosition_4);
             placePlayerHQ(nodeTilemapPosition_5);
         }
