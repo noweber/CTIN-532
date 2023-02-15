@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3664496126847523201}
   - component: {fileID: -5607592328319431818}
   m_Layer: 0
-  m_Name: Defender
+  m_Name: AiDefenderUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108,7 +108,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1134917048, guid: c05b044666732a644b440151cea9056a, type: 3}
+  m_Sprite: {fileID: -2021247738, guid: c05b044666732a644b440151cea9056a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -151,10 +151,7 @@ MonoBehaviour:
   armorPoints: 0
   resistPoints: 0
   speedPoints: 0
-  Owner: 1
-  OwnerSprites:
-  - {fileID: 1134917048, guid: c05b044666732a644b440151cea9056a, type: 3}
-  - {fileID: -2021247738, guid: 915d4630149db9f49a98d81664a3568d, type: 3}
+  Owner: 2
   selectedGoalNode: {fileID: 0}
   preGoal: {fileID: 0}
   hunterTargeted: 0

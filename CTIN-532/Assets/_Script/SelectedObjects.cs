@@ -11,6 +11,9 @@ public class SelectedObjects : MonoBehaviour
     // TODO: refactor these stats when SpawnUnit() is refactored.
     public float hitPoints;
     public float attackPoints;
+    public float magicPoints;
+    public float armorPoints;
+    public float resistPoints;
     public float speedPoints;
 
     public MapNodeController SelectedMapNode { get; private set; }
@@ -59,13 +62,16 @@ public class SelectedObjects : MonoBehaviour
         secondsLeftInSpawningBurst = 0;
     }
 
-    public void SelectUnitToSpawn(GameObject prefab, int type, float hp, float attack, float speed)
+    public void SelectUnitToSpawn(GameObject prefab, int type, float hp, float attack, float magic, float armor, float resist, float speed)
     {
         SelectedUnitPrefab = prefab;
         this.type = type;
         secondsLeftInSpawningBurst = BurstSpawnDuration;
         hitPoints = hp;
         attackPoints = attack;
+        magicPoints = magic;
+        armorPoints = armor;
+        resistPoints = resist;
         speedPoints = speed;
     }
 
@@ -96,9 +102,11 @@ public class SelectedObjects : MonoBehaviour
             }
             else if (Owner == Player.AI)
             {
+                // Select a random unit prefab:
+                SelectedUnitPrefab = list_Of_UnitPrefab[Random.Range(0, list_Of_UnitPrefab.Length)];
+
                 if (SelectedUnitPrefab != null)
                 {
-
                     // Select a random node owned by the AI player:
                     MapNodeController[] mapNodeControllers = Object.FindObjectsOfType<MapNodeController>();
                     System.Random randomNumberGenerator = new();
@@ -136,7 +144,7 @@ public class SelectedObjects : MonoBehaviour
 
         // TODO: Refactor this so that the prefab contains the stat data and the UI card reads that instead of the UI card passing it to the prefab.
         var controller = unit.GetComponent<BaseUnitController>();
-        controller.SetUnitStats(hitPoints, attackPoints, speedPoints);
+        controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
         controller.preGoal = parent;
     }
 }

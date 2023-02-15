@@ -1392,13 +1392,17 @@ MonoBehaviour:
   - {fileID: 1303486019930469317, guid: a91ee99354da161438dc6fa859c31f34, type: 3}
   - {fileID: 1303486019930469317, guid: b6d53942c6503834dae4e2e9b8710dc1, type: 3}
   - {fileID: 1303486019930469317, guid: 27d42ee0c2031564db0e3d8c7708852e, type: 3}
+  - {fileID: 1303486019930469317, guid: cac561525a3cdcc4fa8ccf85df0ea021, type: 3}
   SelectedUnitPrefab: {fileID: 1303486019930469317, guid: ed7114223bda99042b42c760ca589f4d, type: 3}
   hitPoints: 0
   attackPoints: 0
+  magicPoints: 0
+  armorPoints: 0
+  resistPoints: 0
   speedPoints: 0
   Owner: 1
-  SecondsBetweenSpawns: 0.8
-  BurstSpawnDuration: 2
+  SecondsBetweenSpawns: 2
+  BurstSpawnDuration: 0
   BurstSpawnRate: 3
 --- !u!114 &1589649559
 MonoBehaviour:
@@ -1628,14 +1632,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0211ba3705c41c4428b9248faa2ddfe6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  list_Of_UnitPrefab: []
-  SelectedUnitPrefab: {fileID: 1303486019930469317, guid: ed7114223bda99042b42c760ca589f4d, type: 3}
-  hitPoints: 16
-  attackPoints: 4
-  speedPoints: 2.5
+  list_Of_UnitPrefab:
+  - {fileID: 1303486019930469317, guid: 5083f59897f11b24bac7d270dd6a5d89, type: 3}
+  - {fileID: 1303486019930469317, guid: 0211e3bd26c24da49bf701bf4e84f6d6, type: 3}
+  - {fileID: 1303486019930469317, guid: 869f25618bcf10745a005cc1fe517d00, type: 3}
+  - {fileID: 1303486019930469317, guid: 233515ec9df1a0f4481c5f8db051ba86, type: 3}
+  - {fileID: 1303486019930469317, guid: a64e1d714eed93640b1963f9c873ea60, type: 3}
+  SelectedUnitPrefab: {fileID: 0}
+  hitPoints: 6
+  attackPoints: 2
+  magicPoints: 0
+  armorPoints: 0
+  resistPoints: 0
+  speedPoints: 2
   Owner: 2
-  SecondsBetweenSpawns: 0.5
-  BurstSpawnDuration: 2
+  SecondsBetweenSpawns: 1.25
+  BurstSpawnDuration: 0
   BurstSpawnRate: 1
 --- !u!4 &2136319963
 Transform:
@@ -1749,7 +1761,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 465108369657271551, guid: 45471c7ba0ad8d945bb9301f8d8a1cb4, type: 3}
       propertyPath: cardPrefabs.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 465108369657271551, guid: 45471c7ba0ad8d945bb9301f8d8a1cb4, type: 3}
       propertyPath: cardPrefabs.Array.data[0]
@@ -1765,6 +1777,10 @@ PrefabInstance:
       objectReference: {fileID: 1886421610800277245, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
     - target: {fileID: 465108369657271551, guid: 45471c7ba0ad8d945bb9301f8d8a1cb4, type: 3}
       propertyPath: cardPrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 4173088315994952644, guid: 54a89080db07792498177e9326325005, type: 3}
+    - target: {fileID: 465108369657271551, guid: 45471c7ba0ad8d945bb9301f8d8a1cb4, type: 3}
+      propertyPath: cardPrefabs.Array.data[4]
       value: 
       objectReference: {fileID: 4173088315994952644, guid: c702e0d570d55b343b6b5eed631bfff5, type: 3}
     - target: {fileID: 465108369657271551, guid: 45471c7ba0ad8d945bb9301f8d8a1cb4, type: 3}

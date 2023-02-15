@@ -13,10 +13,9 @@ GameObject:
   - component: {fileID: 1303486019930469327}
   - component: {fileID: 6589952227621368072}
   - component: {fileID: 6149043121710213374}
-  - component: {fileID: 3664496126847523201}
-  - component: {fileID: -5607592328319431818}
+  - component: {fileID: 4816704669226913969}
   m_Layer: 0
-  m_Name: Defender
+  m_Name: AiShooterUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34,7 +33,7 @@ Transform:
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4175001205371488022}
+  - {fileID: 5814261482829686410}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -108,7 +107,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1134917048, guid: c05b044666732a644b440151cea9056a, type: 3}
+  m_Sprite: {fileID: -2016011592, guid: c05b044666732a644b440151cea9056a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -130,9 +129,9 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.15
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3664496126847523201
+--- !u!114 &4816704669226913969
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -141,7 +140,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1303486019930469317}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edfce2cdc95bb7242b674a43d80802fc, type: 3}
+  m_Script: {fileID: 11500000, guid: f1646b14e8638834c86480a025e17bbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   FightSound: {fileID: 8300000, guid: f64aa2273cd03bd4d95b4f5d6b3f23fc, type: 3}
@@ -151,33 +150,11 @@ MonoBehaviour:
   armorPoints: 0
   resistPoints: 0
   speedPoints: 0
-  Owner: 1
-  OwnerSprites:
-  - {fileID: 1134917048, guid: c05b044666732a644b440151cea9056a, type: 3}
-  - {fileID: -2021247738, guid: 915d4630149db9f49a98d81664a3568d, type: 3}
+  Owner: 2
   selectedGoalNode: {fileID: 0}
   preGoal: {fileID: 0}
   hunterTargeted: 0
-  radius: 8
-  targetUnit: {fileID: 0}
---- !u!114 &-5607592328319431818
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1303486019930469317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6227bdcc2e2f9ec4f9c1f46fcee8d8a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  XAxisMeander: 1
-  YAxisMeander: 0
-  ZAxisMeander: 1
-  MaxMeanderMagnitude: {x: 0.25, y: 0, z: 0.25}
-  MaxMeanderSpeed: {x: 0.125, y: 0, z: 0.125}
---- !u!1001 &6932669888120969186
+--- !u!1001 &681512434490226302
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -234,8 +211,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 109f92afa590c24438816e7245bc41d3, type: 3}
---- !u!4 &4175001205371488022 stripped
+--- !u!4 &5814261482829686410 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6468681931373514996, guid: 109f92afa590c24438816e7245bc41d3, type: 3}
-  m_PrefabInstance: {fileID: 6932669888120969186}
+  m_PrefabInstance: {fileID: 681512434490226302}
   m_PrefabAsset: {fileID: 0}

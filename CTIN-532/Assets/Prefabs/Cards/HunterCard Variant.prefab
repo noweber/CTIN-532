@@ -96,12 +96,28 @@ PrefabInstance:
       value: HunterCard Variant
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
+      propertyPath: name
+      value: Hunter
+      objectReference: {fileID: 0}
+    - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
+      propertyPath: armor
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
+      propertyPath: magic
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: speed
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: attack
-      value: 5
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
+      propertyPath: resist
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: sprite
@@ -112,8 +128,12 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
+      propertyPath: aiSprite
+      value: 
+      objectReference: {fileID: 1352663794, guid: 915d4630149db9f49a98d81664a3568d, type: 3}
+    - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: hitPoints
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: description

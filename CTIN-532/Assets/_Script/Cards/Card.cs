@@ -8,23 +8,35 @@ public class Card : MonoBehaviour
 
     public Sprite sprite;
 
+    public string name;
+
     public float hitPoints;
 
     public float attack;
 
+    public float magic;
+
+    public float armor;
+
+    public float resist;
+
     public float speed;
 
-    public string description;
-
     public Image UnitImageComponent;
+
+    public TextMeshProUGUI NameTextComponent;
 
     public TextMeshProUGUI HpTextComponent;
 
     public TextMeshProUGUI AttackTextComponent;
 
-    public TextMeshProUGUI SpeedTextComponent;
+    public TextMeshProUGUI MagicTextComponent;
 
-    public TextMeshProUGUI InfoTextComponent;
+    public TextMeshProUGUI ArmorTextComponent;
+
+    public TextMeshProUGUI ResistTextComponent;
+
+    public TextMeshProUGUI SpeedTextComponent;
 
     public GameObject UnitWorldSpacePrefab;
 
@@ -35,9 +47,9 @@ public class Card : MonoBehaviour
 
     private void Awake()
     {
-        if (description == null)
+        if (name == null)
         {
-            description = string.Empty;
+            name = string.Empty;
         }
 
         if (sprite != null && UnitImageComponent != null)
@@ -45,24 +57,39 @@ public class Card : MonoBehaviour
             UnitImageComponent.sprite = sprite;
         }
 
+        if (NameTextComponent != null)
+        {
+            NameTextComponent.text = "Name: " + name.ToString();
+        }
+
         if (HpTextComponent != null)
         {
-            HpTextComponent.text = "HP: " + hitPoints.ToString();
+            HpTextComponent.text = "Hit Points: " + hitPoints.ToString();
         }
 
         if (AttackTextComponent != null)
         {
-            AttackTextComponent.text = "ATT: " + attack.ToString();
+            AttackTextComponent.text = "Attack: " + attack.ToString();
+        }
+
+        if (MagicTextComponent != null)
+        {
+            MagicTextComponent.text = "Magic: " + magic.ToString();
+        }
+
+        if (ArmorTextComponent != null)
+        {
+            ArmorTextComponent.text = "Armor: " + armor.ToString();
+        }
+
+        if (ResistTextComponent != null)
+        {
+            ResistTextComponent.text = "Resist: " + magic.ToString();
         }
 
         if (SpeedTextComponent != null)
         {
-            SpeedTextComponent.text = "SPD: " + speed.ToString();
-        }
-
-        if (InfoTextComponent != null)
-        {
-            InfoTextComponent.text = "INFO: " + description.ToString();
+            SpeedTextComponent.text = "Speed: " + speed.ToString();
         }
 
         // TODO: Check this code for errors with debug statements
@@ -84,7 +111,7 @@ public class Card : MonoBehaviour
             if (UnitWorldSpacePrefab != null)
             {
                 // TODO: remove this hard-coding of unity type values and just push it to the unit prefabs instead of the player selection
-                playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, UnitType, hitPoints, attack, speed);
+                playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, UnitType, hitPoints, attack, magic, armor, resist, speed);
             }
             else
             {

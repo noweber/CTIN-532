@@ -86,7 +86,7 @@ public class RandomMeander : MonoBehaviour
 		{
 			return;
 		}
-		meanderSpeed[axis] = Random.Range(0.01f, MaxMeanderMagnitude[axis]);
+		meanderSpeed[axis] = Random.Range(MaxMeanderMagnitude[axis] / 2.0f, MaxMeanderMagnitude[axis]);
 
 		if(Random.Range(0, 2) > 0)
         {
@@ -104,7 +104,7 @@ public class RandomMeander : MonoBehaviour
 		{
 			return;
 		}
-		meanderMagnitude[axis] = Random.Range(0, MaxMeanderSpeed[axis]);
+		meanderMagnitude[axis] = Random.Range(MaxMeanderSpeed[axis] / 2.0f, MaxMeanderSpeed[axis]);
 	}
 
 	/// <summary>

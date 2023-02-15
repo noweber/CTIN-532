@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using static MapNodeController;
 
@@ -13,6 +14,15 @@ public class BaseUnitController : MonoBehaviour
     private float attackPoints;
 
     [SerializeField]
+    private float magicPoints;
+
+    [SerializeField]
+    private float armorPoints;
+
+    [SerializeField]
+    private float resistPoints;
+
+    [SerializeField]
     private float speedPoints;
 
     public Player Owner;
@@ -25,12 +35,15 @@ public class BaseUnitController : MonoBehaviour
 
     public bool hunterTargeted = false;
 
-    public void SetUnitStats(float hitPoints, float attackPoints, float speedPoints)
+    public void SetUnitStats(float hitPoints, float attackPoints, float magicPoints, float armorPoints, float resistPoints, float speedPoints)
     {
         // TODO: validate inputs
         this.maxHp = hitPoints;
         this.currentHp = hitPoints;
         this.attackPoints = attackPoints;
+        this.magicPoints = magicPoints;
+        this.armorPoints = armorPoints;
+        this.resistPoints = resistPoints;
         this.speedPoints = speedPoints;
     }
 
@@ -65,7 +78,7 @@ public class BaseUnitController : MonoBehaviour
     }
 
     public void FixedUpdate()
-    { 
+    {
         if (selectedGoalNode == null)
         {
             SelectGoal();
@@ -157,8 +170,8 @@ public class BaseUnitController : MonoBehaviour
                 AudioManager.Instance.PlaySFX(FightSound, 0.5f);
 
                 // Adjust HP:
-                UpdateUnitHp(this, otherUnit.attackPoints);
-                UpdateUnitHp(otherUnit, attackPoints);
+                ReceiveDamage(this, otherUnit);
+                ReceiveDamage(otherUnit, this);
 
                 // Push Back:
                 //PushUnitBack(this);
@@ -174,17 +187,28 @@ public class BaseUnitController : MonoBehaviour
         unit.transform.position = forward * unit.speedPoints / 10.0f;
     }
 
-    private void UpdateUnitHp(BaseUnitController unit, float damage)
+    private void ReceiveDamage(BaseUnitController damageReceiver, BaseUnitController damageDealer)
     {
-        unit.currentHp -= damage;
-        if (unit.currentHp <= 0)
+        // If the damage dealer has at least 1 magic or attack point,
+        // They deal that many points minus the receiver's defensive stats.
+        // A minimum of 1 damage is always applied.
+        if (damageDealer.magicPoints > 0)
         {
-            Destroy(unit.gameObject);
+            damageReceiver.currentHp -= Mathf.Max(1, damageDealer.magicPoints - damageReceiver.resistPoints);
+        }
+        if (damageDealer.attackPoints > 0)
+        {
+            damageReceiver.currentHp -= Mathf.Max(1, damageDealer.attackPoints - damageReceiver.armorPoints);
+        }
+
+        if (damageReceiver.currentHp <= 0)
+        {
+            Destroy(damageReceiver.gameObject);
         }
         else
         {
-            var hpBar = unit.GetComponentInChildren<Hpbar>();
-            hpBar.updateHpBar(unit.maxHp, unit.currentHp);
+            var hpBar = damageReceiver.GetComponentInChildren<Hpbar>();
+            hpBar.updateHpBar(damageReceiver.maxHp, damageReceiver.currentHp);
         }
     }
 }
