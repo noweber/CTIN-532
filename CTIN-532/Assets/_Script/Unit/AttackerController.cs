@@ -6,11 +6,9 @@ public class AttackerController : BaseUnitController
     public override void SelectGoal()
     {
         Debug.LogWarning("Attacker");
-        MapNodeController target = m_gameManager.closestSelected(transform.position, Owner, false);
-        if (target == null)
-        {
-            target = m_gameManager.closestNode(transform.position, Owner, false);
-        }
+
+        MapNodeController target = m_gameManager.closestNode(transform.position, Owner, false);
+
         Debug.Log(target);
         selectedGoalNode = target.transform;
     }

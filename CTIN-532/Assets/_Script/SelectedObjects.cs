@@ -137,5 +137,6 @@ public class SelectedObjects : MonoBehaviour
         // TODO: Refactor this so that the prefab contains the stat data and the UI card reads that instead of the UI card passing it to the prefab.
         var controller = unit.GetComponent<BaseUnitController>();
         controller.SetUnitStats(hitPoints, attackPoints, speedPoints);
+        controller.preGoal = parent;
     }
 }

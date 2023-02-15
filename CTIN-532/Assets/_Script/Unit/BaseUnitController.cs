@@ -21,6 +21,10 @@ public class BaseUnitController : MonoBehaviour
 
     protected GameManager m_gameManager;
 
+    public Transform preGoal;
+
+    public bool hunterTargeted = false;
+
     public void SetUnitStats(float hitPoints, float attackPoints, float speedPoints)
     {
         // TODO: validate inputs
@@ -45,10 +49,10 @@ public class BaseUnitController : MonoBehaviour
 
     protected virtual void Start()
     {
-        SelectStarterGoal();
+        // SelectStarterGoal();
     }
 
-    protected void OnDestroy()
+    protected virtual void OnDestroy()
     {
         if (Owner == Player.Human)
         {
@@ -61,7 +65,7 @@ public class BaseUnitController : MonoBehaviour
     }
 
     public void FixedUpdate()
-    {
+    { 
         if (selectedGoalNode == null)
         {
             SelectGoal();
@@ -80,25 +84,10 @@ public class BaseUnitController : MonoBehaviour
         transform.rotation = rotationBeforeLookat;
     }
 
-    public virtual void SelectStarterGoal()
+    /*public virtual void SelectStarterGoal()
     {
-        if (Owner == Player.Human)
-        {
-            var randomSelectedNode = m_gameManager.getRandomSelectedNode();
-            if (randomSelectedNode == null)
-            {
-                SelectRandomNodeOwnedByOpponent();
-            }
-            else
-            {
-                selectedGoalNode = randomSelectedNode.transform;
-            }
-        }
-        else
-        {
-            SelectRandomNodeOwnedByOpponent();
-        }
-    }
+        SelectRandomNodeOwnedByOpponent();
+    }*/
 
     public virtual void SelectGoal()
     {
@@ -151,6 +140,7 @@ public class BaseUnitController : MonoBehaviour
         {
             if (possibleGoal != null && possibleGoal.transform == selectedGoalNode)
             {
+                preGoal = selectedGoalNode;
                 selectedGoalNode = null;
             }
         }

@@ -75,20 +75,42 @@ public class GameManager : MonoBehaviour
         return res;
     }
 
-    public BaseUnitController closestEnermy(Vector3 pos)
+    public BaseUnitController closestEnermy(Vector3 pos, MapNodeController.Player owner, bool repeat)
     {
-        if (Enemy_Units.Count == 0) return null;
-        BaseUnitController res = null;
-        float dist = float.MaxValue;
-        for (int i = 0; i < Enemy_Units.Count; i++)
+        if (owner == MapNodeController.Player.Human)
         {
-            float cur = Vector3.Distance(Enemy_Units[i].transform.position, pos);
-            if (cur < dist)
+            if (Enemy_Units.Count == 0) return null;
+            BaseUnitController res = null;
+            float dist = float.MaxValue;
+            for (int i = 0; i < Enemy_Units.Count; i++)
             {
-                dist = cur;
-                res = Enemy_Units[i];
+                if (Enemy_Units[i].hunterTargeted && !repeat) continue;
+                float cur = Vector3.Distance(Enemy_Units[i].transform.position, pos);
+                if (cur < dist)
+                {
+                    dist = cur;
+                    res = Enemy_Units[i];
+                }
             }
+            return res;
         }
-        return res;
+        else
+        {
+            if (Player_Units.Count == 0) return null;
+            BaseUnitController res = null;
+            float dist = float.MaxValue;
+            for (int i = 0; i < Player_Units.Count; i++)
+            {
+                if (Player_Units[i].hunterTargeted && !repeat) continue;
+                float cur = Vector3.Distance(Player_Units[i].transform.position, pos);
+                if (cur < dist)
+                {
+                    dist = cur;
+                    res = Player_Units[i];
+                }
+            }
+            return res;
+        }
+        
     }
 }
