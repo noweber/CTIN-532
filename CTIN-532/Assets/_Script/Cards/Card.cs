@@ -8,7 +8,7 @@ public class Card : MonoBehaviour
 
     public Sprite sprite;
 
-    public string name;
+    public string unitName;
 
     public float hitPoints;
 
@@ -23,6 +23,10 @@ public class Card : MonoBehaviour
     public float speed;
 
     public Image UnitImageComponent;
+
+    public GameObject UnitImageBackground;
+
+    public GameObject CardBackground;
 
     public TextMeshProUGUI NameTextComponent;
 
@@ -45,11 +49,13 @@ public class Card : MonoBehaviour
 
     private SelectedObjects playerSelection;
 
+    private bool isCardSelectable;
+
     private void Awake()
     {
-        if (name == null)
+        if (unitName == null)
         {
-            name = string.Empty;
+            unitName = string.Empty;
         }
 
         if (sprite != null && UnitImageComponent != null)
@@ -59,7 +65,7 @@ public class Card : MonoBehaviour
 
         if (NameTextComponent != null)
         {
-            NameTextComponent.text = "Name: " + name.ToString();
+            NameTextComponent.text = "Name: " + unitName.ToString();
         }
 
         if (HpTextComponent != null)
@@ -102,10 +108,18 @@ public class Card : MonoBehaviour
                 playerSelection = controller;
             }
         }
+
+        isCardSelectable = true;
     }
 
     public void SelectCard()
     {
+        if (!isCardSelectable)
+        {
+            return;
+        }
+        Time.timeScale = 1;
+
         if (playerSelection != null)
         {
             if (UnitWorldSpacePrefab != null)
@@ -126,5 +140,104 @@ public class Card : MonoBehaviour
         // TODO: Refactor the way this interacts with audio manager to store the spawn clip on the base prefab instead.
         AudioManager.Instance.PlaySFX(AudioManager.Instance.SpawnSound.clip, 1.0f);
         Destroy(this.gameObject);
+    }
+
+    public void AllowUse(bool state)
+    {
+        isCardSelectable = state;
+        if (!isCardSelectable)
+        {
+            if (UnitImageBackground != null)
+            {
+                UnitImageBackground.SetActive(false);
+            }
+
+            if (CardBackground != null)
+            {
+                CardBackground.SetActive(false);
+            }
+
+            if (NameTextComponent != null)
+            {
+                NameTextComponent.color = new Color(NameTextComponent.color.r, NameTextComponent.color.g, NameTextComponent.color.b, 0);
+            }
+
+            if (HpTextComponent != null)
+            {
+                HpTextComponent.color = new Color(HpTextComponent.color.r, HpTextComponent.color.g, HpTextComponent.color.b, 0);
+            }
+
+            if (AttackTextComponent != null)
+            {
+                AttackTextComponent.color = new Color(AttackTextComponent.color.r, AttackTextComponent.color.g, AttackTextComponent.color.b, 0);
+            }
+
+            if (MagicTextComponent != null)
+            {
+                MagicTextComponent.color = new Color(MagicTextComponent.color.r, MagicTextComponent.color.g, MagicTextComponent.color.b, 0);
+            }
+
+            if (ArmorTextComponent != null)
+            {
+                ArmorTextComponent.color = new Color(ArmorTextComponent.color.r, ArmorTextComponent.color.g, ArmorTextComponent.color.b, 0);
+            }
+
+            if (ResistTextComponent != null)
+            {
+                ResistTextComponent.color = new Color(ResistTextComponent.color.r, ResistTextComponent.color.g, ResistTextComponent.color.b, 0);
+            }
+
+            if (SpeedTextComponent != null)
+            {
+                SpeedTextComponent.color = new Color(SpeedTextComponent.color.r, SpeedTextComponent.color.g, SpeedTextComponent.color.b, 0);
+            }
+        }
+        else
+        {
+            if (UnitImageBackground != null)
+            {
+                UnitImageBackground.SetActive(true);
+            }
+
+            if (CardBackground != null)
+            {
+                CardBackground.SetActive(true);
+            }
+
+            if (NameTextComponent != null)
+            {
+                NameTextComponent.color = new Color(NameTextComponent.color.r, NameTextComponent.color.g, NameTextComponent.color.b, 255);
+            }
+
+            if (HpTextComponent != null)
+            {
+                HpTextComponent.color = new Color(HpTextComponent.color.r, HpTextComponent.color.g, HpTextComponent.color.b, 255);
+            }
+
+            if (AttackTextComponent != null)
+            {
+                AttackTextComponent.color = new Color(AttackTextComponent.color.r, AttackTextComponent.color.g, AttackTextComponent.color.b, 255);
+            }
+
+            if (MagicTextComponent != null)
+            {
+                MagicTextComponent.color = new Color(MagicTextComponent.color.r, MagicTextComponent.color.g, MagicTextComponent.color.b, 255);
+            }
+
+            if (ArmorTextComponent != null)
+            {
+                ArmorTextComponent.color = new Color(ArmorTextComponent.color.r, ArmorTextComponent.color.g, ArmorTextComponent.color.b, 255);
+            }
+
+            if (ResistTextComponent != null)
+            {
+                ResistTextComponent.color = new Color(ResistTextComponent.color.r, ResistTextComponent.color.g, ResistTextComponent.color.b, 255);
+            }
+
+            if (SpeedTextComponent != null)
+            {
+                SpeedTextComponent.color = new Color(SpeedTextComponent.color.r, SpeedTextComponent.color.g, SpeedTextComponent.color.b, 255);
+            }
+        }
     }
 }

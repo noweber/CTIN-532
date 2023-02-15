@@ -99,9 +99,6 @@ MonoBehaviour:
   resistPoints: 0
   speedPoints: 0
   Owner: 1
-  OwnerSprites:
-  - {fileID: 0}
-  - {fileID: 0}
   selectedGoalNode: {fileID: 0}
   preGoal: {fileID: 0}
   hunterTargeted: 0

@@ -1220,7 +1220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sprite: {fileID: 0}
-  name: 
+  unitName: 
   hitPoints: 0
   attack: 0
   magic: 0
@@ -1228,6 +1228,7 @@ MonoBehaviour:
   resist: 0
   speed: 0
   UnitImageComponent: {fileID: 8311514823204444576}
+  UnitImageBackground: {fileID: 8311514824589275896}
   NameTextComponent: {fileID: 8311514824839548927}
   HpTextComponent: {fileID: 8311514823234112770}
   AttackTextComponent: {fileID: 8311514823163242739}

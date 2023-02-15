@@ -5,66 +5,50 @@ public class CardSlot : MonoBehaviour
 {
     public TextMeshProUGUI cooldownText;
 
-    [SerializeField]
-    private float cooldownInSeconds = 1.0f;
+    public GameObject DrawnCard;
 
-    [SerializeField]
-    private float cooldownSecondsRemaining;
+    public GameObject CardSlotBackground;
 
-    [SerializeField]
-    private GameObject drawnCard;
-
-    [SerializeField]
-    private CardDeck cardDeck;
-
-    public void SetCooldown(float seconds)
+    private void Awake()
     {
-        if (seconds < 0)
-        {
-            seconds = 0;
-        }
-        cooldownInSeconds = seconds;
-        //TODO: Ask Jackie... cooldownSecondsRemaining = seconds; ??
+        DrawnCard = null;
     }
 
-    private void Start()
+    public void SetRemainingCooldownTimer(float seconds)
     {
-        cardDeck = CardDeck.Instance;
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        // TODO: When turn-based pausing is enabled, make this timer occur in the deck which can keep all timers in sync to prevent floating point error.
-
-        // Cooldowns don't matter unless there is no card in this slot:
-        if (drawnCard == null)
-        {
-            cooldownSecondsRemaining -= Time.fixedDeltaTime;
-            if (cooldownSecondsRemaining <= 0)
+        if (DrawnCard != null) {
+            Card cardMono = DrawnCard.GetComponent<Card>();
+            if (cardMono != null)
             {
-                Debug.Log("Draw card.");
-                if (cardDeck != null)
+                if (seconds > 0)
                 {
-                    drawnCard = cardDeck.InstantiateNextCard(transform.position, transform, Quaternion.identity);
+                    cardMono.AllowUse(false);
+                    CardSlotBackground.SetActive(false);
                 }
                 else
                 {
-                    Debug.LogError("Card deck is null, so no card can be drawn. Make sure the scene has a CardDeck instance.");
+                    cardMono.AllowUse(true);
+                    CardSlotBackground.SetActive(true);
                 }
-                cooldownSecondsRemaining = cooldownInSeconds;
+            } else
+            {
+                Debug.LogError("The game object in the card slot does not have a Card MonoBehavior entity.");
+            }
+        } else
+        {
+            CardSlotBackground.SetActive(false);
+        }
+
+        if (cooldownText != null)
+        {
+            if (seconds <= 0)
+            {
                 cooldownText.gameObject.SetActive(false);
             }
             else
             {
-                if (cooldownText != null)
-                {
-                    if (!cooldownText.IsActive())
-                    {
-                        cooldownText.gameObject.SetActive(true);
-                    }
-                    cooldownText.text = ((int)cooldownSecondsRemaining).ToString() + "s";
-                }
+                cooldownText.gameObject.SetActive(true);
+                cooldownText.text = ((int)seconds).ToString() + "s";
             }
         }
     }

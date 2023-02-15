@@ -124,6 +124,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -1164787613, guid: 915d4630149db9f49a98d81664a3568d, type: 3}
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+      propertyPath: unitName
+      value: Attacker
+      objectReference: {fileID: 0}
+    - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: hitPoints
       value: 6
       objectReference: {fileID: 0}
@@ -132,8 +136,26 @@ PrefabInstance:
       value: Attacker
       objectReference: {fileID: 0}
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+      propertyPath: CardBackground
+      value: 
+      objectReference: {fileID: 8656583593457277231}
+    - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+      propertyPath: UnitImageBackground
+      value: 
+      objectReference: {fileID: 8656583592450841457}
+    - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: UnitWorldSpacePrefab
       value: 
       objectReference: {fileID: 1303486019930469317, guid: a91ee99354da161438dc6fa859c31f34, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+--- !u!1 &8656583592450841457 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8311514823598174374, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+  m_PrefabInstance: {fileID: 827028850976730071}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8656583593457277231 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8311514824589275896, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+  m_PrefabInstance: {fileID: 827028850976730071}
+  m_PrefabAsset: {fileID: 0}

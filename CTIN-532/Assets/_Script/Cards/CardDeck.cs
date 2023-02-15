@@ -6,29 +6,74 @@ using Random = UnityEngine.Random;
 
 public class CardDeck : Singleton<CardDeck>
 {
-    public List<GameObject> cardPrefabs;
+    public List<GameObject> CardPrefabs;
 
-    public List<CardSlot> cardSlots;
+    public List<CardSlot> CardSlots;
 
-    public float cardSlotCooldownInSeconds = 5.0f;
+    public float ReplacementCooldownInSeconds = 10.0f;
+
+    private float remainingCardSlotCooldownInSeconds;
+
+    private void Awake()
+    {
+        remainingCardSlotCooldownInSeconds = 0;
+    }
 
     void Start()
     {
-        SetCardSlotCooldowns(cardSlotCooldownInSeconds);
+        UpdateCardSlotCooldowns(0);
     }
 
-    public void SetCardSlotCooldowns(float seconds)
+    void FixedUpdate()
     {
-        if (seconds < 0)
+        if (IsACardSlotEmpty())
         {
-            seconds = 0;
+            remainingCardSlotCooldownInSeconds -= Time.fixedDeltaTime;
+            UpdateCardSlotCooldowns(remainingCardSlotCooldownInSeconds);
+
+            if (remainingCardSlotCooldownInSeconds <= 0)
+            {
+                remainingCardSlotCooldownInSeconds = ReplacementCooldownInSeconds;
+                DrawCardForEachEmptySlot();
+                Time.timeScale = 0;
+            }
         }
-        cardSlotCooldownInSeconds = seconds;
-        foreach (var slot in cardSlots)
+    }
+
+    private bool IsACardSlotEmpty()
+    {
+        foreach (var slot in CardSlots)
+        {
+            if (slot == null)
+            {
+                Debug.LogError("Card slot not set on the game object.");
+            }
+            else if (slot.DrawnCard == null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void DrawCardForEachEmptySlot()
+    {
+        foreach (var slot in CardSlots)
+        {
+            if (slot.DrawnCard == null)
+            {
+                slot.DrawnCard = InstantiateNextCard(slot.transform.position, slot.transform, Quaternion.identity);
+            }
+        }
+    }
+
+    public void UpdateCardSlotCooldowns(float remainingSeconds)
+    {
+        foreach (var slot in CardSlots)
         {
             if (slot != null)
             {
-                slot.SetCooldown(seconds);
+                slot.SetRemainingCooldownTimer(remainingSeconds);
             }
             else
             {
@@ -39,12 +84,12 @@ public class CardDeck : Singleton<CardDeck>
 
     public GameObject InstantiateNextCard(Vector3 postion, Transform parent, Quaternion rotation)
     {
-        if(cardPrefabs == null || cardPrefabs.Count == 0)
+        if (CardPrefabs == null || CardPrefabs.Count == 0)
         {
             throw new Exception("The set of card prefabs are notset in the inspector.");
         }
 
-        foreach (GameObject unitPrefab in cardPrefabs)
+        foreach (GameObject unitPrefab in CardPrefabs)
         {
             if (unitPrefab == null)
             {
@@ -52,6 +97,7 @@ public class CardDeck : Singleton<CardDeck>
             }
         }
 
-        return Instantiate(cardPrefabs[Random.Range(0, cardPrefabs.Count)], postion, rotation, parent);
+        return Instantiate(CardPrefabs[Random.Range(0, CardPrefabs.Count)], postion, rotation, parent);
     }
+
 }
