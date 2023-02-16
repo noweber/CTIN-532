@@ -1,24 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-424022975404678670
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97303b8d468eab34ebe0382638bf891e, type: 3}
-  m_Name: PixelRenderFeature
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  settings:
-    layerMask:
-      serializedVersion: 2
-      m_Bits: 8
-    renderPassEvent: 550
-    screenHeight: 300
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33,10 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debugShaders:
     debugReplacementPS: {fileID: 4800000, guid: cf852408f2e174538bcd9b7fda1c5ae7, type: 3}
-  m_RendererFeatures:
-  - {fileID: -424022975404678670}
-  - {fileID: 1845899626648448959}
-  m_RendererFeatureMap: f26166b659911dfabf2f6831eef39d19
+  m_RendererFeatures: []
+  m_RendererFeatureMap: 
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -74,23 +53,3 @@ MonoBehaviour:
   m_ClusteredRendering: 0
   m_TileSize: 32
   m_IntermediateTextureMode: 1
---- !u!114 &1845899626648448959
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00227a58c4fe8dc4c89b8e02db9b5e0b, type: 3}
-  m_Name: BasicFeature
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  settings:
-    layerMask:
-      serializedVersion: 2
-      m_Bits: 8
-    Event: 450
-    blitMat: {fileID: 2100000, guid: baf092ab24201a54c8fea617d73eb97e, type: 2}
-    pixelDensity: 4.29

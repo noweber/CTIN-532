@@ -1,3 +1,5 @@
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +12,7 @@ public class MapNodeController : MonoBehaviour
     public Player Owner;
 
     public Material[] OwnerMaterialsMap;
+    public GameObject HQModel;
 
     public GameObject Select_Sphere;
 
@@ -44,7 +47,12 @@ public class MapNodeController : MonoBehaviour
         Debug.Log("Node converted to: " + Owner.ToString());
         if (OwnerMaterialsMap != null)
         {
-            GetComponent<MeshRenderer>().material = OwnerMaterialsMap[(int)Owner];
+            HQModel.GetComponent<MeshRenderer>().material = OwnerMaterialsMap[(int)Owner];
+            
+            foreach (MeshRenderer m in HQModel.GetComponentsInChildren<MeshRenderer>())
+            {
+                m.material = OwnerMaterialsMap[(int)Owner];
+            }
         }
         else
         {

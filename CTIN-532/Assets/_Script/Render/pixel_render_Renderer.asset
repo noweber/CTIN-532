@@ -70,6 +70,6 @@ MonoBehaviour:
   settings:
     layerMask:
       serializedVersion: 2
-      m_Bits: 0
+      m_Bits: 8
     renderPassEvent: 550
-    screenHeight: 226
+    screenHeight: 250
