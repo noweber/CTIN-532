@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro.Examples;
 using Unity.Mathematics;
 using UnityEngine;
 using static MapNodeController;
@@ -526,5 +527,8 @@ public class LevelGenerator : MonoBehaviour
         {
             Debug.LogWarning("Headquarters prefab is null.");
         }
+
+        CameraControl c = FindObjectOfType<CameraControl>();
+        c.setFocus(getLevelmapPositionInWorldSpace(nodeTilemapPosition_1));
     }
 }

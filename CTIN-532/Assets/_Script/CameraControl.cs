@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,8 +9,6 @@ public class CameraControl : MonoBehaviour
 {
     private CameraAction cameraAction;
     private InputAction move;
-    private Camera m_camera;
-
 
     private Vector3 targetPosition;
     private Vector3 velocity = Vector3.zero;
@@ -28,7 +28,7 @@ public class CameraControl : MonoBehaviour
     private void OnEnable()
     {
         move = cameraAction.Player.Move;
-        cameraAction.Player.Zoom.performed += zoomCamera;
+        //cameraAction.Player.Zoom.performed += zoomCamera;
         cameraAction.Player.Enable();
     }
 
@@ -78,4 +78,9 @@ public class CameraControl : MonoBehaviour
         }
     }
 
+    public void setFocus(Vector3 focusedPos)
+    {
+        targetPosition = new Vector3(focusedPos.x, focusedPos.y + 3, focusedPos.z - 6);
+        transform.position = new Vector3(focusedPos.x, focusedPos.y + 3, focusedPos.z - 6);
+    }
 }
