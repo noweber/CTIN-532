@@ -62,8 +62,6 @@ public class BaseUnitController : MonoBehaviour
 
     protected virtual void Start()
     {
-        GetComponent<SpriteRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-        GetComponent<SpriteRenderer>().receiveShadows= true;
         // SelectStarterGoal();
     }
 

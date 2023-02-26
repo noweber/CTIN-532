@@ -75,6 +75,24 @@ public class GameManager : MonoBehaviour
         return res;
     }
 
+    public MapNodeController closestNode(Vector3 pos)
+    {
+        loadNodes();
+        if (All_Nodes.Length == 0) return null;
+        MapNodeController res = null;
+        float dist = float.MaxValue;
+        for (int i = 0; i < All_Nodes.Length; i++)
+        {
+            float cur = Vector3.Distance(All_Nodes[i].transform.position, pos);
+            if (cur < dist)
+            {
+                dist = cur;
+                res = All_Nodes[i];
+            }
+        }
+        return res;
+    }
+
     public BaseUnitController closestEnermy(Vector3 pos, MapNodeController.Player owner, bool repeat)
     {
         if (owner == MapNodeController.Player.Human)

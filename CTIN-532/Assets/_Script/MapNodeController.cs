@@ -16,6 +16,8 @@ public class MapNodeController : MonoBehaviour
     [HideInInspector]
     public bool isSelected = false;
 
+    public MinimapHQIcon minimap_icon;
+
     private SelectedObjects playerSelection;
 
     public enum Player
@@ -45,6 +47,7 @@ public class MapNodeController : MonoBehaviour
         if (OwnerMaterialsMap != null)
         {
             GetComponent<MeshRenderer>().material = OwnerMaterialsMap[(int)Owner];
+            minimap_icon.setOwner(player);
         }
         else
         {
