@@ -13,7 +13,7 @@ public class WizardController : BaseUnitController
         }
         else
         {
-            selectedGoalNode = targetUnit.preGoal;
+            selectedGoalNode = targetUnit.PreGoal;
         }
     }
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static MapNodeController;
+using static PlayerSelection;
 
 public class BaseUnitController : MonoBehaviour
 {
@@ -31,9 +32,18 @@ public class BaseUnitController : MonoBehaviour
 
     protected GameManager m_gameManager;
 
-    public Transform preGoal;
+    public Transform PreGoal;
 
     public bool hunterTargeted = false;
+
+    private float secondsBeforeSelectingGoal = 0.5f;
+
+    public BaseUnitController Initialize(Player owner, Transform defaultGoal)
+    {
+        Owner = owner;
+        PreGoal = defaultGoal;
+        return this;
+    }
 
     public void SetUnitStats(float hitPoints, float attackPoints, float magicPoints, float armorPoints, float resistPoints, float speedPoints)
     {
@@ -46,6 +56,7 @@ public class BaseUnitController : MonoBehaviour
         this.resistPoints = resistPoints;
         this.speedPoints = speedPoints;
     }
+
 
     protected virtual void Awake()
     {
@@ -79,11 +90,18 @@ public class BaseUnitController : MonoBehaviour
 
     public void FixedUpdate()
     {
-        if (selectedGoalNode == null)
+        if (secondsBeforeSelectingGoal > 0)
         {
-            SelectGoal();
+            secondsBeforeSelectingGoal -= Time.fixedDeltaTime;
         }
-        Move(Time.fixedDeltaTime);
+        else
+        {
+            if (selectedGoalNode == null)
+            {
+                SelectGoal();
+            }
+            Move(Time.fixedDeltaTime);
+        }
     }
 
     protected virtual void Move(float deltaTime)
@@ -153,7 +171,7 @@ public class BaseUnitController : MonoBehaviour
         {
             if (possibleGoal != null && possibleGoal.transform == selectedGoalNode)
             {
-                preGoal = selectedGoalNode;
+                PreGoal = selectedGoalNode;
                 selectedGoalNode = null;
             }
         }

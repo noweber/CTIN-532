@@ -1,5 +1,6 @@
 using UnityEngine;
 using static MapNodeController;
+using static PlayerSelection;
 
 public class SelectedObjects : MonoBehaviour
 {
@@ -143,8 +144,42 @@ public class SelectedObjects : MonoBehaviour
         var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, transform);
 
         // TODO: Refactor this so that the prefab contains the stat data and the UI card reads that instead of the UI card passing it to the prefab.
-        var controller = unit.GetComponent<BaseUnitController>();
-        controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
-        controller.preGoal = parent;
+        // BaseUnitController controller;// = unit.GetComponent<BaseUnitController>();
+
+        // TODO: DRY
+        // TODO: Refactor and remove this from here
+        if (Owner == Player.Human)
+        {
+            BaseUnitController controller;
+            switch (PlayerSelection.Instance.SelectedLogic)
+            {
+                case UnitLogic.Attack:
+                    controller = unit.AddComponent<AttackerController>().Initialize(Player.Human, parent);
+                    break;
+                case UnitLogic.Defend:
+                    controller = unit.AddComponent<DefenderController>().Initialize(Player.Human, parent);
+                    unit.AddComponent<RandomMeander>();
+                    break;
+                case UnitLogic.Hunt:
+                    controller = unit.AddComponent<HunterController>().Initialize(Player.Human, parent);
+                    break;
+                case UnitLogic.Intercept:
+                    controller = unit.AddComponent<WizardController>().Initialize(Player.Human, parent);
+                    break;
+                case UnitLogic.Random:
+                default:
+                    controller = unit.AddComponent<BaseUnitController>().Initialize(Player.Human, parent);
+                    break;
+            }
+            controller.FightSound = AudioManager.Instance.FightSound.clip;
+            controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+            controller.PreGoal = parent;
+        }
+        else
+        {
+            BaseUnitController controller = unit.GetComponent<BaseUnitController>();
+            controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+            controller.PreGoal = parent;
+        }
     }
 }

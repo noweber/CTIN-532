@@ -10,14 +10,14 @@ public class DefenderController : BaseUnitController
         // chase enermy within range around defending node
         BaseUnitController target = m_gameManager.closestEnermy(transform.position,Owner,false);
 
-        if(Vector3.Distance(target.transform.position, preGoal.position) > radius)
+        if(Vector3.Distance(target.transform.position, PreGoal.position) > radius)
         {
             target = null;
         }
 
         if (target == null)
         {
-            selectedGoalNode = preGoal;
+            selectedGoalNode = PreGoal;
         }
         else
         {
