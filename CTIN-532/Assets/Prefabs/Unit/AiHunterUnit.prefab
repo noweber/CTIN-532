@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 1303486019930469323}
   - component: {fileID: 1303486019930469327}
   - component: {fileID: 6149043121710213374}
-  - component: {fileID: 2614158109592119531}
   m_Layer: 0
   m_Name: AiHunterUnit
   m_TagString: Untagged
@@ -80,30 +79,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2614158109592119531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1303486019930469317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 203cfaeab44532d4ea0fae995a443fba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FightSound: {fileID: 8300000, guid: f64aa2273cd03bd4d95b4f5d6b3f23fc, type: 3}
-  maxHp: 0
-  attackPoints: 0
-  magicPoints: 0
-  armorPoints: 0
-  resistPoints: 0
-  speedPoints: 0
-  Owner: 2
-  selectedGoalNode: {fileID: 0}
-  preGoal: {fileID: 0}
-  hunterTargeted: 0
-  targetUnit: {fileID: 0}
 --- !u!1 &2082745673310163346
 GameObject:
   m_ObjectHideFlags: 0

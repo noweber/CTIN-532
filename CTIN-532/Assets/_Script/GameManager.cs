@@ -1,13 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
+using static MapNodeController;
 
 public class GameManager : MonoBehaviour
 {
     public List<MapNodeController> Selected_Nodes;
-    public MapNodeController[] All_Nodes;
+    public MapNodeController[] MapNodes;
 
     public List<BaseUnitController> Player_Units;
     public List<BaseUnitController> Enemy_Units;
@@ -20,12 +18,81 @@ public class GameManager : MonoBehaviour
         Selected_Nodes = new List<MapNodeController>();
     }
 
-    public void loadNodes()
+    private void Start()
     {
-        if (All_Nodes.Length == 0)
+        FindMapNodes();
+    }
+
+    public void FindMapNodes()
+    {
+        if (MapNodes.Length == 0)
         {
-            All_Nodes = FindObjectsOfType<MapNodeController>();
+            MapNodes = FindObjectsOfType<MapNodeController>();
         }
+    }
+
+    public BaseUnitLogic GetClosestUnitByPlayer(Vector3 position, Player owner)
+    {
+        List<BaseUnitLogic> unitsOfPlayer = new();
+        var units = FindObjectsOfType<BaseUnitLogic>();
+        foreach (var unit in units)
+        {
+            if (unit.Owner == owner)
+            {
+                unitsOfPlayer.Add(unit);
+            }
+        }
+        BaseUnitLogic result = null;
+        float distance = float.MaxValue;
+        foreach (var unit in unitsOfPlayer)
+        {
+            float tempDistance = Vector3.Distance(position, unit.transform.position);
+            if (tempDistance <= distance)
+            {
+                result = unit;
+                distance = tempDistance;
+            }
+        }
+        return result;
+    }
+
+    public MapNodeController GetRandomNodeByPlayerOrNeutral(Player owner)
+    {
+        FindMapNodes();
+        List<MapNodeController> possibleNodes = new();
+        foreach (var node in MapNodes)
+        {
+            if (node.Owner == owner || node.Owner == Player.Neutral)
+            {
+                possibleNodes.Add(node);
+            }
+        }
+        if (possibleNodes.Count == 0)
+        {
+            return null;
+        }
+
+        return possibleNodes[Random.Range(0, possibleNodes.Count)];
+    }
+
+    public MapNodeController GetClosestNodeByPlayerOrNeutral(Vector3 fromPosition, Player owner)
+    {
+        FindMapNodes();
+        MapNodeController result = null;
+        float distance = float.MaxValue;
+        for (int i = 0; i < MapNodes.Length; i++)
+        {
+            if (MapNodes[i].Owner == owner || MapNodes[i].Owner == Player.Neutral)
+            {
+                float tempDistance = Vector3.Distance(MapNodes[i].transform.position, fromPosition);
+                if (tempDistance < distance)
+                {
+                    distance = tempDistance;
+                    result = MapNodes[i];
+                }
+            }
+        }
+        return result;
     }
 
     public MapNodeController getRandomSelectedNode()
@@ -56,19 +123,19 @@ public class GameManager : MonoBehaviour
 
     public MapNodeController closestNode(Vector3 pos, MapNodeController.Player owner, bool isAlly)
     {
-        loadNodes();
-        if (All_Nodes.Length == 0) return null;
+        FindMapNodes();
+        if (MapNodes.Length == 0) return null;
         MapNodeController res = null;
         float dist = float.MaxValue;
-        for (int i = 0; i < All_Nodes.Length; i++)
+        for (int i = 0; i < MapNodes.Length; i++)
         {
-            if ((All_Nodes[i].Owner == owner) == isAlly)
+            if ((MapNodes[i].Owner == owner) == isAlly)
             {
-                float cur = Vector3.Distance(All_Nodes[i].transform.position, pos);
+                float cur = Vector3.Distance(MapNodes[i].transform.position, pos);
                 if (cur < dist)
                 {
                     dist = cur;
-                    res = All_Nodes[i];
+                    res = MapNodes[i];
                 }
             }
         }
@@ -77,17 +144,17 @@ public class GameManager : MonoBehaviour
 
     public MapNodeController closestNode(Vector3 pos)
     {
-        loadNodes();
-        if (All_Nodes.Length == 0) return null;
+        FindMapNodes();
+        if (MapNodes.Length == 0) return null;
         MapNodeController res = null;
         float dist = float.MaxValue;
-        for (int i = 0; i < All_Nodes.Length; i++)
+        for (int i = 0; i < MapNodes.Length; i++)
         {
-            float cur = Vector3.Distance(All_Nodes[i].transform.position, pos);
+            float cur = Vector3.Distance(MapNodes[i].transform.position, pos);
             if (cur < dist)
             {
                 dist = cur;
-                res = All_Nodes[i];
+                res = MapNodes[i];
             }
         }
         return res;
@@ -129,6 +196,6 @@ public class GameManager : MonoBehaviour
             }
             return res;
         }
-        
+
     }
 }

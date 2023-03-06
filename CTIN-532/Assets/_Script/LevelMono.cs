@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 /// <summary>
 /// This class creates the game's entities procedurally which sets up a playable level within the game.
 /// </summary>
-public class LevelGenerator : MonoBehaviour
+public class LevelMono : MonoBehaviour
 {
     /// <summary>
     /// A prefab for the player HQs.
@@ -60,19 +60,24 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     private bool[,] tilemap;
 
-    /// <summary>
-    /// This 2D array stores the positions of level entites on top of the map data such as player headquarters.
-    /// </summary>
-    private int[,] levelmap;
-
     private SelectedObjects humanPlayerController;
 
-    enum LevelTileType
+    /// <summary>
+    /// Stores which tiles on the map are impassable obstacles.
+    /// </summary>
+    private HashSet<Tuple<int, int>> obstacleMap;
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public bool IsTilePassable(int x, int y)
     {
-        invalid = -1,
-        open = 0,
-        headquarters = 1
+        return obstacleMap.Contains(new Tuple<int, int>(x, y));
     }
+
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
@@ -80,7 +85,7 @@ public class LevelGenerator : MonoBehaviour
     private void Awake()
     {
         tilemap = null;
-        levelmap = null;
+        obstacleMap = null;
         levelGameObject = new GameObject("The Level");
         if (MinimumSearchPositionTolerance > MaximumSearchPositionTolerance)
         {
@@ -128,7 +133,7 @@ public class LevelGenerator : MonoBehaviour
             {
                 mapGenerator.RegenerateRoomMap();
                 tilemap = mapGenerator.GetBinaryTilemap();
-                regenerateLevel();
+                RegenerateLevel();
             }
 
             if (Input.GetKeyDown(KeyCode.C))
@@ -141,7 +146,7 @@ public class LevelGenerator : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.R))
             {
-                regenerateLevel();
+                RegenerateLevel();
             }
         }
         else
@@ -155,13 +160,13 @@ public class LevelGenerator : MonoBehaviour
     {
         mapGenerator.RegenerateCaveMap();
         tilemap = mapGenerator.GetBinaryTilemap();
-        regenerateLevel();
+        RegenerateLevel();
     }
 
     /// <summary>
     /// Clears all of the current level's entities and generates a new one based on the underlying map data.
     /// </summary>
-    private void regenerateLevel()
+    private void RegenerateLevel()
     {
         if (tilemap == null)
         {
@@ -171,7 +176,7 @@ public class LevelGenerator : MonoBehaviour
         else
         {
             // Recreate the levelmap and destroy any current gameobjects:
-            levelmap = new int[tilemap.GetLength(0), tilemap.GetLength(1)];
+            obstacleMap = new();
             foreach (Transform child in levelGameObject.transform)
             {
                 GameObject.Destroy(child.gameObject);
@@ -182,13 +187,9 @@ public class LevelGenerator : MonoBehaviour
             {
                 for (int j = 0; j < tilemap.GetLength(1); j++)
                 {
-                    if (tilemap[i, j])
+                    if (!tilemap[i, j])
                     {
-                        levelmap[i, j] = 0;
-                    }
-                    else
-                    {
-                        levelmap[i, j] = -1;
+                        obstacleMap.Add(new Tuple<int, int>(i, j));
                     }
                 }
             }
@@ -196,7 +197,7 @@ public class LevelGenerator : MonoBehaviour
 
         Debug.Log("Regenerating the level.");
         //placePlayerHeadquarters();
-        placeNodes();
+        PlaceFortressNodes();
     }
 
     /// <summary>
@@ -265,10 +266,10 @@ public class LevelGenerator : MonoBehaviour
         if (HeadquartersPrefab != null)
         {
             // Place Player One's HQ:
-            placePlayerHQ(playerOneHqTilemapPosition, true);
+            PlaceFortressNode(playerOneHqTilemapPosition, true);
 
             // Place Player Two's HQ:
-            placePlayerHQ(playerTwoHqTilemapPosition);
+            PlaceFortressNode(playerTwoHqTilemapPosition);
         }
         else
         {
@@ -276,17 +277,17 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    private void placePlayerHQ(Tuple<int, int> tilemapPosition, bool isHumanPlayerHq = false, bool isAiPlayerHq = false)
+    private void PlaceFortressNode(Tuple<int, int> tilemapPosition, bool isHumanPlayerHq = false, bool isAiPlayerHq = false)
     {
-        Vector3 hqPosition = getLevelmapPositionInWorldSpace(tilemapPosition);
-        GameObject playerHq = Instantiate(HeadquartersPrefab, hqPosition, Quaternion.identity, levelGameObject.transform);
-        MapNodeController hqController = playerHq.GetComponent<MapNodeController>();
+        Vector3 fortressPosition = getLevelmapPositionInWorldSpace(tilemapPosition);
+        GameObject fortressGameObject = Instantiate(HeadquartersPrefab, fortressPosition, Quaternion.identity, levelGameObject.transform);
+        MapNodeController fortressMapNodeController = fortressGameObject.GetComponent<MapNodeController>();
         if (isHumanPlayerHq)
         {
-            hqController.SetOwner(Player.Human);
+            fortressMapNodeController.SetOwner(Player.Human);
             if (humanPlayerController != null)
             {
-                humanPlayerController.SetSelectedMapNode(hqController);
+                humanPlayerController.SetSelectedMapNode(fortressMapNodeController);
             }
             else
             {
@@ -295,14 +296,14 @@ public class LevelGenerator : MonoBehaviour
         }
         else if (isAiPlayerHq)
         {
-            hqController.SetOwner(Player.AI);
+            fortressMapNodeController.SetOwner(Player.AI);
         }
         else
         {
-            hqController.SetOwner(Player.Neutral);
+            fortressMapNodeController.SetOwner(Player.Neutral);
         }
 
-        playerHq.transform.parent = levelGameObject.transform;
+        fortressGameObject.transform.parent = levelGameObject.transform;
     }
 
     private Vector3 getLevelmapPositionInWorldSpace(Tuple<int, int> tilemapPosition)
@@ -357,15 +358,9 @@ public class LevelGenerator : MonoBehaviour
             return null;
         }
 
-        if (levelmap == null)
+        if (obstacleMap == null)
         {
-            Debug.LogError("Levelmap data is null.");
-            return null;
-        }
-
-        if (tilemap.GetLength(0) != levelmap.GetLength(0) || tilemap.GetLength(1) != levelmap.GetLength(1))
-        {
-            Debug.LogError("Levelmap dimensions do not match tilemap dimenstions.");
+            Debug.LogError("Obstacle data is null.");
             return null;
         }
 
@@ -391,7 +386,7 @@ public class LevelGenerator : MonoBehaviour
             searchFrontier.Dequeue();
 
             // If the tile is passable, then the tile being searched for has been found:
-            if (levelmap[x, y] != -1)
+            if (IsTilePassable(x, y))
             {
                 searchPositionsPassedOn++;
                 if (searchPositionsPassedOn >= MinimumSearchPositionTolerance)
@@ -451,9 +446,9 @@ public class LevelGenerator : MonoBehaviour
     /// <returns>Returns true if the cell is valid to be searched, else returns false.</returns>
     private bool isCellValidForContinuingSearch(bool[,] cellsSearched, int x, int y)
     {
-        if (levelmap == null)
+        if (obstacleMap == null)
         {
-            Debug.LogError("Levelmap data is null.");
+            Debug.LogError("Obstacle data is null.");
         }
 
         if (cellsSearched == null)
@@ -462,7 +457,7 @@ public class LevelGenerator : MonoBehaviour
         }
 
         // To be valid, the cell to check must be within the map boundaries.
-        if (x < 0 || x >= levelmap.GetLength(0) || y < 0 || y >= levelmap.GetLength(1))
+        if (x < 0 || x >= tilemap.GetLength(0) || y < 0 || y >= tilemap.GetLength(1))
         {
             return false;
         }
@@ -477,7 +472,7 @@ public class LevelGenerator : MonoBehaviour
     }
 
 
-    private void placeNodes()
+    private void PlaceFortressNodes()
     {
         if (tilemap == null)
         {
@@ -517,11 +512,11 @@ public class LevelGenerator : MonoBehaviour
 
         if (HeadquartersPrefab != null)
         {
-            placePlayerHQ(nodeTilemapPosition_1, isHumanPlayerHq: true);
-            placePlayerHQ(nodeTilemapPosition_2);
-            placePlayerHQ(nodeTilemapPosition_3, isAiPlayerHq: true);
-            placePlayerHQ(nodeTilemapPosition_4);
-            placePlayerHQ(nodeTilemapPosition_5);
+            PlaceFortressNode(nodeTilemapPosition_1, isHumanPlayerHq: true);
+            PlaceFortressNode(nodeTilemapPosition_2);
+            PlaceFortressNode(nodeTilemapPosition_3, isAiPlayerHq: true);
+            PlaceFortressNode(nodeTilemapPosition_4);
+            PlaceFortressNode(nodeTilemapPosition_5);
         }
         else
         {
