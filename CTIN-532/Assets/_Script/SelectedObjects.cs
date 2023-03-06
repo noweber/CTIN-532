@@ -142,12 +142,15 @@ public class SelectedObjects : MonoBehaviour
     private void SpawnUnit(GameObject unitPrefab, Transform parent)
     {
         var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, transform);
+        // TODO: handle map scale factor on the unit's starting postion
+        unit.GetComponent<MapUnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
 
         // TODO: Refactor this so that the prefab contains the stat data and the UI card reads that instead of the UI card passing it to the prefab.
         // BaseUnitController controller;// = unit.GetComponent<BaseUnitController>();
 
         // TODO: DRY
         // TODO: Refactor and remove this from here
+        /*
         if (Owner == Player.Human)
         {
             BaseUnitController controller;
@@ -180,6 +183,6 @@ public class SelectedObjects : MonoBehaviour
             BaseUnitController controller = unit.GetComponent<BaseUnitController>();
             controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
             controller.PreGoal = parent;
-        }
+        }*/
     }
 }

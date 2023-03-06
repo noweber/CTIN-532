@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 1303486019930469327}
   - component: {fileID: 6149043121710213374}
   - component: {fileID: -203060880061671539}
+  - component: {fileID: 5401280231639195541}
   m_Layer: 0
   m_Name: AiAttackerUnit
   m_TagString: Untagged
@@ -184,7 +185,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1303486019930469317}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c3c2c35c957137489da5d1b1e2c94fe, type: 3}
   m_Name: 
@@ -198,8 +199,30 @@ MonoBehaviour:
   speedPoints: 0
   Owner: 2
   selectedGoalNode: {fileID: 0}
-  preGoal: {fileID: 0}
+  PreGoal: {fileID: 0}
   hunterTargeted: 0
+--- !u!114 &5401280231639195541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303486019930469317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53a0ccbf2a62e045822899944c4b699, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FightSound: {fileID: 0}
+  Owner: 2
+  mapCoordinates: {x: 0, y: 0}
+  target: {fileID: 0}
+  maxHp: 0
+  attackPoints: 0
+  magicPoints: 0
+  armorPoints: 0
+  resistPoints: 0
+  speedPoints: 0
 --- !u!1 &8016737775164038350
 GameObject:
   m_ObjectHideFlags: 0

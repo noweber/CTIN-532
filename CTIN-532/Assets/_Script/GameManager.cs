@@ -1,13 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
+using static MapNodeController;
 
 public class GameManager : MonoBehaviour
 {
     public List<MapNodeController> Selected_Nodes;
-    public MapNodeController[] All_Nodes;
+    public MapNodeController[] MapNodes;
 
     public List<BaseUnitController> Player_Units;
     public List<BaseUnitController> Enemy_Units;
@@ -20,12 +18,36 @@ public class GameManager : MonoBehaviour
         Selected_Nodes = new List<MapNodeController>();
     }
 
-    public void loadNodes()
+    private void Start()
     {
-        if (All_Nodes.Length == 0)
+        FindMapNodes();
+    }
+
+    public void FindMapNodes()
+    {
+        if (MapNodes.Length == 0)
         {
-            All_Nodes = FindObjectsOfType<MapNodeController>();
+            MapNodes = FindObjectsOfType<MapNodeController>();
         }
+    }
+
+    public MapNodeController GetRandomNodeByPlayerOrNeutral(Player owner)
+    {
+        FindMapNodes();
+        List<MapNodeController> nodes = new();
+        foreach (var node in MapNodes)
+        {
+            if (node.Owner == owner || node.Owner == Player.Neutral)
+            {
+                nodes.Add(node);
+            }
+        }
+        if (nodes.Count == 0)
+        {
+            return null;
+        }
+
+        return nodes[Random.Range(0, nodes.Count)];
     }
 
     public MapNodeController getRandomSelectedNode()
@@ -56,19 +78,19 @@ public class GameManager : MonoBehaviour
 
     public MapNodeController closestNode(Vector3 pos, MapNodeController.Player owner, bool isAlly)
     {
-        loadNodes();
-        if (All_Nodes.Length == 0) return null;
+        FindMapNodes();
+        if (MapNodes.Length == 0) return null;
         MapNodeController res = null;
         float dist = float.MaxValue;
-        for (int i = 0; i < All_Nodes.Length; i++)
+        for (int i = 0; i < MapNodes.Length; i++)
         {
-            if ((All_Nodes[i].Owner == owner) == isAlly)
+            if ((MapNodes[i].Owner == owner) == isAlly)
             {
-                float cur = Vector3.Distance(All_Nodes[i].transform.position, pos);
+                float cur = Vector3.Distance(MapNodes[i].transform.position, pos);
                 if (cur < dist)
                 {
                     dist = cur;
-                    res = All_Nodes[i];
+                    res = MapNodes[i];
                 }
             }
         }
@@ -77,17 +99,17 @@ public class GameManager : MonoBehaviour
 
     public MapNodeController closestNode(Vector3 pos)
     {
-        loadNodes();
-        if (All_Nodes.Length == 0) return null;
+        FindMapNodes();
+        if (MapNodes.Length == 0) return null;
         MapNodeController res = null;
         float dist = float.MaxValue;
-        for (int i = 0; i < All_Nodes.Length; i++)
+        for (int i = 0; i < MapNodes.Length; i++)
         {
-            float cur = Vector3.Distance(All_Nodes[i].transform.position, pos);
+            float cur = Vector3.Distance(MapNodes[i].transform.position, pos);
             if (cur < dist)
             {
                 dist = cur;
-                res = All_Nodes[i];
+                res = MapNodes[i];
             }
         }
         return res;
@@ -129,6 +151,6 @@ public class GameManager : MonoBehaviour
             }
             return res;
         }
-        
+
     }
 }

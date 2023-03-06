@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Selected_Nodes: []
-  All_Nodes: []
+  MapNodes: []
   Player_Units: []
   Enemy_Units: []
   refreshGoal: 1
@@ -2441,7 +2441,7 @@ MonoBehaviour:
   resistPoints: 0
   speedPoints: 2
   Owner: 2
-  SecondsBetweenSpawns: 0.6
+  SecondsBetweenSpawns: 1
   BurstSpawnDuration: 0
   BurstSpawnRate: 1
 --- !u!4 &2136319963

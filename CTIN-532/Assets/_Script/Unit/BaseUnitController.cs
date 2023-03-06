@@ -198,13 +198,6 @@ public class BaseUnitController : MonoBehaviour
         }
     }
 
-    private void PushUnitBack(BaseUnitController unit)
-    {
-        Vector3 forward = unit.transform.forward;
-        forward.y = 0;
-        unit.transform.position = forward * unit.speedPoints / 10.0f;
-    }
-
     private void ReceiveDamage(BaseUnitController damageReceiver, BaseUnitController damageDealer)
     {
         // If the damage dealer has at least 1 magic or attack point,
