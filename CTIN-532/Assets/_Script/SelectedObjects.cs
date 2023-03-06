@@ -143,46 +143,81 @@ public class SelectedObjects : MonoBehaviour
     {
         var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, transform);
         // TODO: handle map scale factor on the unit's starting postion
-        unit.GetComponent<MapUnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+        BaseUnitLogic logicComponent = null;
 
         // TODO: Refactor this so that the prefab contains the stat data and the UI card reads that instead of the UI card passing it to the prefab.
         // BaseUnitController controller;// = unit.GetComponent<BaseUnitController>();
 
-        // TODO: DRY
-        // TODO: Refactor and remove this from here
-        /*
         if (Owner == Player.Human)
         {
-            BaseUnitController controller;
             switch (PlayerSelection.Instance.SelectedLogic)
             {
                 case UnitLogic.Attack:
-                    controller = unit.AddComponent<AttackerController>().Initialize(Player.Human, parent);
+                    logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
                     break;
                 case UnitLogic.Defend:
-                    controller = unit.AddComponent<DefenderController>().Initialize(Player.Human, parent);
                     unit.AddComponent<RandomMeander>();
                     break;
                 case UnitLogic.Hunt:
-                    controller = unit.AddComponent<HunterController>().Initialize(Player.Human, parent);
                     break;
                 case UnitLogic.Intercept:
-                    controller = unit.AddComponent<WizardController>().Initialize(Player.Human, parent);
                     break;
                 case UnitLogic.Random:
                 default:
-                    controller = unit.AddComponent<BaseUnitController>().Initialize(Player.Human, parent);
+                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
                     break;
             }
-            controller.FightSound = AudioManager.Instance.FightSound.clip;
-            controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
-            controller.PreGoal = parent;
-        }
-        else
+        } else
         {
-            BaseUnitController controller = unit.GetComponent<BaseUnitController>();
-            controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
-            controller.PreGoal = parent;
-        }*/
+            int randomLogic = Random.Range(0, 5);
+            switch (randomLogic)
+            {
+                case 0:
+                    logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+                    break;
+                default:
+                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+                    break;
+            }
+        }
+        logicComponent.FightSound = AudioManager.Instance.FightSound.clip;
     }
+
+
+    // TODO: DRY
+    // TODO: Refactor and remove this from here
+    /*
+    if (Owner == Player.Human)
+    {
+        BaseUnitController controller;
+        switch (PlayerSelection.Instance.SelectedLogic)
+        {
+            case UnitLogic.Attack:
+                controller = unit.AddComponent<AttackerController>().Initialize(Player.Human, parent);
+                break;
+            case UnitLogic.Defend:
+                controller = unit.AddComponent<DefenderController>().Initialize(Player.Human, parent);
+                unit.AddComponent<RandomMeander>();
+                break;
+            case UnitLogic.Hunt:
+                controller = unit.AddComponent<HunterController>().Initialize(Player.Human, parent);
+                break;
+            case UnitLogic.Intercept:
+                controller = unit.AddComponent<WizardController>().Initialize(Player.Human, parent);
+                break;
+            case UnitLogic.Random:
+            default:
+                controller = unit.AddComponent<BaseUnitController>().Initialize(Player.Human, parent);
+                break;
+        }
+        controller.FightSound = AudioManager.Instance.FightSound.clip;
+        controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+        controller.PreGoal = parent;
+    }
+    else
+    {
+        BaseUnitController controller = unit.GetComponent<BaseUnitController>();
+        controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+        controller.PreGoal = parent;
+    }*/
 }

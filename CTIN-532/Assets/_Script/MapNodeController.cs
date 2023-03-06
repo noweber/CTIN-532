@@ -74,7 +74,7 @@ public class MapNodeController : MonoBehaviour
     public void OnTriggerEnter(Collider other)
     {
         // Convert the node to a team on collision with a unit:
-        BaseUnitController unitController = other.GetComponent<BaseUnitController>();
+        BaseUnitLogic unitController = other.GetComponent<BaseUnitLogic>();
         if (unitController != null)
         {
             if (unitController.Owner == Player.Human && Owner != Player.Human)

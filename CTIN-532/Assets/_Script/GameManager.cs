@@ -34,20 +34,40 @@ public class GameManager : MonoBehaviour
     public MapNodeController GetRandomNodeByPlayerOrNeutral(Player owner)
     {
         FindMapNodes();
-        List<MapNodeController> nodes = new();
+        List<MapNodeController> possibleNodes = new();
         foreach (var node in MapNodes)
         {
             if (node.Owner == owner || node.Owner == Player.Neutral)
             {
-                nodes.Add(node);
+                possibleNodes.Add(node);
             }
         }
-        if (nodes.Count == 0)
+        if (possibleNodes.Count == 0)
         {
             return null;
         }
 
-        return nodes[Random.Range(0, nodes.Count)];
+        return possibleNodes[Random.Range(0, possibleNodes.Count)];
+    }
+
+    public MapNodeController GetClosestNodeByPlayerOrNeutral(Vector3 fromPosition, Player owner)
+    {
+        FindMapNodes();
+        MapNodeController result = null;
+        float distance = float.MaxValue;
+        for (int i = 0; i < MapNodes.Length; i++)
+        {
+            if (MapNodes[i].Owner == owner || MapNodes[i].Owner == Player.Neutral)
+            {
+                float tempDistance = Vector3.Distance(MapNodes[i].transform.position, fromPosition);
+                if (tempDistance < distance)
+                {
+                    distance = tempDistance;
+                    result = MapNodes[i];
+                }
+            }
+        }
+        return result;
     }
 
     public MapNodeController getRandomSelectedNode()

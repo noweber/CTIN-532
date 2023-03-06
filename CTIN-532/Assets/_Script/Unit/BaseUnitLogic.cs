@@ -2,40 +2,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using static MapNodeController;
 
-public class MapUnitController : MonoBehaviour
+public class BaseUnitLogic : MonoBehaviour
 {
     public AudioClip FightSound;
 
     [SerializeField]
-    private Player Owner;
+    public Player Owner { get; protected set; }
 
     [SerializeField]
-    private Vector2Int currentCoordinates;
+    protected Vector2Int CurrentCoordinates;
 
     [SerializeField]
-    private Vector2Int targetCoordinates;
+    protected Vector2Int TargetCoordinates;
 
     [SerializeField]
-    private Transform target;
+    protected Transform Target;
 
     [SerializeField]
-    private float maxHp;
-    private float currentHp;
+    protected float MaxHp;
+    protected float CurrentHp;
 
     [SerializeField]
-    private float attackPoints;
+    protected float AttackPoints;
 
     [SerializeField]
-    private float magicPoints;
+    protected float MagicPoints;
 
     [SerializeField]
-    private float armorPoints;
+    protected float ArmorPoints;
 
     [SerializeField]
-    private float resistPoints;
+    protected float ResistPoints;
 
     [SerializeField]
-    private float speedPoints;
+    protected float SpeedPoints;
 
     [SerializeField]
     private float timeBetweenMovesInSeconds;
@@ -44,10 +44,10 @@ public class MapUnitController : MonoBehaviour
 
     private float timeRemainingUntilNextMoveInSeconds;
 
-    public MapUnitController Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float attackPoints, float magicPoints, float armorPoints, float resistPoints, float speedPoints)
+    public BaseUnitLogic Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float attackPoints, float magicPoints, float armorPoints, float resistPoints, float speedPoints)
     {
         Owner = owner;
-        currentCoordinates = new Vector2Int(xCoordinate, yCoordinate);
+        CurrentCoordinates = new Vector2Int(xCoordinate, yCoordinate);
         SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
         return this;
     }
@@ -55,13 +55,13 @@ public class MapUnitController : MonoBehaviour
     private void SetUnitStats(float hitPoints, float attackPoints, float magicPoints, float armorPoints, float resistPoints, float speedPoints)
     {
         // TODO: validate inputs
-        this.maxHp = hitPoints;
-        this.currentHp = hitPoints;
-        this.attackPoints = attackPoints;
-        this.magicPoints = magicPoints;
-        this.armorPoints = armorPoints;
-        this.resistPoints = resistPoints;
-        this.speedPoints = speedPoints;
+        this.MaxHp = hitPoints;
+        this.CurrentHp = hitPoints;
+        this.AttackPoints = attackPoints;
+        this.MagicPoints = magicPoints;
+        this.ArmorPoints = armorPoints;
+        this.ResistPoints = resistPoints;
+        this.SpeedPoints = speedPoints;
         
         if (speedPoints != 0)
         {
@@ -76,7 +76,7 @@ public class MapUnitController : MonoBehaviour
 
     private void Awake()
     {
-        currentCoordinates = new Vector2Int();
+        CurrentCoordinates = new Vector2Int();
     }
 
     // Start is called before the first frame update
@@ -87,7 +87,7 @@ public class MapUnitController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (target == null)
+        if (Target == null)
         {
             SelectTarget();
             return;
@@ -101,29 +101,28 @@ public class MapUnitController : MonoBehaviour
         }
     }
 
-    protected void SelectTarget()
+    protected virtual void SelectTarget()
     {
         var gameManager = FindObjectOfType<GameManager>();
-        Debug.Log("Selecting target.");
         // TODO: Refactor this to use a reference to the level and not the game manager.
         if (this.Owner == Player.Human)
         {
-            target = gameManager.GetRandomNodeByPlayerOrNeutral(Player.AI).transform;
+            Target = gameManager.GetRandomNodeByPlayerOrNeutral(Player.AI).transform;
         }
         else
         {
-            target = gameManager.GetRandomNodeByPlayerOrNeutral(Player.Human).transform;
+            Target = gameManager.GetRandomNodeByPlayerOrNeutral(Player.Human).transform;
         }
-        targetCoordinates = new Vector2Int((int)target.transform.position.x, (int)target.transform.position.z);
+        TargetCoordinates = new Vector2Int((int)Target.transform.position.x, (int)Target.transform.position.z);
     }
 
     protected void MoveToNextMapTile()
     {
         List<Vector2Int> frontier = new();
-        frontier.Add(new Vector2Int(currentCoordinates.x + 1, currentCoordinates.y));
-        frontier.Add(new Vector2Int(currentCoordinates.x - 1, currentCoordinates.y));
-        frontier.Add(new Vector2Int(currentCoordinates.x, currentCoordinates.y + 1));
-        frontier.Add(new Vector2Int(currentCoordinates.x, currentCoordinates.y - 1));
+        frontier.Add(new Vector2Int(CurrentCoordinates.x + 1, CurrentCoordinates.y));
+        frontier.Add(new Vector2Int(CurrentCoordinates.x - 1, CurrentCoordinates.y));
+        frontier.Add(new Vector2Int(CurrentCoordinates.x, CurrentCoordinates.y + 1));
+        frontier.Add(new Vector2Int(CurrentCoordinates.x, CurrentCoordinates.y - 1));
 
         // TODO: Check the tile is passable.
 
@@ -131,7 +130,7 @@ public class MapUnitController : MonoBehaviour
         float nextDistance = float.MaxValue;
         foreach (var position in frontier)
         {
-            float tempDistance = Vector2.Distance(position, new Vector2Int((int)target.position.x, (int)target.position.z));
+            float tempDistance = Vector2.Distance(position, new Vector2Int((int)Target.position.x, (int)Target.position.z));
             if (tempDistance < nextDistance || (tempDistance == nextDistance && Random.Range(0, 1.0f) > 0.5f)) // Flip a coin for a tie.
             {
                 nextMapPosition = position;
@@ -141,7 +140,7 @@ public class MapUnitController : MonoBehaviour
 
         // TODO: Handle the map scaling (this currently works because it is set to 1).
         // TODO: Use update to interpolate this movement 
-        currentCoordinates = nextMapPosition;
+        CurrentCoordinates = nextMapPosition;
         this.transform.position = new Vector3(nextMapPosition.x, this.transform.position.y, nextMapPosition.y);
     }
 
@@ -154,11 +153,11 @@ public class MapUnitController : MonoBehaviour
     protected virtual void HandleCollisionWithGoal(Collider possibleGoal)
     {
         // On collision with its goal, set the goal to null (so that it will find a new goal during next update):
-        if (possibleGoal != null && target != null)
+        if (possibleGoal != null && Target != null)
         {
-            if (possibleGoal != null && (int)possibleGoal.transform.position.x == targetCoordinates.x && (int)possibleGoal.transform.position.z == targetCoordinates.y)
+            if (possibleGoal != null && (int)possibleGoal.transform.position.x == TargetCoordinates.x && (int)possibleGoal.transform.position.z == TargetCoordinates.y)
             {
-                target = null;
+                Target = null;
             }
         }
     }
@@ -166,7 +165,7 @@ public class MapUnitController : MonoBehaviour
     protected virtual void HandleCollisionWithUnit(Collider possibleUnit)
     {
         // If an AI unit collides wtih a human unit, randomly destroy one of them.
-        MapUnitController otherUnit = possibleUnit.GetComponent<MapUnitController>();
+        BaseUnitLogic otherUnit = possibleUnit.GetComponent<BaseUnitLogic>();
         if (otherUnit != null)
         {
             if (Owner == Player.Human && Owner != otherUnit.Owner)
@@ -180,28 +179,28 @@ public class MapUnitController : MonoBehaviour
         }
     }
 
-    private void ReceiveDamage(MapUnitController damageReceiver, MapUnitController damageDealer)
+    private void ReceiveDamage(BaseUnitLogic damageReceiver, BaseUnitLogic damageDealer)
     {
         // If the damage dealer has at least 1 magic or attack point,
         // They deal that many points minus the receiver's defensive stats.
         // A minimum of 1 damage is always applied.
-        if (damageDealer.magicPoints > 0)
+        if (damageDealer.MagicPoints > 0)
         {
-            damageReceiver.currentHp -= Mathf.Max(1, damageDealer.magicPoints - damageReceiver.resistPoints);
+            damageReceiver.CurrentHp -= Mathf.Max(1, damageDealer.MagicPoints - damageReceiver.ResistPoints);
         }
-        if (damageDealer.attackPoints > 0)
+        if (damageDealer.AttackPoints > 0)
         {
-            damageReceiver.currentHp -= Mathf.Max(1, damageDealer.attackPoints - damageReceiver.armorPoints);
+            damageReceiver.CurrentHp -= Mathf.Max(1, damageDealer.AttackPoints - damageReceiver.ArmorPoints);
         }
 
-        if (damageReceiver.currentHp <= 0)
+        if (damageReceiver.CurrentHp <= 0)
         {
             Destroy(damageReceiver.gameObject);
         }
         else
         {
             var hpBar = damageReceiver.GetComponentInChildren<Hpbar>();
-            hpBar.updateHpBar(damageReceiver.maxHp, damageReceiver.currentHp);
+            hpBar.updateHpBar(damageReceiver.MaxHp, damageReceiver.CurrentHp);
         }
     }
 }
