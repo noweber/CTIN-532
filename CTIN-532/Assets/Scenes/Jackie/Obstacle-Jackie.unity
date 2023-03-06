@@ -2014,10 +2014,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HeadquartersPrefab: {fileID: 6212767972623595804, guid: 6fd09ab83f3fdb94aae833042be93dfc, type: 3}
-  LevelmapWorldSpaceYPosition: 1
+  LevelmapWorldSpaceYPosition: 0.5
   MinimumSearchPositionTolerance: 8
   MaximumSearchPositionTolerance: 64
   SearchPositionToleranceChance: 0.05
+  Obs_num: 1000
+  Obs_num_per_flood: 100
+  Obs_prefab_land: {fileID: 6212767972623595804, guid: 413c4fe347999a44ca1171452e307058, type: 3}
+  Obs_prefab_water: {fileID: 6212767972623595804, guid: 985baec89b817ae4296e400cb36bd597, type: 3}
 --- !u!1 &1892080702
 GameObject:
   m_ObjectHideFlags: 0
@@ -2130,9 +2134,9 @@ MonoBehaviour:
   resistPoints: 0
   speedPoints: 2
   Owner: 2
-  SecondsBetweenSpawns: 1.25
-  BurstSpawnDuration: 0
-  BurstSpawnRate: 1
+  SecondsBetweenSpawns: 0.5
+  BurstSpawnDuration: 1
+  BurstSpawnRate: 5
 --- !u!4 &2136319963
 Transform:
   m_ObjectHideFlags: 0

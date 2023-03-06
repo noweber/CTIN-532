@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using TMPro.Examples;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static MapNodeController;
 using Random = UnityEngine.Random;
 
@@ -67,6 +70,17 @@ public class LevelGenerator : MonoBehaviour
 
     private SelectedObjects humanPlayerController;
 
+
+    [Header("Obstacles")]
+    public int Obs_num;
+    public int Obs_num_per_flood;
+    public GameObject Obs_prefab_land;
+    public GameObject Obs_prefab_water;
+    private List<Tuple<int, int>> node_pos;
+    private List<Tuple<int, int>> Obs_pos;
+    private int[,] Obs_map;
+
+
     enum LevelTileType
     {
         invalid = -1,
@@ -115,6 +129,10 @@ public class LevelGenerator : MonoBehaviour
         {
             Debug.LogWarning("The level generator was unable to find a reference to the map generator.");
         }
+
+        node_pos = new List<Tuple<int, int>>();
+        Obs_map = new int[mapGenerator.map_width, mapGenerator.map_height];
+        Obs_pos = new List<Tuple<int, int>>();
     }
 
     /// <summary>
@@ -197,6 +215,7 @@ public class LevelGenerator : MonoBehaviour
         Debug.Log("Regenerating the level.");
         //placePlayerHeadquarters();
         placeNodes();
+        //placeObstacle();
     }
 
     /// <summary>
@@ -522,6 +541,12 @@ public class LevelGenerator : MonoBehaviour
             placePlayerHQ(nodeTilemapPosition_3, isAiPlayerHq: true);
             placePlayerHQ(nodeTilemapPosition_4);
             placePlayerHQ(nodeTilemapPosition_5);
+
+            node_pos.Add(nodeTilemapPosition_1);
+            node_pos.Add(nodeTilemapPosition_2);
+            node_pos.Add(nodeTilemapPosition_3);
+            node_pos.Add(nodeTilemapPosition_4);
+            node_pos.Add(nodeTilemapPosition_5);
         }
         else
         {
@@ -530,5 +555,101 @@ public class LevelGenerator : MonoBehaviour
 
         CameraControl c = FindObjectOfType<CameraControl>();
         c.setFocus(getLevelmapPositionInWorldSpace(nodeTilemapPosition_1));
+    }
+
+    private void placeObstacle()
+    {
+        int try_num = 0;
+        int num_left = Obs_num;
+        
+        while(num_left > 0 && try_num < 50)
+        {
+            for (int a = 0; a < node_pos.Count; a++)
+            {
+                Obs_map[node_pos[a].Item1, node_pos[a].Item2] = -2;
+            }
+            for (int a = 0; a < Obs_pos.Count; a++)
+            {
+                Obs_map[Obs_pos[a].Item1, Obs_pos[a].Item2] = -1;
+            }
+            //int[,] cur_obs_map = Obs_map;
+            List<Tuple<int, int>> cur_obs_pos = new List<Tuple<int, int>>();
+            int i = Obs_num_per_flood;
+            if (num_left < Obs_num_per_flood) i = num_left;
+            for(int a= 0; a< i; a++)
+            {
+                int x = Random.Range(0,mapGenerator.map_width - 1);
+                int y = Random.Range(0,mapGenerator.map_height - 1);
+                if (Obs_map[x,y]!= -2 && Obs_map[x,y]!= -1)
+                {
+                    cur_obs_pos.Add(Tuple.Create(x, y));
+                    Obs_map[x, y] = -1;
+                }
+                else
+                {
+                    a--;
+                }
+            }
+            if (flood())
+            {
+                for(int a = 0; a<i; a++)
+                {
+                    Obs_pos.Add(cur_obs_pos[a]);
+                }
+                num_left -= i;
+            }
+            else { try_num++; }
+
+            for(int a= 0; a<mapGenerator.map_width; a++)
+            {
+                for(int b = 0; b< mapGenerator.map_height; b++)
+                {
+                    Obs_map[a,b] = 0;
+                }
+            }
+
+        }
+
+        foreach(Tuple<int,int> t in Obs_pos)
+        {
+            if (levelmap[t.Item1,t.Item2] == 0)
+            {
+                Instantiate(Obs_prefab_land, getLevelmapPositionInWorldSpace(t), Quaternion.identity, levelGameObject.transform);
+            }
+            else
+            {
+                Instantiate(Obs_prefab_water, getLevelmapPositionInWorldSpace(t), Quaternion.identity, levelGameObject.transform);
+            }
+        }
+    }
+
+    private bool flood()
+    {
+        int count = 0;
+        dfs(node_pos[0].Item1, node_pos[0].Item2,ref count);
+        Debug.Log(count);
+        if(count == 5) { 
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void dfs(int i, int j, ref int count)
+    {
+        if (Obs_map[i, j] == -2)
+        {
+            count++;
+        }
+        Obs_map[i, j] = 1;
+        if (i - 1 >= 0 && Obs_map[i-1,j] != -1 && Obs_map[i - 1, j] != 1) dfs(i - 1, j, ref count);
+
+        if (i + 1 < mapGenerator.map_width && Obs_map[i + 1, j] != -1 && Obs_map[i + 1, j] != 1) dfs(i + 1, j, ref count);
+
+        if (j - 1 >= 0 && Obs_map[i, j - 1] != -1 && Obs_map[i, j - 1] != 1) dfs(i, j - 1, ref count);
+
+        if (j + 1 < mapGenerator.map_height && Obs_map[i, j + 1] != -1 && Obs_map[i, j + 1] != 1) dfs(i, j + 1, ref count);
     }
 }
