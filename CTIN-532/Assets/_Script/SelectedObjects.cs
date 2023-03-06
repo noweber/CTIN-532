@@ -157,6 +157,7 @@ public class SelectedObjects : MonoBehaviour
                     break;
                 case UnitLogic.Defend:
                     unit.AddComponent<RandomMeander>();
+                    logicComponent = unit.AddComponent<UnitDefendLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
                     break;
                 case UnitLogic.Hunt:
                     break;

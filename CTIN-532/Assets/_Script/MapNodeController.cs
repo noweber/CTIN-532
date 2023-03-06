@@ -20,6 +20,13 @@ public class MapNodeController : MonoBehaviour
 
     private SelectedObjects playerSelection;
 
+    private bool isCurrentlyCollidingWithTrigger;
+
+    private float timeBetweenCollisionChecks = 0.5f;
+
+    private float timeUntilNextCollisionCheck;
+
+
     public enum Player
     {
         Neutral = 0,
@@ -71,7 +78,35 @@ public class MapNodeController : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (isCurrentlyCollidingWithTrigger)
+        {
+            timeUntilNextCollisionCheck -= Time.deltaTime;
+        }
+    }
+
+    public virtual void OnTriggerStay(Collider other)
+    {
+        isCurrentlyCollidingWithTrigger = true;
+        if (timeUntilNextCollisionCheck <= 0)
+        {
+            ConvertToTeamColor(other);
+        }
+    }
+
     public void OnTriggerEnter(Collider other)
+    {
+        ConvertToTeamColor(other);
+    }
+
+    public void OnTriggerExit(Collider other)
+    {
+        isCurrentlyCollidingWithTrigger = false;
+        timeUntilNextCollisionCheck = timeBetweenCollisionChecks;
+    }
+
+    private void ConvertToTeamColor(Collider other)
     {
         // Convert the node to a team on collision with a unit:
         BaseUnitLogic unitController = other.GetComponent<BaseUnitLogic>();

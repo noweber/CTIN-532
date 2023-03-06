@@ -42,7 +42,13 @@ public class BaseUnitLogic : MonoBehaviour
 
     private const float BaseTimeBetweenMovesInSeconds = 1.0f;
 
+    [SerializeField]
     private float timeRemainingUntilNextMoveInSeconds;
+
+    private float timeBetweenTargetSelections = 1.0f;
+
+    [SerializeField]
+    private float timeUntilNextTargetSelection;
 
     public BaseUnitLogic Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float attackPoints, float magicPoints, float armorPoints, float resistPoints, float speedPoints)
     {
@@ -62,7 +68,7 @@ public class BaseUnitLogic : MonoBehaviour
         this.ArmorPoints = armorPoints;
         this.ResistPoints = resistPoints;
         this.SpeedPoints = speedPoints;
-        
+
         if (speedPoints != 0)
         {
             timeBetweenMovesInSeconds = BaseTimeBetweenMovesInSeconds / speedPoints;
@@ -77,27 +83,34 @@ public class BaseUnitLogic : MonoBehaviour
     private void Awake()
     {
         CurrentCoordinates = new Vector2Int();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
+        timeUntilNextTargetSelection = 0;
+        timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
     }
 
     void FixedUpdate()
     {
         if (Target == null)
         {
-            SelectTarget();
+            if (timeUntilNextTargetSelection <= 0)
+            {
+                SelectTarget();
+                timeUntilNextTargetSelection = timeBetweenTargetSelections;
+            }
+            else
+            {
+                timeUntilNextTargetSelection -= Time.deltaTime;
+            }
             return;
         }
 
-        timeRemainingUntilNextMoveInSeconds -= Time.deltaTime;
         if (timeRemainingUntilNextMoveInSeconds <= 0)
         {
             MoveToNextMapTile();
             timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
+        }
+        else
+        {
+            timeRemainingUntilNextMoveInSeconds -= Time.deltaTime;
         }
     }
 

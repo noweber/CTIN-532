@@ -31,6 +31,31 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public BaseUnitLogic GetClosestUnitByPlayer(Vector3 position, Player owner)
+    {
+        List<BaseUnitLogic> unitsOfPlayer = new();
+        var units = FindObjectsOfType<BaseUnitLogic>();
+        foreach (var unit in units)
+        {
+            if (unit.Owner == owner)
+            {
+                unitsOfPlayer.Add(unit);
+            }
+        }
+        BaseUnitLogic result = null;
+        float distance = float.MaxValue;
+        foreach (var unit in unitsOfPlayer)
+        {
+            float tempDistance = Vector3.Distance(position, unit.transform.position);
+            if (tempDistance <= distance)
+            {
+                result = unit;
+                distance = tempDistance;
+            }
+        }
+        return result;
+    }
+
     public MapNodeController GetRandomNodeByPlayerOrNeutral(Player owner)
     {
         FindMapNodes();
