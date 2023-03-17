@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static MapNodeController;
 
 public class BaseUnitLogic : MonoBehaviour
@@ -71,7 +73,7 @@ public class BaseUnitLogic : MonoBehaviour
 
         if (speedPoints != 0)
         {
-            timeBetweenMovesInSeconds = BaseTimeBetweenMovesInSeconds / speedPoints;
+            timeBetweenMovesInSeconds = BaseTimeBetweenMovesInSeconds / (float)Math.Sqrt(SpeedPoints);
         }
         else
         {
@@ -103,14 +105,24 @@ public class BaseUnitLogic : MonoBehaviour
             return;
         }
 
-        if (timeRemainingUntilNextMoveInSeconds <= 0)
+        // TODO: Move the unit towards its target
+
+        // TODO: If unit reached target, select next map tile
+        if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)CurrentCoordinates.x)
+            && Math.Round((decimal)transform.position.z) == Math.Round((decimal)CurrentCoordinates.y))
         {
-            MoveToNextMapTile();
-            timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
+            SelectNextMapTile();
+        }
+        else if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)Target.position.x)
+            && Math.Round((decimal)transform.position.z) == Math.Round((decimal)Target.position.y))
+        {
+            SelectTarget();
         }
         else
         {
-            timeRemainingUntilNextMoveInSeconds -= Time.deltaTime;
+            float magnitude = Time.fixedDeltaTime / timeBetweenMovesInSeconds;
+            transform.LookAt(new Vector3(CurrentCoordinates.x, transform.position.y, CurrentCoordinates.y));
+            transform.position += transform.forward * magnitude;
         }
     }
 
@@ -129,7 +141,7 @@ public class BaseUnitLogic : MonoBehaviour
         TargetCoordinates = new Vector2Int((int)Target.transform.position.x, (int)Target.transform.position.z);
     }
 
-    protected void MoveToNextMapTile()
+    protected void SelectNextMapTile()
     {
         List<Vector2Int> frontier = new();
         frontier.Add(new Vector2Int(CurrentCoordinates.x + 1, CurrentCoordinates.y));
@@ -144,7 +156,7 @@ public class BaseUnitLogic : MonoBehaviour
         foreach (var position in frontier)
         {
             float tempDistance = Vector2.Distance(position, new Vector2Int((int)Target.position.x, (int)Target.position.z));
-            if (tempDistance < nextDistance || (tempDistance == nextDistance && Random.Range(0, 1.0f) > 0.5f)) // Flip a coin for a tie.
+            if (tempDistance < nextDistance || (tempDistance == nextDistance && UnityEngine.Random.Range(0, 1.0f) > 0.5f)) // Flip a coin for a tie.
             {
                 nextMapPosition = position;
                 nextDistance = tempDistance;
@@ -154,7 +166,7 @@ public class BaseUnitLogic : MonoBehaviour
         // TODO: Handle the map scaling (this currently works because it is set to 1).
         // TODO: Use update to interpolate this movement 
         CurrentCoordinates = nextMapPosition;
-        this.transform.position = new Vector3(nextMapPosition.x, this.transform.position.y, nextMapPosition.y);
+        //this.transform.position = new Vector3(nextMapPosition.x, this.transform.position.y, nextMapPosition.y);
     }
 
     public virtual void OnTriggerEnter(Collider other)
