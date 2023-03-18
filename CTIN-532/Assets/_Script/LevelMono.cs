@@ -131,9 +131,7 @@ public class LevelMono : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.O))
             {
-                mapGenerator.RegenerateRoomMap();
-                tilemap = mapGenerator.GetBinaryTilemap();
-                RegenerateLevel();
+                RegenerateRoomMap();
             }
 
             if (Input.GetKeyDown(KeyCode.C))
@@ -154,6 +152,13 @@ public class LevelMono : MonoBehaviour
             // Generate a cave map by default:
             regenerateCaveMap();
         }
+    }
+
+    private void RegenerateRoomMap()
+    {
+        mapGenerator.RegenerateRoomMap();
+        tilemap = mapGenerator.GetBinaryTilemap();
+        RegenerateLevel();
     }
 
     private void regenerateCaveMap()

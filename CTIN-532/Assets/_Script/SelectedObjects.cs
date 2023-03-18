@@ -141,6 +141,13 @@ public class SelectedObjects : MonoBehaviour
 
     private void SpawnUnit(GameObject unitPrefab, Transform parent)
     {
+        PlayerResourcesController playerResources = PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner);
+        // This block of code checks whether or not the player can support an additional unit being spawned based on their resources.
+        if (!playerResources.CanSupportAnAdditionalUnit())
+        {
+            return;
+        }
+
         var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, transform);
         // TODO: handle map scale factor on the unit's starting postion
         BaseUnitLogic logicComponent = null;
@@ -168,7 +175,8 @@ public class SelectedObjects : MonoBehaviour
                     logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
                     break;
             }
-        } else
+        }
+        else
         {
             int randomLogic = Random.Range(0, 5);
             switch (randomLogic)
@@ -182,43 +190,8 @@ public class SelectedObjects : MonoBehaviour
             }
         }
         logicComponent.FightSound = AudioManager.Instance.FightSound.clip;
-    }
 
-
-    // TODO: DRY
-    // TODO: Refactor and remove this from here
-    /*
-    if (Owner == Player.Human)
-    {
-        BaseUnitController controller;
-        switch (PlayerSelection.Instance.SelectedLogic)
-        {
-            case UnitLogic.Attack:
-                controller = unit.AddComponent<AttackerController>().Initialize(Player.Human, parent);
-                break;
-            case UnitLogic.Defend:
-                controller = unit.AddComponent<DefenderController>().Initialize(Player.Human, parent);
-                unit.AddComponent<RandomMeander>();
-                break;
-            case UnitLogic.Hunt:
-                controller = unit.AddComponent<HunterController>().Initialize(Player.Human, parent);
-                break;
-            case UnitLogic.Intercept:
-                controller = unit.AddComponent<WizardController>().Initialize(Player.Human, parent);
-                break;
-            case UnitLogic.Random:
-            default:
-                controller = unit.AddComponent<BaseUnitController>().Initialize(Player.Human, parent);
-                break;
-        }
-        controller.FightSound = AudioManager.Instance.FightSound.clip;
-        controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
-        controller.PreGoal = parent;
+        // This adds the unit to the player's set of resources for tracking.
+        playerResources.AddUnit(logicComponent);
     }
-    else
-    {
-        BaseUnitController controller = unit.GetComponent<BaseUnitController>();
-        controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
-        controller.PreGoal = parent;
-    }*/
 }
