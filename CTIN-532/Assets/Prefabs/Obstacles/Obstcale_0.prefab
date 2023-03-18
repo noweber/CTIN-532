@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 6212767972623595795}
   - component: {fileID: 6212767972623595794}
   m_Layer: 3
-  m_Name: Obstcale_land
+  m_Name: Obstcale_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

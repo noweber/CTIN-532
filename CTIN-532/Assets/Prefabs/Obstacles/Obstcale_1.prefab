@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1673197368, guid: 3f41ed0cc3df2304c8c0161d3bdf5e3f, type: 3}
+  m_Sprite: {fileID: -1247769518, guid: 3f41ed0cc3df2304c8c0161d3bdf5e3f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 6212767972623595795}
   - component: {fileID: 6212767972623595794}
   m_Layer: 3
-  m_Name: Obstcale_water
+  m_Name: Obstcale_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -146,7 +146,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31bc9a06311f3b142842b5550b22469e, type: 2}
+  - {fileID: 2100000, guid: 0431f83c50f353442846fddc380626a1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

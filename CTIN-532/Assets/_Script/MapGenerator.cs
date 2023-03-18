@@ -48,6 +48,13 @@ public class MapGenerator : Singleton<MapGenerator>
     public int iteration_num_total = 7;
     public int iteration_num_round_1 = 4;
 
+    [Header("Obstacles")]
+    public int Obs_num;
+    public GameObject[] Obs_prefabs;
+    private int[,] Obs_map;
+    private float noiseOffset;
+
+
     /* a list of prafabs used in map
      * 1 - Floor
      * 2 - Wall
@@ -62,6 +69,7 @@ public class MapGenerator : Singleton<MapGenerator>
     private TileType[,] _map;
     private GameObject grid;
     private bool[,] _mainIsland;
+    private bool[,] _obsIsland;
     private bool islandFilled = false;
 
     [Header("Map Generation Input Response")]
@@ -81,6 +89,7 @@ public class MapGenerator : Singleton<MapGenerator>
         RespondsToInputSystem = true;
         _map = new TileType[map_width, map_height];
         _mainIsland = new bool[map_width,map_height];
+        Obs_map = new int[map_width,map_height];
         indexOfWall = new List<index>();
     }
 
@@ -178,10 +187,11 @@ public class MapGenerator : Singleton<MapGenerator>
         if (!islandFilled)
         {
             findMainIsland();
+            findMainIslandObs();
             islandFilled = true;
         }
 
-        return _mainIsland[x, y];
+        return _mainIsland[x, y] && _obsIsland[x,y];
     }
 
     private void generateRoomMap()
@@ -305,6 +315,7 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             caveIterate(c);
         }
+        generateObs();
     }
 
     public void mapLoad()
@@ -334,6 +345,69 @@ public class MapGenerator : Singleton<MapGenerator>
                     case TileType.empty:
                         Instantiate(elements[3], new Vector3(x, y, z), Quaternion.identity, grid.transform);
                         break;
+                }
+                z += TileSize;
+            }
+            z = position.z;
+            x += TileSize;
+        }
+        obsLoad();
+    }
+
+    public void generateObs()
+    {
+        noiseOffset = Random.Range(0, 1);
+        
+        for (int i = 0; i < map_width; i++)
+        {
+            for (int j = 0; j < map_height; j++)
+            {
+                float x = noiseOffset + (float)i / map_width * 10;
+                float y = noiseOffset + (float)j / map_height * 10;
+                float v = Mathf.PerlinNoise(x, y);
+
+                if (v > 0.7)
+                {
+                    Obs_map[i, j] = 3;
+                }
+                else if (v > 0.6)
+                {
+                    Obs_map[i, j] = 2;
+                }
+                else if (v > 0.5)
+                {
+                    Obs_map[i, j] = 1;
+                }
+                else
+                {
+                    Obs_map[i, j] = 0;
+                }
+            }
+        }
+    }
+
+    public void obsLoad()
+    {
+        float x = position.x, y = position.y, z = position.z;
+
+        for (int i = 0; i < map_width; i++)
+        {
+            for (int j = 0; j < map_height; j++)
+            {
+                if (Obs_map[i, j] == 1)
+                {
+                    Instantiate(Obs_prefabs[0], new Vector3(x, y, z),
+                        Quaternion.identity, grid.transform);
+                }
+                else if (Obs_map[i, j] == 2)
+                {
+                    Instantiate(Obs_prefabs[1], new Vector3(x, y, z),
+                        Quaternion.identity, grid.transform);
+                }
+                else if (Obs_map[i, j] == 3)
+                {
+                    Instantiate(Obs_prefabs[2], new Vector3(x, y, z),
+                        Quaternion.identity, grid.transform);
                 }
                 z += TileSize;
             }
@@ -612,6 +686,42 @@ public class MapGenerator : Singleton<MapGenerator>
         dfs(maxX, maxY, ref maxSize);
     }
 
+    private void findMainIslandObs()
+    {
+        int maxSize = 0;
+        int maxX = 0, maxY = 0;
+
+        for (int i = 0; i < map_width; i++)
+        {
+            for (int j = 0; j < map_height; j++)
+            {
+                if (Obs_map[i,j] == 0 && _obsIsland[i, j] == false)
+                {
+                    int size = 0;
+                    dfs_obs(i, j, ref size);
+                    if (size >= maxSize)
+                    {
+                        maxSize = size;
+                        maxX = i;
+                        maxY = j;
+                    }
+                }
+            }
+        }
+
+        // reset _mainIsland
+        for (int i = 0; i < map_width; i++)
+        {
+            for (int j = 0; j < map_height; j++)
+            {
+                _obsIsland[i, j] = false;
+            }
+        }
+
+        // mark the main island
+        dfs_obs(maxX, maxY, ref maxSize);
+    }
+
     private void dfs(int i, int j, ref int size)
     {
         size++;
@@ -624,6 +734,19 @@ public class MapGenerator : Singleton<MapGenerator>
         if (j - 1 >= 0 && isOpen(i, j-1) && _mainIsland[i , j - 1] == false) dfs(i, j - 1, ref size);
         
         if (j + 1 < map_height && isOpen(i, j+1) && _mainIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
+    }
+
+    private void dfs_obs(int i, int j, ref int size)
+    {
+        size++;
+        _obsIsland[i, j] = true;
+        if (i - 1 >= 0 && Obs_map[i-1,j] == 0 && _obsIsland[i - 1, j] == false) dfs(i - 1, j, ref size);
+
+        if (i + 1 < map_width && Obs_map[i + 1, j] == 0 && _obsIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
+
+        if (j - 1 >= 0 && Obs_map[i, j - 1] == 0 && _obsIsland[i, j - 1] == false) dfs(i, j - 1, ref size);
+
+        if (j + 1 < map_height && Obs_map[i, j + 1] == 0 && _obsIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
     }
 
     private bool isOpen(int i, int j)
