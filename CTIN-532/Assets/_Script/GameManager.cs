@@ -13,6 +13,9 @@ public class GameManager : MonoBehaviour
     public bool refreshGoal = true;
     public bool enermyRefreshGoal = true;
 
+    // 0 - startmenu; 1 - tutorial; 2 - main game loop; 3 - end scene
+    public int gameState = 0;
+
     private void Awake()
     {
         Selected_Nodes = new List<MapNodeController>();

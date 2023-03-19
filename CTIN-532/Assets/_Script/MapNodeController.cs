@@ -27,6 +27,8 @@ public class MapNodeController : MonoBehaviour
 
     private float timeUntilNextCollisionCheck;
 
+    private GameManager gameManager;
+
     public enum Player
     {
         Neutral = 0,
@@ -36,6 +38,7 @@ public class MapNodeController : MonoBehaviour
 
     public void Start()
     {
+        gameManager = FindObjectOfType<GameManager>();
         playerSelection = FindObjectOfType<SelectedObjects>();
         SelectedObjects[] controllers = FindObjectsOfType<SelectedObjects>();
         foreach (var controller in controllers)
@@ -64,7 +67,7 @@ public class MapNodeController : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && gameManager.gameState > 0 && gameManager.gameState < 3)
         {
             RaycastHit raycastHit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

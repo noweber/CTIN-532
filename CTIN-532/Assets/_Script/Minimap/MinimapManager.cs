@@ -10,7 +10,7 @@ public class MinimapManager : Singleton<MinimapManager>
     public float unit_height;
     public float HQ_height;
 
-    private GameManager m_gameManager;
+    private GameManager game_manager;
     private CameraControl main_camera_control;
 
     public RectTransform miniMap_Rect;
@@ -22,14 +22,14 @@ public class MinimapManager : Singleton<MinimapManager>
 
     private void Start()
     {
-        m_gameManager = FindObjectOfType<GameManager>();
+        game_manager = FindObjectOfType<GameManager>();
         main_camera_control = FindObjectOfType<CameraControl>();
     }
 
     private void Update()
     {
         findMapNode();
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && game_manager.gameState>0 && game_manager.gameState <3 )
         {
             if(cur_Node != null)
             {
@@ -55,7 +55,7 @@ public class MinimapManager : Singleton<MinimapManager>
                 mouse_worldPosition.y = map_height;
 
                 if (cur_Node != null) { cur_Node.minimap_icon.highlighted(false); }
-                cur_Node = m_gameManager.closestNode(mouse_worldPosition);
+                cur_Node = game_manager.closestNode(mouse_worldPosition);
                 cur_Node.minimap_icon.highlighted(true);
             }
             else

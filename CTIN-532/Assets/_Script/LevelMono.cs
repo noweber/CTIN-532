@@ -67,6 +67,8 @@ public class LevelMono : MonoBehaviour
     /// </summary>
     private HashSet<Tuple<int, int>> obstacleMap;
 
+    private GameManager gameManager;
+
     /// <summary>
     /// TODO
     /// </summary>
@@ -98,6 +100,8 @@ public class LevelMono : MonoBehaviour
     /// </summary>
     void Start()
     {
+        gameManager = FindObjectOfType<GameManager>();
+
         // Find the human player selection controller:
         SelectedObjects[] controllers = FindObjectsOfType<SelectedObjects>();
         foreach (var controller in controllers)
@@ -127,7 +131,7 @@ public class LevelMono : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (mapGenerator != null)
+        if (mapGenerator != null && gameManager.gameState > 0 && gameManager.gameState < 3)
         {
             if (Input.GetKeyDown(KeyCode.O))
             {
@@ -140,14 +144,14 @@ public class LevelMono : MonoBehaviour
             }
         }
 
-        if (tilemap != null)
+        if (tilemap != null && gameManager.gameState > 0 && gameManager.gameState < 3)
         {
             if (Input.GetKeyDown(KeyCode.R))
             {
                 RegenerateLevel();
             }
         }
-        else
+        else if(gameManager.gameState > 0 && gameManager.gameState < 3)
         {
             // Generate a cave map by default:
             regenerateCaveMap();
@@ -161,7 +165,7 @@ public class LevelMono : MonoBehaviour
         RegenerateLevel();
     }
 
-    private void regenerateCaveMap()
+    public void regenerateCaveMap()
     {
         mapGenerator.RegenerateCaveMap();
         tilemap = mapGenerator.GetBinaryTilemap();

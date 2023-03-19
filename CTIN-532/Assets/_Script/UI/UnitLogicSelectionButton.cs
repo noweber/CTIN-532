@@ -7,9 +7,16 @@ public class UnitLogicSelectionButton : MonoBehaviour
 
     public GameObject Highlight;
 
+    PlayerSelection playerSelection;
+
+    private void Start()
+    {
+        playerSelection = FindObjectOfType<PlayerSelection>();
+    }
+
     public void SetUnitLogicOnClick()
     {
-        PlayerSelection.Instance.SelectUnitLogic(UnitLogicForButton);
+        playerSelection.SelectUnitLogic(UnitLogicForButton);
         UnitLogicSelectionButton[] buttons = Object.FindObjectsOfType<UnitLogicSelectionButton>();
         foreach (var button in buttons)
         {

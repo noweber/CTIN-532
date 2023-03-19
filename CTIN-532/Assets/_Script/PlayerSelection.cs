@@ -1,5 +1,7 @@
 
-public class PlayerSelection : Singleton<PlayerSelection>
+using UnityEngine;
+
+public class PlayerSelection : MonoBehaviour
 {
     public enum UnitLogic
     {

@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using static MapNodeController;
 using static PlayerSelection;
@@ -36,6 +37,8 @@ public class SelectedObjects : MonoBehaviour
 
     private int type;
 
+    private PlayerSelection playerSelection;
+
     public void SetSelectedMapNode(MapNodeController nodeController)
     {
         if (SelectedMapNode != null)
@@ -61,6 +64,7 @@ public class SelectedObjects : MonoBehaviour
     {
         secondsSinceLastSpawn = 0;
         secondsLeftInSpawningBurst = 0;
+        playerSelection = GetComponent<PlayerSelection>();
     }
 
     public void SelectUnitToSpawn(GameObject prefab, int type, float hp, float attack, float magic, float armor, float resist, float speed)
@@ -157,7 +161,7 @@ public class SelectedObjects : MonoBehaviour
 
         if (Owner == Player.Human)
         {
-            switch (PlayerSelection.Instance.SelectedLogic)
+            switch (playerSelection.SelectedLogic)
             {
                 case UnitLogic.Attack:
                     logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);

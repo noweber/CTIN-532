@@ -7,10 +7,15 @@ public class PauseController : MonoBehaviour
 
     public GameObject PauseMenu;
 
+    private GameManager gameManager;
+    private void Start()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+    }
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && gameManager.gameState > 0 && gameManager.gameState < 3)
         {
             isPaused = !isPaused;
             if (Time.timeScale == 0 && !isPaused)
