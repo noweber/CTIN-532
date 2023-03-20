@@ -21,21 +21,28 @@ public class BaseUnitLogic : MonoBehaviour
     protected Transform Target;
 
     [SerializeField]
-    protected float MaxHp;
+    protected HitBox hitBox;
+    /*
+    [SerializeField]
+    float MaxHp;
     protected float CurrentHp;
+    */
 
+    [SerializeField]
+    protected HurtBox hurtBox;
+    /*
     [SerializeField]
     protected float AttackPoints;
 
     [SerializeField]
     protected float MagicPoints;
-
+    
     [SerializeField]
     protected float ArmorPoints;
 
     [SerializeField]
     protected float ResistPoints;
-
+    */
     [SerializeField]
     protected float SpeedPoints;
 
@@ -52,23 +59,29 @@ public class BaseUnitLogic : MonoBehaviour
     [SerializeField]
     private float timeUntilNextTargetSelection;
 
-    public BaseUnitLogic Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float attackPoints, float magicPoints, float armorPoints, float resistPoints, float speedPoints)
+    void Awake()
+    {
+        CurrentCoordinates = new Vector2Int();
+        timeUntilNextTargetSelection = 0;
+        timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
+        hitBox = GetComponent<HitBox>();
+        hurtBox = GetComponent<HurtBox>();
+    }
+
+
+    public BaseUnitLogic Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float damagePoints, float speedPoints)
     {
         Owner = owner;
         CurrentCoordinates = new Vector2Int(xCoordinate, yCoordinate);
-        SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+        SetUnitStats(hitPoints, damagePoints, speedPoints);
         return this;
     }
 
-    private void SetUnitStats(float hitPoints, float attackPoints, float magicPoints, float armorPoints, float resistPoints, float speedPoints)
+    private void SetUnitStats(float hitPoints, float damagePoints, float speedPoints)
     {
         // TODO: validate inputs
-        this.MaxHp = hitPoints;
-        this.CurrentHp = hitPoints;
-        this.AttackPoints = attackPoints;
-        this.MagicPoints = magicPoints;
-        this.ArmorPoints = armorPoints;
-        this.ResistPoints = resistPoints;
+        this.hitBox.SetHitPoints(hitPoints);
+        this.hurtBox.Damage = damagePoints;
         this.SpeedPoints = speedPoints;
 
         if (speedPoints != 0)
@@ -81,14 +94,6 @@ public class BaseUnitLogic : MonoBehaviour
         }
         timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
     }
-
-    private void Awake()
-    {
-        CurrentCoordinates = new Vector2Int();
-        timeUntilNextTargetSelection = 0;
-        timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
-    }
-
     void FixedUpdate()
     {
         if (Target == null)
@@ -171,7 +176,7 @@ public class BaseUnitLogic : MonoBehaviour
 
     public virtual void OnTriggerEnter(Collider other)
     {
-        HandleCollisionWithUnit(other);
+        //HandleCollisionWithUnit(other);
         HandleCollisionWithGoal(other);
     }
 
@@ -184,48 +189,6 @@ public class BaseUnitLogic : MonoBehaviour
             {
                 Target = null;
             }
-        }
-    }
-
-    protected virtual void HandleCollisionWithUnit(Collider possibleUnit)
-    {
-        // If an AI unit collides wtih a human unit, randomly destroy one of them.
-        BaseUnitLogic otherUnit = possibleUnit.GetComponent<BaseUnitLogic>();
-        if (otherUnit != null)
-        {
-            if (Owner == Player.Human && Owner != otherUnit.Owner)
-            {
-                AudioManager.Instance.PlaySFX(FightSound, 0.5f);
-
-                // Adjust HP:
-                ReceiveDamage(this, otherUnit);
-                ReceiveDamage(otherUnit, this);
-            }
-        }
-    }
-
-    private void ReceiveDamage(BaseUnitLogic damageReceiver, BaseUnitLogic damageDealer)
-    {
-        // If the damage dealer has at least 1 magic or attack point,
-        // They deal that many points minus the receiver's defensive stats.
-        // A minimum of 1 damage is always applied.
-        if (damageDealer.MagicPoints > 0)
-        {
-            damageReceiver.CurrentHp -= Mathf.Max(1, damageDealer.MagicPoints - damageReceiver.ResistPoints);
-        }
-        if (damageDealer.AttackPoints > 0)
-        {
-            damageReceiver.CurrentHp -= Mathf.Max(1, damageDealer.AttackPoints - damageReceiver.ArmorPoints);
-        }
-
-        if (damageReceiver.CurrentHp <= 0)
-        {
-            Destroy(damageReceiver.gameObject);
-        }
-        else
-        {
-            var hpBar = damageReceiver.GetComponentInChildren<Hpbar>();
-            hpBar.updateHpBar(damageReceiver.MaxHp, damageReceiver.CurrentHp);
         }
     }
 }

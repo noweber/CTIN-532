@@ -20,6 +20,6 @@ public class Hpbar : MonoBehaviour
     public void updateHpBar(float Hptotal, float HpCurrent)
     {
         targetScale.x = HpCurrent/Hptotal;
-        Debug.Log("targetScale" + targetScale);
+        //Debug.Log("targetScale" + targetScale);
     }
 }

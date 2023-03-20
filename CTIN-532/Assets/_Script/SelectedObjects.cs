@@ -9,13 +9,9 @@ public class SelectedObjects : MonoBehaviour
 
     public GameObject SelectedUnitPrefab;
 
-
     // TODO: refactor these stats when SpawnUnit() is refactored.
     public float hitPoints;
-    public float attackPoints;
-    public float magicPoints;
-    public float armorPoints;
-    public float resistPoints;
+    public float damagePoints;
     public float speedPoints;
 
     public MapNodeController SelectedMapNode { get; private set; }
@@ -67,16 +63,13 @@ public class SelectedObjects : MonoBehaviour
         playerSelection = GetComponent<PlayerSelection>();
     }
 
-    public void SelectUnitToSpawn(GameObject prefab, int type, float hp, float attack, float magic, float armor, float resist, float speed)
+    public void SelectUnitToSpawn(GameObject prefab, int type, float hp, float damage, float speed)
     {
         SelectedUnitPrefab = prefab;
         this.type = type;
         secondsLeftInSpawningBurst = BurstSpawnDuration;
         hitPoints = hp;
-        attackPoints = attack;
-        magicPoints = magic;
-        armorPoints = armor;
-        resistPoints = resist;
+        damagePoints = damage;
         speedPoints = speed;
     }
 
@@ -164,11 +157,11 @@ public class SelectedObjects : MonoBehaviour
             switch (playerSelection.SelectedLogic)
             {
                 case UnitLogic.Attack:
-                    logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+                    logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
                     break;
                 case UnitLogic.Defend:
                     unit.AddComponent<RandomMeander>();
-                    logicComponent = unit.AddComponent<UnitDefendLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+                    logicComponent = unit.AddComponent<UnitDefendLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
                     break;
                 case UnitLogic.Hunt:
                     break;
@@ -176,20 +169,23 @@ public class SelectedObjects : MonoBehaviour
                     break;
                 case UnitLogic.Random:
                 default:
-                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
                     break;
             }
         }
         else
         {
+            damagePoints = unitPrefab.GetComponent<HurtBox>().Damage;
+            hitPoints = unitPrefab.GetComponent<HitBox>().MaxHitPoints;
+
             int randomLogic = Random.Range(0, 5);
             switch (randomLogic)
             {
                 case 0:
-                    logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+                    logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
                     break;
                 default:
-                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
                     break;
             }
         }

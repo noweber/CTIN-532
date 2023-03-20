@@ -1,17 +1,39 @@
-using System.Reflection;
 using UnityEngine;
+using static MapNodeController;
 
 public class HitBox : MonoBehaviour
 {
+    public Player Owner;
+
     [SerializeField]
-    private int hitPoints = 1;
+    public float MaxHitPoints = 1;
 
-    public void ReceiveDamage(int rawDamage)
+    [SerializeField]
+    private float currentHitPoints = 1;
+
+    private Hpbar hitPointsBar;
+
+    private void Awake()
     {
-        Debug.Log(MethodBase.GetCurrentMethod());
-        hitPoints -= rawDamage;
+        hitPointsBar = GetComponentInChildren<Hpbar>();
+    }
 
-        if (hitPoints <= 0)
+    public void SetHitPoints(float value)
+    {
+        MaxHitPoints = value;
+        currentHitPoints = MaxHitPoints;
+    }
+
+    public void ReceiveDamage(float rawDamage)
+    {
+        currentHitPoints -= rawDamage;
+
+        if (hitPointsBar != null)
+        {
+            hitPointsBar.updateHpBar(MaxHitPoints, currentHitPoints);
+        }
+
+        if (currentHitPoints <= 0)
         {
             Destroy(gameObject);
         }

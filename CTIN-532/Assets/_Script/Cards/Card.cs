@@ -12,13 +12,7 @@ public class Card : MonoBehaviour
 
     public float hitPoints;
 
-    public float attack;
-
-    public float magic;
-
-    public float armor;
-
-    public float resist;
+    public float damage;
 
     public float speed;
 
@@ -32,13 +26,7 @@ public class Card : MonoBehaviour
 
     public TextMeshProUGUI HpTextComponent;
 
-    public TextMeshProUGUI AttackTextComponent;
-
-    public TextMeshProUGUI MagicTextComponent;
-
-    public TextMeshProUGUI ArmorTextComponent;
-
-    public TextMeshProUGUI ResistTextComponent;
+    public TextMeshProUGUI DamageTextComponent;
 
     public TextMeshProUGUI SpeedTextComponent;
 
@@ -73,24 +61,9 @@ public class Card : MonoBehaviour
             HpTextComponent.text = "Hit Points: " + hitPoints.ToString();
         }
 
-        if (AttackTextComponent != null)
+        if (DamageTextComponent != null)
         {
-            AttackTextComponent.text = "Attack: " + attack.ToString();
-        }
-
-        if (MagicTextComponent != null)
-        {
-            MagicTextComponent.text = "Magic: " + magic.ToString();
-        }
-
-        if (ArmorTextComponent != null)
-        {
-            ArmorTextComponent.text = "Armor: " + armor.ToString();
-        }
-
-        if (ResistTextComponent != null)
-        {
-            ResistTextComponent.text = "Resist: " + magic.ToString();
+            DamageTextComponent.text = "Damage: " + damage.ToString();
         }
 
         if (SpeedTextComponent != null)
@@ -125,7 +98,7 @@ public class Card : MonoBehaviour
             if (UnitWorldSpacePrefab != null)
             {
                 // TODO: remove this hard-coding of unity type values and just push it to the unit prefabs instead of the player selection
-                playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, UnitType, hitPoints, attack, magic, armor, resist, speed);
+                playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, UnitType, hitPoints, damage, speed);
             }
             else
             {
@@ -167,24 +140,9 @@ public class Card : MonoBehaviour
                 HpTextComponent.color = new Color(HpTextComponent.color.r, HpTextComponent.color.g, HpTextComponent.color.b, 0);
             }
 
-            if (AttackTextComponent != null)
+            if (DamageTextComponent != null)
             {
-                AttackTextComponent.color = new Color(AttackTextComponent.color.r, AttackTextComponent.color.g, AttackTextComponent.color.b, 0);
-            }
-
-            if (MagicTextComponent != null)
-            {
-                MagicTextComponent.color = new Color(MagicTextComponent.color.r, MagicTextComponent.color.g, MagicTextComponent.color.b, 0);
-            }
-
-            if (ArmorTextComponent != null)
-            {
-                ArmorTextComponent.color = new Color(ArmorTextComponent.color.r, ArmorTextComponent.color.g, ArmorTextComponent.color.b, 0);
-            }
-
-            if (ResistTextComponent != null)
-            {
-                ResistTextComponent.color = new Color(ResistTextComponent.color.r, ResistTextComponent.color.g, ResistTextComponent.color.b, 0);
+                DamageTextComponent.color = new Color(DamageTextComponent.color.r, DamageTextComponent.color.g, DamageTextComponent.color.b, 0);
             }
 
             if (SpeedTextComponent != null)
@@ -214,24 +172,9 @@ public class Card : MonoBehaviour
                 HpTextComponent.color = new Color(HpTextComponent.color.r, HpTextComponent.color.g, HpTextComponent.color.b, 255);
             }
 
-            if (AttackTextComponent != null)
+            if (DamageTextComponent != null)
             {
-                AttackTextComponent.color = new Color(AttackTextComponent.color.r, AttackTextComponent.color.g, AttackTextComponent.color.b, 255);
-            }
-
-            if (MagicTextComponent != null)
-            {
-                MagicTextComponent.color = new Color(MagicTextComponent.color.r, MagicTextComponent.color.g, MagicTextComponent.color.b, 255);
-            }
-
-            if (ArmorTextComponent != null)
-            {
-                ArmorTextComponent.color = new Color(ArmorTextComponent.color.r, ArmorTextComponent.color.g, ArmorTextComponent.color.b, 255);
-            }
-
-            if (ResistTextComponent != null)
-            {
-                ResistTextComponent.color = new Color(ResistTextComponent.color.r, ResistTextComponent.color.g, ResistTextComponent.color.b, 255);
+                DamageTextComponent.color = new Color(DamageTextComponent.color.r, DamageTextComponent.color.g, DamageTextComponent.color.b, 255);
             }
 
             if (SpeedTextComponent != null)

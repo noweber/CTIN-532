@@ -1,38 +1,94 @@
-using System.Reflection;
 using UnityEngine;
+using static MapNodeController;
 
 public class HurtBox : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject particlesPrefab;
+    public Player Owner;
 
     [SerializeField]
-    private int damage = 1;
+    public float Damage = 1;
+
+    [SerializeField]
+    private float rateOfFire = 1;
+
+    [SerializeField]
+    private float secondRemainingUntilNextHurt;
 
     [SerializeField]
     private bool destroyOnContact = false;
 
-    private void OnTriggerEnter(Collider other)
+    [SerializeField]
+    private GameObject particlesPrefab;
+
+    public void SetRateOfFire(float value)
     {
-        HitBox hitBox = other.GetComponent<HitBox>();
-        if (hitBox != null)
-        {
-            DamageHitBox(hitBox);
-        }
+        rateOfFire = value;
     }
 
-    protected virtual void DamageHitBox(HitBox hurtBox)
+    void Awake()
     {
-        hurtBox.ReceiveDamage(damage);
+        ResetHurtTimer();
+    }
 
-        if(particlesPrefab != null)
+    protected virtual void DamageHitBox(HitBox hitBox)
+    {
+        hitBox.ReceiveDamage(Damage);
+
+        if (particlesPrefab != null)
         {
             Instantiate(particlesPrefab, transform);
         }
+    }
 
-        if (destroyOnContact)
+    protected virtual void ResetHurtTimer()
+    {
+        if (rateOfFire == 0)
         {
-            Destroy(gameObject);
+            secondRemainingUntilNextHurt = 0;
+        }
+        else
+        {
+            secondRemainingUntilNextHurt = 1.0f / rateOfFire;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (secondRemainingUntilNextHurt > 0.0f)
+        {
+            secondRemainingUntilNextHurt -= Time.fixedDeltaTime;
+        }
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        HandleTriggerCollision(other);
+    }
+
+    private void HandleTriggerCollision(Collider other)
+    {
+        if (secondRemainingUntilNextHurt > 0.0f)
+        {
+            return;
+        }
+
+        if (other.TryGetComponent<HitBox>(out var hitBox))
+        {
+            if (hitBox.Owner != this.Owner)
+            {
+                Debug.LogError("hit");
+                DamageHitBox(hitBox);
+
+
+                if (destroyOnContact)
+                {
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    ResetHurtTimer();
+                }
+            }
         }
     }
 }

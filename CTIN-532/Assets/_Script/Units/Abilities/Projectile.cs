@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Projectile : HurtBox
 {
+    public bool IsArmed = false;
+
     [SerializeField]
     private float speed = 4;
 
@@ -22,5 +24,13 @@ public class Projectile : HurtBox
         }
 
         this.transform.position += speed * direction * Time.fixedDeltaTime;
+    }
+
+    protected override void DamageHitBox(HitBox hitBox)
+    {
+        if (IsArmed)
+        {
+            hitBox.ReceiveDamage(Damage);
+        }
     }
 }

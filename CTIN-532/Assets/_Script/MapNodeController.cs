@@ -53,7 +53,7 @@ public class MapNodeController : MonoBehaviour
     public void SetOwner(Player player)
     {
         Owner = player;
-        Debug.Log("Node converted to: " + Owner.ToString());
+        //Debug.Log("Node converted to: " + Owner.ToString());
         if (OwnerMaterialsMap != null)
         {
             GetComponent<MeshRenderer>().material = OwnerMaterialsMap[(int)Owner];

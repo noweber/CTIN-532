@@ -9,9 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1303486019930469326}
-  - component: {fileID: 1303486019930469323}
   - component: {fileID: 1303486019930469327}
   - component: {fileID: 6149043121710213374}
+  - component: {fileID: 4757709954793024334}
+  - component: {fileID: 4892299322567637441}
+  - component: {fileID: 1076972598026882845}
   m_Layer: 0
   m_Name: Wizard
   m_TagString: Untagged
@@ -38,19 +40,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &1303486019930469323
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1303486019930469317}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &1303486019930469327
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -78,8 +67,56 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4757709954793024334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303486019930469317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d12953e74ed85c246b803b29f09d98fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Owner: 1
+  Damage: 1
+  rateOfFire: 4
+  secondRemainingUntilNextHurt: 0
+  destroyOnContact: 0
+  particlesPrefab: {fileID: 0}
+--- !u!114 &4892299322567637441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303486019930469317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0153092b94f43cb43878b3929850d475, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Owner: 1
+  MaxHitPoints: 1
+  currentHitPoints: 1
+--- !u!114 &1076972598026882845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303486019930469317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0153092b94f43cb43878b3929850d475, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Owner: 0
+  MaxHitPoints: 1
+  currentHitPoints: 1
 --- !u!1 &1423509353255799880
 GameObject:
   m_ObjectHideFlags: 0

@@ -204,7 +204,7 @@ public class LevelMono : MonoBehaviour
             }
         }
 
-        Debug.Log("Regenerating the level.");
+        //Debug.Log("Regenerating the level.");
         //placePlayerHeadquarters();
         PlaceFortressNodes();
     }
@@ -222,7 +222,7 @@ public class LevelMono : MonoBehaviour
             return;
         }
 
-        Debug.Log("Placing two player headquarters within the level.");
+        //Debug.Log("Placing two player headquarters within the level.");
 
         // Each player needs to be in a different corner of the map:
         int playerOneCornerIndex = (int)math.floor(Random.Range(0, 4));
@@ -243,8 +243,8 @@ public class LevelMono : MonoBehaviour
                 playerTwoCornerIndex = 1;
                 break;
         }
-        Debug.Log("Placing player one's HQ in corner: " + playerOneCornerIndex);
-        Debug.Log("Placing player two's HQ in corner: " + playerTwoCornerIndex);
+        //.Log("Placing player one's HQ in corner: " + playerOneCornerIndex);
+        //Debug.Log("Placing player two's HQ in corner: " + playerTwoCornerIndex);
         Tuple<int, int> playerOneCornerPosition = convertCornerIndexToXYTuple(playerOneCornerIndex);
         Tuple<int, int> playerTwoCornerPosition = convertCornerIndexToXYTuple(playerTwoCornerIndex);
         if (playerOneCornerPosition == null || playerTwoCornerPosition == null)
@@ -262,10 +262,10 @@ public class LevelMono : MonoBehaviour
             return;
         }
 
-        Debug.Log("Nearest passable tile for player one's HQ is: " + playerOneHqTilemapPosition);
-        Debug.Log("Tilemap (" + playerOneHqTilemapPosition.Item1 + ", " + playerOneHqTilemapPosition.Item2 + ") is: " + tilemap[playerOneHqTilemapPosition.Item1, playerOneHqTilemapPosition.Item2]);
-        Debug.Log("Nearest passable tile for player two's HQ is: " + playerTwoHqTilemapPosition);
-        Debug.Log("Tilemap (" + playerTwoHqTilemapPosition.Item1 + ", " + playerTwoHqTilemapPosition.Item2 + ") is: " + tilemap[playerTwoHqTilemapPosition.Item1, playerTwoHqTilemapPosition.Item2]);
+        //Debug.Log("Nearest passable tile for player one's HQ is: " + playerOneHqTilemapPosition);
+        //Debug.Log("Tilemap (" + playerOneHqTilemapPosition.Item1 + ", " + playerOneHqTilemapPosition.Item2 + ") is: " + tilemap[playerOneHqTilemapPosition.Item1, playerOneHqTilemapPosition.Item2]);
+        //Debug.Log("Nearest passable tile for player two's HQ is: " + playerTwoHqTilemapPosition);
+        //Debug.Log("Tilemap (" + playerTwoHqTilemapPosition.Item1 + ", " + playerTwoHqTilemapPosition.Item2 + ") is: " + tilemap[playerTwoHqTilemapPosition.Item1, playerTwoHqTilemapPosition.Item2]);
         if (mapGenerator != null)
         {
             mapGenerator.PrintMapLocation(playerOneHqTilemapPosition.Item1, playerOneHqTilemapPosition.Item2);
@@ -402,7 +402,7 @@ public class LevelMono : MonoBehaviour
                 {
                     if (searchPositionsPassedOn >= MaximumSearchPositionTolerance || Random.Range(0.0f, 1.0f) < SearchPositionToleranceChance)
                     {
-                        Debug.Log("Tiles skipped in search: " + searchPositionsPassedOn);
+                        //Debug.Log("Tiles skipped in search: " + searchPositionsPassedOn);
                         return new Tuple<int, int>(x, y);
                     }
                 }
@@ -489,7 +489,7 @@ public class LevelMono : MonoBehaviour
             return;
         }
 
-        Debug.Log("Placing 5 nodes within the level.");
+        //Debug.Log("Placing 5 nodes within the level.");
 
         Tuple<int, int> CornerNodePosition_1 = convertCornerIndexToXYTuple(0);
         Tuple<int, int> CornerNodePosition_2 = convertCornerIndexToXYTuple(1);

@@ -336,7 +336,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0153092b94f43cb43878b3929850d475, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitPoints: 5
+  Owner: 2
+  MaxHitPoints: 10
+  currentHitPoints: 10
 --- !u!135 &857712304
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -614,12 +616,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 714a28e0cf73de64dacfecd95319d918, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RateOfFire: 0.5
-  SecondsUntilNextFire: 0
+  AbilityCooldown: 0.5
+  CooldownRemainingInSeconds: 0
   prefabToSpawnWhenAbilityIsUsed: {fileID: 8944371612916874545, guid: 6e94e0eed70c5144889fe0d53b9bbe61, type: 3}
   maxDistanceAllowedToTarget: 100
   target: {fileID: 857712302}
-  owner: 0
+  Owner: 1
 --- !u!114 &1353238703
 MonoBehaviour:
   m_ObjectHideFlags: 0

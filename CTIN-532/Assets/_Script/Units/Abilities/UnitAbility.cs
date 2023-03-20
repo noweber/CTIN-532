@@ -3,30 +3,30 @@ using UnityEngine;
 public abstract class UnitAbility : MonoBehaviour
 {
     [SerializeField]
-    protected float RateOfFire = 0.5f;
+    protected float AbilityCooldown = 0.5f;
 
     [SerializeField]
-    protected float SecondsUntilNextFire;
+    protected float CooldownRemainingInSeconds;
 
     private void Awake()
     {
-        ResetSecondsUntilNextShot();
+        ResetCooldownTimer();
     }
 
     void FixedUpdate()
     {
-        SecondsUntilNextFire -= Time.fixedDeltaTime;
-        if (SecondsUntilNextFire <= 0.0f)
+        CooldownRemainingInSeconds -= Time.fixedDeltaTime;
+        if (CooldownRemainingInSeconds <= 0.0f)
         {
-            ResetSecondsUntilNextShot();
+            ResetCooldownTimer();
             UseAbility();
         }
     }
 
     protected abstract void UseAbility();
 
-    protected virtual void ResetSecondsUntilNextShot()
+    protected virtual void ResetCooldownTimer()
     {
-        SecondsUntilNextFire = 1.0f / RateOfFire;
+        CooldownRemainingInSeconds = 1.0f / AbilityCooldown;
     }
 }

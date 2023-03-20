@@ -11,7 +11,7 @@ public class ProjectileShooter : PrefabSpawnAbility
     private Transform target;
 
     [SerializeField]
-    Player owner;
+    protected Player Owner;
 
     private GameManager gameManager;
 
@@ -30,11 +30,17 @@ public class ProjectileShooter : PrefabSpawnAbility
             }
             if (gameManager == null)
             {
+                Debug.LogWarning("Could not find game manager.");
                 Destroy(spawnedGameObject);
                 return;
             }
-            var nearestEnemy = gameManager.GetClosestUnitByPlayer(transform.position, owner);
-            if (nearestEnemy != null && Vector3.Distance(transform.position, nearestEnemy.transform.position) > maxDistanceAllowedToTarget)
+            Player enemies = Player.Human;
+            if (Owner == Player.Human)
+            {
+                enemies = Player.AI;
+            }
+            var nearestEnemy = gameManager.GetClosestUnitByPlayer(transform.position, enemies);
+            if (nearestEnemy != null && Vector3.Distance(transform.position, nearestEnemy.transform.position) < maxDistanceAllowedToTarget)
             {
                 target = nearestEnemy.transform;
             }
@@ -45,16 +51,14 @@ public class ProjectileShooter : PrefabSpawnAbility
             if (!spawnedGameObject.TryGetComponent<Projectile>(out var projectile))
             {
                 Debug.LogError("The spawned object was not a projectile.");
-                Destroy(gameObject);
+                Destroy(spawnedGameObject);
             }
             else
             {
                 projectile.SetTarget(target.position);
+                projectile.Owner = Owner;
+                projectile.IsArmed = true;
             }
-        }
-        else
-        {
-            Destroy(spawnedGameObject);
         }
     }
 }
