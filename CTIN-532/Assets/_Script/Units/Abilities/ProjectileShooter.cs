@@ -13,6 +13,9 @@ public class ProjectileShooter : PrefabSpawnAbility
     [SerializeField]
     protected Player Owner;
 
+    [SerializeField]
+    protected bool CreateProjectilesWithoutTarget = false;
+
     private GameManager gameManager;
 
     private void FindGameManager()
@@ -20,7 +23,7 @@ public class ProjectileShooter : PrefabSpawnAbility
         gameManager = FindObjectOfType<GameManager>();
     }
 
-    protected override void HandleSpawnedGameObject(GameObject spawnedGameObject)
+    protected override void SpawnGameObject(GameObject prefab)
     {
         if (target == null || Vector3.Distance(transform.position, target.position) > maxDistanceAllowedToTarget)
         {
@@ -31,7 +34,6 @@ public class ProjectileShooter : PrefabSpawnAbility
             if (gameManager == null)
             {
                 Debug.LogWarning("Could not find game manager.");
-                Destroy(spawnedGameObject);
                 return;
             }
             Player enemies = Player.Human;
@@ -48,17 +50,7 @@ public class ProjectileShooter : PrefabSpawnAbility
 
         if (target != null)
         {
-            if (!spawnedGameObject.TryGetComponent<Projectile>(out var projectile))
-            {
-                Debug.LogError("The spawned object was not a projectile.");
-                Destroy(spawnedGameObject);
-            }
-            else
-            {
-                projectile.SetTarget(target.position);
-                projectile.Owner = Owner;
-                projectile.IsArmed = true;
-            }
+            Instantiate(prefab, transform.position, Quaternion.identity).GetComponent<Projectile>().Initialize(target.position, Owner);
         }
     }
 }

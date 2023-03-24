@@ -1,4 +1,3 @@
-using System.Reflection;
 using UnityEngine;
 
 public abstract class PrefabSpawnAbility : UnitAbility
@@ -8,10 +7,8 @@ public abstract class PrefabSpawnAbility : UnitAbility
 
     protected override void UseAbility()
     {
-        Debug.Log(MethodBase.GetCurrentMethod());
-        var spawnedGameObject = Instantiate(prefabToSpawnWhenAbilityIsUsed, transform.position, Quaternion.identity);
-        HandleSpawnedGameObject(spawnedGameObject);
+        SpawnGameObject(prefabToSpawnWhenAbilityIsUsed);
     }
 
-    protected abstract void HandleSpawnedGameObject(GameObject spawnedGameObject);
+    protected abstract void SpawnGameObject(GameObject prefab);
 }

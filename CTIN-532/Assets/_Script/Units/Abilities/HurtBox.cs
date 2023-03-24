@@ -52,7 +52,7 @@ public class HurtBox : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (secondRemainingUntilNextHurt > 0.0f)
         {
@@ -76,7 +76,6 @@ public class HurtBox : MonoBehaviour
         {
             if (hitBox.Owner != this.Owner)
             {
-                Debug.LogError("hit");
                 DamageHitBox(hitBox);
 
 

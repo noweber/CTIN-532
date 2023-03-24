@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 714a28e0cf73de64dacfecd95319d918, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AbilityCooldown: 0.25
+  AbilityCooldown: 2
   CooldownRemainingInSeconds: 0
   prefabToSpawnWhenAbilityIsUsed: {fileID: 8944371612916874545, guid: 6e94e0eed70c5144889fe0d53b9bbe61, type: 3}
   maxDistanceAllowedToTarget: 8

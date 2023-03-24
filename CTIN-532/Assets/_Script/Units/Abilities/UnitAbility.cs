@@ -27,6 +27,6 @@ public abstract class UnitAbility : MonoBehaviour
 
     protected virtual void ResetCooldownTimer()
     {
-        CooldownRemainingInSeconds = 1.0f / AbilityCooldown;
+        CooldownRemainingInSeconds = AbilityCooldown;
     }
 }

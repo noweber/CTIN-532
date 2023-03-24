@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6149043121710213374}
   - component: {fileID: 403114789012143729}
   - component: {fileID: 3602306294928500848}
+  - component: {fileID: 991432717092866744}
   m_Layer: 0
   m_Name: AiWizardUnit
   m_TagString: Untagged
@@ -81,7 +82,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Owner: 2
-  Damage: 3
+  Damage: 0
   rateOfFire: 4
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 0
@@ -99,8 +100,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Owner: 2
-  MaxHitPoints: 4
-  currentHitPoints: 4
+  MaxHitPoints: 1
+  currentHitPoints: 1
+--- !u!114 &991432717092866744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303486019930469317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 714a28e0cf73de64dacfecd95319d918, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AbilityCooldown: 4
+  CooldownRemainingInSeconds: 0
+  prefabToSpawnWhenAbilityIsUsed: {fileID: 8944371612916874545, guid: 8db8d8a16e2a3d74c88be591733d36a5, type: 3}
+  maxDistanceAllowedToTarget: 8
+  target: {fileID: 0}
+  Owner: 2
+  CreateProjectilesWithoutTarget: 0
 --- !u!1 &3219570763848057474
 GameObject:
   m_ObjectHideFlags: 0

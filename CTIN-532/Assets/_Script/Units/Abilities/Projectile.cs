@@ -1,22 +1,25 @@
 using UnityEngine;
+using static MapNodeController;
 
 public class Projectile : HurtBox
 {
-    public bool IsArmed = false;
-
     [SerializeField]
     private float speed = 4;
 
     [SerializeField]
     private Vector3 direction;
 
-    public void SetTarget(Vector3 targetPosition)
+    public Projectile Initialize(Vector3 targetPosition, Player owner)
     {
         direction = targetPosition - this.transform.position;
+        transform.LookAt(targetPosition);
+        base.Owner = owner;
+        return this;
     }
 
-    void FixedUpdate()
+    protected override void FixedUpdate()
     {
+        base.FixedUpdate();
         if (direction == Vector3.zero)
         {
             Debug.LogError("Projectile's direction was not set.");
@@ -28,9 +31,6 @@ public class Projectile : HurtBox
 
     protected override void DamageHitBox(HitBox hitBox)
     {
-        if (IsArmed)
-        {
-            hitBox.ReceiveDamage(Damage);
-        }
+        hitBox.ReceiveDamage(Damage);
     }
 }

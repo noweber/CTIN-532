@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6149043121710213374}
   - component: {fileID: 4757709954793024334}
   - component: {fileID: 4892299322567637441}
-  - component: {fileID: 1076972598026882845}
+  - component: {fileID: 4585178894385986939}
   m_Layer: 0
   m_Name: Wizard
   m_TagString: Untagged
@@ -102,7 +102,7 @@ MonoBehaviour:
   Owner: 1
   MaxHitPoints: 1
   currentHitPoints: 1
---- !u!114 &1076972598026882845
+--- !u!114 &4585178894385986939
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -111,12 +111,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1303486019930469317}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0153092b94f43cb43878b3929850d475, type: 3}
+  m_Script: {fileID: 11500000, guid: 714a28e0cf73de64dacfecd95319d918, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: 0
-  MaxHitPoints: 1
-  currentHitPoints: 1
+  AbilityCooldown: 4
+  CooldownRemainingInSeconds: 0
+  prefabToSpawnWhenAbilityIsUsed: {fileID: 8944371612916874545, guid: 8db8d8a16e2a3d74c88be591733d36a5, type: 3}
+  maxDistanceAllowedToTarget: 8
+  target: {fileID: 0}
+  Owner: 1
+  CreateProjectilesWithoutTarget: 0
 --- !u!1 &1423509353255799880
 GameObject:
   m_ObjectHideFlags: 0
