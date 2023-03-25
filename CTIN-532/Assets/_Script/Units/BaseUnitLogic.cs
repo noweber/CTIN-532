@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 using static MapNodeController;
 
 public class BaseUnitLogic : MonoBehaviour
@@ -22,27 +21,10 @@ public class BaseUnitLogic : MonoBehaviour
 
     [SerializeField]
     protected HitBox hitBox;
-    /*
-    [SerializeField]
-    float MaxHp;
-    protected float CurrentHp;
-    */
 
     [SerializeField]
     protected HurtBox hurtBox;
-    /*
-    [SerializeField]
-    protected float AttackPoints;
 
-    [SerializeField]
-    protected float MagicPoints;
-    
-    [SerializeField]
-    protected float ArmorPoints;
-
-    [SerializeField]
-    protected float ResistPoints;
-    */
     [SerializeField]
     protected float SpeedPoints;
 
@@ -59,15 +41,32 @@ public class BaseUnitLogic : MonoBehaviour
     [SerializeField]
     private float timeUntilNextTargetSelection;
 
+    [SerializeField]
+    protected float TimeUntilNextChaseTargetSelection;
+
+    [SerializeField]
+    protected Transform ChaseTarget;
+
+    [SerializeField]
+    protected float MaxChaseDistance = 10.0f;
+
+    private GameManager gameManager;
+
+
     void Awake()
     {
         CurrentCoordinates = new Vector2Int();
         timeUntilNextTargetSelection = 0;
+        TimeUntilNextChaseTargetSelection = 0;
         timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
         hitBox = GetComponent<HitBox>();
         hurtBox = GetComponent<HurtBox>();
     }
 
+    private void Start()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+    }
 
     public BaseUnitLogic Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float damagePoints, float speedPoints)
     {
@@ -110,9 +109,24 @@ public class BaseUnitLogic : MonoBehaviour
             return;
         }
 
-        // TODO: Move the unit towards its target
+        // Check the nearest enemy periodically to see if a target should be chased,
+        // deviating off path from the current target goal temporarily:
+        TimeUntilNextChaseTargetSelection -= Time.deltaTime;
+        if (TimeUntilNextChaseTargetSelection < 0)
+        {
+            SelectChaseTarget();
+            TimeUntilNextChaseTargetSelection = 5 * timeBetweenTargetSelections;
+        }
+        if (ChaseTarget != null)
+        {
+            if (Vector3.Distance(ChaseTarget.position, transform.position) > MaxChaseDistance)
+            {
+                ChaseTarget = null;
+            }
 
-        // TODO: If unit reached target, select next map tile
+        }
+
+        // If unit reached target, select next map tile
         if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)CurrentCoordinates.x)
             && Math.Round((decimal)transform.position.z) == Math.Round((decimal)CurrentCoordinates.y))
         {
@@ -125,16 +139,39 @@ public class BaseUnitLogic : MonoBehaviour
         }
         else
         {
+            // If the nearest enemy is within the chase distance, chase it before continuing on the path to the target:
+            if (ChaseTarget != null)
+            {
+                transform.LookAt(new Vector3(ChaseTarget.transform.position.x, transform.position.y, ChaseTarget.transform.position.z));
+            }
+            else
+            {
+                transform.LookAt(new Vector3(CurrentCoordinates.x, transform.position.y, CurrentCoordinates.y));
+            }
+
             float magnitude = Time.fixedDeltaTime / timeBetweenMovesInSeconds;
-            transform.LookAt(new Vector3(CurrentCoordinates.x, transform.position.y, CurrentCoordinates.y));
             transform.position += transform.forward * magnitude;
+        }
+    }
+
+    protected virtual void SelectChaseTarget()
+    {
+        var targetPlayer = Player.AI;
+        if (Owner == Player.AI)
+        {
+            targetPlayer = Player.Human;
+        }
+        var nearestEnemy = gameManager.GetClosestUnitByPlayer(transform.position, targetPlayer);
+        if (nearestEnemy != null)
+        {
+            ChaseTarget = nearestEnemy.transform;
         }
     }
 
     protected virtual void SelectTarget()
     {
         var gameManager = FindObjectOfType<GameManager>();
-        // TODO: Refactor this to use a reference to the level and not the game manager.
+
         if (this.Owner == Player.Human)
         {
             Target = gameManager.GetRandomNodeByPlayerOrNeutral(Player.AI).transform;

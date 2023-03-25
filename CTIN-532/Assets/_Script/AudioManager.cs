@@ -27,14 +27,25 @@ public class AudioManager : Singleton<AudioManager>
     // Used for UI
     public void PlaySFX(AudioClip audioClip, float volume)
     {
+        if (IsAudioClipNull(audioClip)) return;
         SFXPlayer.PlayOneShot(audioClip, volume);
     }
 
     // Used for repeat-play SFX
-    public void PlayRandomSFX(AudioClip audioClip,float volume)
+    public void PlayRandomSFX(AudioClip audioClip, float volume)
     {
-        SFXPlayer.pitch = Random.Range(min_pitch,max_pitch);
+        if (IsAudioClipNull(audioClip)) return;
+        SFXPlayer.pitch = Random.Range(min_pitch, max_pitch);
         PlaySFX(audioClip, volume);
     }
 
+    private bool IsAudioClipNull(AudioClip audioClip)
+    {
+        if (audioClip == null)
+        {
+            Debug.LogWarning("Audio clip is null");
+            return false;
+        }
+        return true;
+    }
 }
