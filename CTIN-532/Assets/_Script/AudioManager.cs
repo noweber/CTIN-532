@@ -20,6 +20,10 @@ public class AudioManager : Singleton<AudioManager>
 
     public AudioSource LoseNodeSound;
 
+    public AudioSource MainMenuMusic;
+
+    public AudioSource DistrictMusic;
+
     // Used for UI
     public void PlaySFX(AudioClip audioClip, float volume)
     {

@@ -83,6 +83,8 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
             gameManager.gameState = 2;
             // SceneManager.LoadScene(1); // main game scene
         }
+        AudioManager.Instance.MainMenuMusic.Stop();
+        AudioManager.Instance.DistrictMusic.Play();
         StartUI.SetActive(false);
         HUD.SetActive(true);
     }
