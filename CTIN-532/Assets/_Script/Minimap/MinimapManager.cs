@@ -29,7 +29,7 @@ public class MinimapManager : Singleton<MinimapManager>
     private void Update()
     {
         findMapNode();
-        if (Input.GetMouseButtonDown(0) && game_manager.gameState>0 && game_manager.gameState <3 )
+        if (Input.GetMouseButtonDown(0) && game_manager.minimap_enabled)
         {
             if(cur_Node != null)
             {

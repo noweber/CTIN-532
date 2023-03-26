@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static MapNodeController;
@@ -13,8 +14,20 @@ public class GameManager : MonoBehaviour
     public bool refreshGoal = true;
     public bool enermyRefreshGoal = true;
 
-    // 0 - startmenu; 1 - tutorial; 2 - main game loop; 3 - end scene
+    // 0 - startmenu; 1 - tutorial; 200 - main game loop; 300 - end scene
     public int gameState = 0;
+
+    public bool minimap_enabled = false;
+    public bool nodeSelect_enabled = false;
+    public bool cardSelect_enabled = false;
+    public bool logicSelect_enabled = false;
+    public bool spawn_enabled = false;
+    public bool cameraControl_enabled = false;
+    public bool mapGeneerate_enable = false;
+
+    public bool level_reset = false;
+    public bool card_reset = false;
+    public bool resource_reset = false;
 
     private void Awake()
     {
@@ -26,9 +39,11 @@ public class GameManager : MonoBehaviour
         FindMapNodes();
     }
 
+    #region MapNode Manager
+
     public void FindMapNodes()
     {
-        if (MapNodes.Length == 0)
+        if (MapNodes.Length == 0 || MapNodes[0] == null)
         {
             MapNodes = FindObjectsOfType<MapNodeController>();
         }
@@ -75,7 +90,7 @@ public class GameManager : MonoBehaviour
             return null;
         }
 
-        return possibleNodes[Random.Range(0, possibleNodes.Count)];
+        return possibleNodes[UnityEngine.Random.Range(0, possibleNodes.Count)];
     }
 
     public MapNodeController GetClosestNodeByPlayerOrNeutral(Vector3 fromPosition, Player owner)
@@ -101,7 +116,7 @@ public class GameManager : MonoBehaviour
     public MapNodeController getRandomSelectedNode()
     {
         if (Selected_Nodes.Count == 0) return null;
-        return Selected_Nodes[Random.Range(0, Selected_Nodes.Count)];
+        return Selected_Nodes[UnityEngine.Random.Range(0, Selected_Nodes.Count)];
     }
 
     public MapNodeController closestSelected(Vector3 pos, MapNodeController.Player owner, bool isAlly)
@@ -201,4 +216,46 @@ public class GameManager : MonoBehaviour
         }
 
     }
+
+    #endregion
+
+    #region Inpute Manager
+    private void Update()
+    {
+        updateControls();
+    }
+
+    private void updateControls()
+    {
+        if(gameState >= 200 && gameState <= 300)
+        {
+            enableAll();
+        }
+    }
+
+    public void enableAll()
+    {
+        minimap_enabled = true;
+        nodeSelect_enabled = true;
+        cardSelect_enabled = true;
+        logicSelect_enabled = true;
+        spawn_enabled = true;
+        cameraControl_enabled = true;
+        mapGeneerate_enable = true;
+    }
+
+    public void resetGame()
+    {
+        SelectedObjects[] unit = FindObjectsOfType<SelectedObjects>();
+        foreach (SelectedObjects obj in unit)
+        {
+            obj.reset();
+            Destroy(obj.unitParent);
+        }
+        level_reset = true;
+        Array.Clear(MapNodes, 0, MapNodes.Length);
+        card_reset= true;
+        resource_reset= true;
+    }
+    #endregion
 }

@@ -67,7 +67,7 @@ public class MapNodeController : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetMouseButtonDown(0) && gameManager.gameState > 0 && gameManager.gameState < 3)
+        if (Input.GetMouseButtonDown(0) && gameManager.nodeSelect_enabled)
         {
             RaycastHit raycastHit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

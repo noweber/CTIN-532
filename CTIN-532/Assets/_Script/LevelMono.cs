@@ -131,7 +131,13 @@ public class LevelMono : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (mapGenerator != null && gameManager.gameState > 0 && gameManager.gameState < 3)
+        if (gameManager.level_reset)
+        {
+            regenerateCaveMap();
+            gameManager.level_reset = false;
+        }
+
+        if (mapGenerator != null && gameManager.mapGeneerate_enable)
         {
             if (Input.GetKeyDown(KeyCode.O))
             {
@@ -144,14 +150,14 @@ public class LevelMono : MonoBehaviour
             }
         }
 
-        if (tilemap != null && gameManager.gameState > 0 && gameManager.gameState < 3)
+        if (tilemap != null && gameManager.mapGeneerate_enable)
         {
             if (Input.GetKeyDown(KeyCode.R))
             {
                 RegenerateLevel();
             }
         }
-        else if(gameManager.gameState > 0 && gameManager.gameState < 3)
+        else if(gameManager.mapGeneerate_enable)
         {
             // Generate a cave map by default:
             regenerateCaveMap();

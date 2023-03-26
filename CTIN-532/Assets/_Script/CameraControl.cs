@@ -42,7 +42,7 @@ public class CameraControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(gameManager.gameState > 0 && gameManager.gameState < 3)
+        if(gameManager.cameraControl_enabled)
         {
             GetKeyboardMovement();
         }

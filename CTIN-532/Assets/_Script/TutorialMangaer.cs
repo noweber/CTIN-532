@@ -63,8 +63,8 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
 
     public void skipTutorial()
     {
-        gameManager.gameState = 2;
-        level.regenerateCaveMap();
+        gameManager.resetGame();
+        gameManager.gameState = 200;
         Tutorial.SetActive(false);
     }
 
@@ -72,7 +72,9 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
     {
         if (s)
         {
+            //TODO seperate tutorial steps
             gameManager.gameState = 1;
+            gameManager.enableAll();
             Debug.Log("show tutorial");
             Tutorial.SetActive(true);
         }
@@ -80,8 +82,7 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
         {
             StartUI.SetActive(false);
             Debug.Log("load game");
-            gameManager.gameState = 2;
-            // SceneManager.LoadScene(1); // main game scene
+            gameManager.gameState = 200;
         }
         AudioManager.Instance.MainMenuMusic.Stop();
         AudioManager.Instance.DistrictMusic.Play();

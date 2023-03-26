@@ -19,6 +19,8 @@ public class PlayerResourcesController : MonoBehaviour
     [SerializeField]
     private HashSet<MapNodeController> nodes;
 
+    GameManager gameManager;
+
     public void AddUnit(BaseUnitLogic unit)
     {
         units.Add(unit);
@@ -67,6 +69,7 @@ public class PlayerResourcesController : MonoBehaviour
 
     private void Start()
     {
+        gameManager = FindObjectOfType<GameManager>();
         // TODO: Find any starting units
 
         // Find any starting nodes:
@@ -106,6 +109,18 @@ public class PlayerResourcesController : MonoBehaviour
         if (NodeResourceCountController != null)
         {
             NodeResourceCountController.SetResourceCount(nodes.Count);
+        }
+    }
+
+    private void Update()
+    {
+        if (gameManager.resource_reset)
+        {
+            units.Clear();
+            nodes.Clear();
+            UpdateUnitCount();
+            UpdateNodeCount();
+            gameManager.resource_reset = false;
         }
     }
 }

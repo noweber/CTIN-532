@@ -35,6 +35,10 @@ public class SelectedObjects : MonoBehaviour
 
     private PlayerSelection playerSelection;
 
+    private GameManager gameManager;
+
+    public GameObject unitParent;
+
     public void SetSelectedMapNode(MapNodeController nodeController)
     {
         if (SelectedMapNode != null)
@@ -61,6 +65,14 @@ public class SelectedObjects : MonoBehaviour
         secondsSinceLastSpawn = 0;
         secondsLeftInSpawningBurst = 0;
         playerSelection = GetComponent<PlayerSelection>();
+        gameManager = FindObjectOfType<GameManager>();
+        unitParent = new GameObject("UnitParent");
+    }
+
+    public void reset()
+    {
+        secondsSinceLastSpawn = 0;
+        secondsLeftInSpawningBurst = 0;
     }
 
     public void SelectUnitToSpawn(GameObject prefab, int type, float hp, float damage, float speed)
@@ -76,6 +88,9 @@ public class SelectedObjects : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (!gameManager.spawn_enabled) { return; }
+        
         secondsSinceLastSpawn += Time.deltaTime;
         while (secondsSinceLastSpawn >= SecondsBetweenSpawns)
         {
@@ -145,7 +160,9 @@ public class SelectedObjects : MonoBehaviour
             return;
         }
 
-        var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, transform);
+        // var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, transform);
+        if (unitParent == null) unitParent = new GameObject("UnitParent");
+        var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, unitParent.transform);
         // TODO: handle map scale factor on the unit's starting postion
         BaseUnitLogic logicComponent = null;
 

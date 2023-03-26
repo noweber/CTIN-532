@@ -14,6 +14,8 @@ public class CardDeck : Singleton<CardDeck>
 
     private float remainingCardSlotCooldownInSeconds;
 
+    GameManager gameManager;
+
     private void Awake()
     {
         remainingCardSlotCooldownInSeconds = 0;
@@ -21,6 +23,7 @@ public class CardDeck : Singleton<CardDeck>
         {
             Debug.LogError("There are not enough card prefabs to fill each slot.");
         }
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     void Start()
@@ -30,6 +33,12 @@ public class CardDeck : Singleton<CardDeck>
 
     void FixedUpdate()
     {
+        if (gameManager.card_reset) {
+            remainingCardSlotCooldownInSeconds = 0;
+            gameManager.card_reset = false;
+        }
+
+        if(!gameManager.cardSelect_enabled) { return; }
         if (IsACardSlotEmpty())
         {
             remainingCardSlotCooldownInSeconds -= Time.fixedDeltaTime;
