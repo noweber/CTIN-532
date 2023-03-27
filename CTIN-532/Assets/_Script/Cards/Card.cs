@@ -41,6 +41,8 @@ public class Card : MonoBehaviour
 
     private GameManager gameManager;
 
+    public bool isEnermy = false;
+
     private void Awake()
     {
         if (unitName == null)
@@ -98,6 +100,12 @@ public class Card : MonoBehaviour
         {
             return;
         }
+
+        if (isEnermy)
+        {
+            return;
+        }
+
         Time.timeScale = 1;
 
         if (playerSelection != null)

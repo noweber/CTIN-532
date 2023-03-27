@@ -15,6 +15,7 @@ public class CardDeck : Singleton<CardDeck>
     private float remainingCardSlotCooldownInSeconds;
 
     GameManager gameManager;
+    public GameObject EnenemyStat;
 
     private void Awake()
     {
@@ -113,4 +114,11 @@ public class CardDeck : Singleton<CardDeck>
         return Instantiate(CardPrefabs[slotIndex], postion, rotation, parent);
     }
 
+    public void checkEnermy()
+    {
+        if(gameManager.cardSelect_enabled)
+        {
+            EnenemyStat.SetActive(!EnenemyStat.activeSelf);
+        }
+    }
 }
