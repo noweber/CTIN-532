@@ -1,28 +1,59 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class TutorialMangaer : Singleton<TutorialMangaer>
 {
     public GameObject StartUI;
     public GameObject HUD;
     public GameObject Tutorial;
+    public GameObject endUI;
+    public GameObject replayUI;
 
     public PopupWindow[] popUps;
     private int index = 0;
 
     private GameManager gameManager;
-    private LevelMono level;
+    public TextMeshProUGUI CountText;
 
     private void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
-        level = FindObjectOfType<LevelMono>();
     }
     private void Update()
     {
-        if(gameManager.gameState == 1)
+        if(gameManager.gameState == 0)
+        {
+            StartUI.SetActive(true);
+            HUD.SetActive(false);
+            Tutorial.SetActive(false);
+            endUI.SetActive(false);
+        }
+
+        if (gameManager.gameState == 300)
+        {
+            PlayerResourcesController p = PlayerResourcesManager.Instance.GetPlayerResourcesController(MapNodeController.Player.Human); ;
+            CountText.text = p.score.ToString();
+            StartUI.SetActive(false);
+            HUD.SetActive(false);
+            Tutorial.SetActive(false);
+            endUI.SetActive(true);
+        }
+
+        if (gameManager.gameState == 100)
+        {
+            replayUI.SetActive(true);
+        }
+        else
+        {
+            replayUI.SetActive(false);
+        }
+
+        if (gameManager.gameState > 0 && gameManager.gameState<200)
         {
             if(index == popUps.Length)
             {
@@ -66,6 +97,9 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
         gameManager.resetGame();
         gameManager.gameState = 200;
         Tutorial.SetActive(false);
+        PlayerResourcesController p = PlayerResourcesManager.Instance.GetPlayerResourcesController(MapNodeController.Player.Human);
+        p.score = 0;
+
     }
 
     public void showTutorial(bool s)
@@ -75,19 +109,34 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
             //TODO seperate tutorial steps
             gameManager.gameState = 1;
             gameManager.enableAll();
+            gameManager.resetGame();
             Debug.Log("show tutorial");
+            index = 0;
+            popUps[0].setActive(true);
             Tutorial.SetActive(true);
         }
         else
         {
+            Tutorial.SetActive(false);
             StartUI.SetActive(false);
             Debug.Log("load game");
+            gameManager.resetGame();
             gameManager.gameState = 200;
         }
         AudioManager.Instance.MainMenuMusic.Stop();
         AudioManager.Instance.DistrictMusic.Play();
         StartUI.SetActive(false);
         HUD.SetActive(true);
+        PlayerResourcesController p = PlayerResourcesManager.Instance.GetPlayerResourcesController(MapNodeController.Player.Human); ;
+        p.score = 0;
+    }
+
+    public void returnToMainmenu()
+    {
+        gameManager.resetGame();
+        gameManager.gameState = 0;
+        PlayerResourcesController p = PlayerResourcesManager.Instance.GetPlayerResourcesController(MapNodeController.Player.Human); ;
+        p.score = 0;
     }
 
 }

@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public bool level_reset = false;
     public bool card_reset = false;
     public bool resource_reset = false;
+    public bool resource_reset_AI = false;
 
     private void Awake()
     {
@@ -40,12 +41,16 @@ public class GameManager : MonoBehaviour
     }
 
     #region MapNode Manager
-
-    public void FindMapNodes()
+    
+    public bool FindMapNodes()
     {
         if (MapNodes.Length == 0 || MapNodes[0] == null)
         {
             MapNodes = FindObjectsOfType<MapNodeController>();
+            return true;
+        }else
+        {
+            return false;
         }
     }
 
@@ -227,9 +232,13 @@ public class GameManager : MonoBehaviour
 
     private void updateControls()
     {
-        if(gameState >= 200 && gameState <= 300)
+        if(gameState >= 200 && gameState < 300)
         {
             enableAll();
+        }
+        if(gameState == 0 || gameState >= 300)
+        {
+            disableAll();
         }
     }
 
@@ -244,6 +253,17 @@ public class GameManager : MonoBehaviour
         mapGeneerate_enable = true;
     }
 
+    public void disableAll()
+    {
+        minimap_enabled = false;
+        nodeSelect_enabled = false;
+        cardSelect_enabled = false;
+        logicSelect_enabled = false;
+        spawn_enabled = false;
+        cameraControl_enabled = false;
+        mapGeneerate_enable = false;
+    }
+    
     public void resetGame()
     {
         SelectedObjects[] unit = FindObjectsOfType<SelectedObjects>();
@@ -255,7 +275,8 @@ public class GameManager : MonoBehaviour
         level_reset = true;
         Array.Clear(MapNodes, 0, MapNodes.Length);
         card_reset= true;
-        resource_reset= true;
+        resource_reset = true;
+        resource_reset_AI= true;
     }
     #endregion
 }

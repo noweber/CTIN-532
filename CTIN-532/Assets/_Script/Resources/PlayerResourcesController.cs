@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using static MapNodeController;
 
@@ -17,9 +18,13 @@ public class PlayerResourcesController : MonoBehaviour
     private List<BaseUnitLogic> units;
 
     [SerializeField]
-    private HashSet<MapNodeController> nodes;
+    public HashSet<MapNodeController> nodes;
 
     GameManager gameManager;
+
+    // TODO replace temperate score counter
+    public int score = 0;
+    public TextMeshProUGUI CountText;
 
     public void AddUnit(BaseUnitLogic unit)
     {
@@ -29,9 +34,9 @@ public class PlayerResourcesController : MonoBehaviour
 
     public void RemoveUnit(BaseUnitLogic unit)
     {
-
         if (units.Contains(unit))
         {
+            Debug.Log("Remove");
             units.Remove(unit);
             UpdateUnitCount();
         }
@@ -48,16 +53,19 @@ public class PlayerResourcesController : MonoBehaviour
         {
             nodes.Add(node);
             UpdateNodeCount();
+            score++;
+            CountText.text = "Score: " + score.ToString();
         }
     }
 
     public void RemoveNode(MapNodeController node)
     {
-
         if (nodes.Contains(node))
         {
             nodes.Remove(node);
             UpdateNodeCount();
+            score--;
+            CountText.text = "Score: " + score.ToString();
         }
     }
 
@@ -82,6 +90,7 @@ public class PlayerResourcesController : MonoBehaviour
                 AddNode(node);
             }
         }
+        gameManager.FindMapNodes();
     }
 
     private void RemoveNullUnits()
@@ -110,17 +119,50 @@ public class PlayerResourcesController : MonoBehaviour
         {
             NodeResourceCountController.SetResourceCount(nodes.Count);
         }
+
+        if (PlayerToControlResourceFor == Player.Human)
+        {
+            // TODO: temperate check for game end
+            if (nodes.Count == 5 && gameManager.gameState >= 200)
+            {
+                gameManager.gameState++;
+                gameManager.resetGame();
+            }
+            else if (nodes.Count == 5 && (gameManager.gameState > 0 && gameManager.gameState < 200))
+            {
+                gameManager.gameState = 100;
+            }
+        }else if(PlayerToControlResourceFor == Player.AI)
+        {
+            Debug.Log("Node Count AI: "  + nodes.Count);
+            if (nodes.Count == 5 && gameManager.gameState >= 200)
+            {
+                Debug.Log("GameLose");
+                gameManager.gameState = 300;
+
+            }else if (nodes.Count == 5 && gameManager.gameState > 0 && gameManager.gameState < 200)
+            {
+                gameManager.gameState = 100;
+            }
+        }
     }
 
     private void Update()
     {
-        if (gameManager.resource_reset)
+        if (gameManager.resource_reset && PlayerToControlResourceFor == Player.Human)
         {
             units.Clear();
             nodes.Clear();
             UpdateUnitCount();
             UpdateNodeCount();
             gameManager.resource_reset = false;
+        }else if(gameManager.resource_reset_AI && PlayerToControlResourceFor == Player.AI)
+        {
+            units.Clear();
+            nodes.Clear();
+            UpdateUnitCount();
+            UpdateNodeCount();
+            gameManager.resource_reset_AI = false;
         }
     }
 }
