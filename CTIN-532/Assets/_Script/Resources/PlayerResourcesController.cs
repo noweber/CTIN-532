@@ -45,7 +45,13 @@ public class PlayerResourcesController : MonoBehaviour
     public bool CanSupportAnAdditionalUnit()
     {
         RemoveNullUnits();
-        return units.Count < nodes.Count * NumberOfUnitsSupportedPerNodeControlled;
+        if (PlayerToControlResourceFor == Player.Human)
+        {
+            return units.Count < nodes.Count * NumberOfUnitsSupportedPerNodeControlled;
+        } else
+        {
+            return units.Count < nodes.Count * (NumberOfUnitsSupportedPerNodeControlled + gameManager.NumberOfDistrictLevelsCleared);
+        }
     }
     public void AddNode(MapNodeController node)
     {
@@ -125,9 +131,10 @@ public class PlayerResourcesController : MonoBehaviour
             // TODO: temperate check for game end
             if (nodes.Count == 5 && gameManager.gameState >= 200)
             {
-                DistrictMetricsTelemetryManager.Instance.StartNextDistrict();
+                gameManager.NumberOfDistrictLevelsCleared++;
                 gameManager.gameState++;
                 gameManager.resetGame();
+                DistrictMetricsTelemetryManager.Instance.TrackDistrictStartMetric();
             }
             else if (nodes.Count == 5 && (gameManager.gameState > 0 && gameManager.gameState < 200))
             {
@@ -140,7 +147,7 @@ public class PlayerResourcesController : MonoBehaviour
             {
                 Debug.Log("GameLose");
                 gameManager.gameState = 300;
-                DistrictMetricsTelemetryManager.Instance.LossAtDistrict();
+                DistrictMetricsTelemetryManager.Instance.TrackDistrictLossMetric();
 
             }
             else if (nodes.Count == 5 && gameManager.gameState > 0 && gameManager.gameState < 200)

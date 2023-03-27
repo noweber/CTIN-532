@@ -16,17 +16,11 @@ public class ReloadScene : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*if (Input.GetKeyDown(KeyCode.R))
-        {
-            Scene scene = SceneManager.GetActiveScene();
-            SceneManager.LoadScene(scene.name);
-        }*/
-
         // new game
         if (Input.GetKeyDown(KeyCode.R))
         {
             gameManager.resetGame();
-            DistrictMetricsTelemetryManager.Instance.ResetDistrict();
+            gameManager.ResetDistrict();
         }
     }
 }

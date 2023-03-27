@@ -79,7 +79,13 @@ public class SelectedObjects : MonoBehaviour
     {
         SelectedUnitPrefab = prefab;
         this.type = type;
-        secondsLeftInSpawningBurst = BurstSpawnDuration;
+        if (Owner == Player.Human)
+        {
+            secondsLeftInSpawningBurst = BurstSpawnDuration;
+        } else
+        {
+            secondsLeftInSpawningBurst = BurstSpawnDuration + gameManager.NumberOfDistrictLevelsCleared;
+        }
         hitPoints = hp;
         damagePoints = damage;
         speedPoints = speed;

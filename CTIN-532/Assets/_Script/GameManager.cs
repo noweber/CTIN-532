@@ -5,6 +5,8 @@ using static MapNodeController;
 
 public class GameManager : MonoBehaviour
 {
+    public int NumberOfDistrictLevelsCleared = -1;
+
     public List<MapNodeController> Selected_Nodes;
     public MapNodeController[] MapNodes;
 
@@ -38,11 +40,17 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         FindMapNodes();
-        DistrictMetricsTelemetryManager.Instance.StartNextDistrict();
+        ResetDistrict();
+        DistrictMetricsTelemetryManager.Instance.TrackDistrictStartMetric();
+    }
+
+    public void ResetDistrict()
+    {
+        NumberOfDistrictLevelsCleared = 0;
     }
 
     #region MapNode Manager
-    
+
     public bool FindMapNodes()
     {
         if (MapNodes.Length == 0 || MapNodes[0] == null)

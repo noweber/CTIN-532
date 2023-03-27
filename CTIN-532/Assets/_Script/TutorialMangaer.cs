@@ -44,7 +44,6 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
             HUD.SetActive(false);
             Tutorial.SetActive(false);
             endUI.SetActive(true);
-            DistrictMetricsTelemetryManager.Instance.LossAtDistrict();
         }
 
         if (gameManager.gameState == 100)
