@@ -26,6 +26,7 @@ public class ReloadScene : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             gameManager.resetGame();
+            DistrictMetricsTelemetryManager.Instance.ResetDistrict();
         }
     }
 }

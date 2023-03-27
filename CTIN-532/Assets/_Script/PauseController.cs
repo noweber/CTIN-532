@@ -8,6 +8,7 @@ public class PauseController : MonoBehaviour
     public GameObject PauseMenu;
 
     private GameManager gameManager;
+
     private void Start()
     {
         gameManager = FindObjectOfType<GameManager>();

@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         FindMapNodes();
+        DistrictMetricsTelemetryManager.Instance.StartNextDistrict();
     }
 
     #region MapNode Manager

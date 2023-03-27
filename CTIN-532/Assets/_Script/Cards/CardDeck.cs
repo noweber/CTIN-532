@@ -49,7 +49,7 @@ public class CardDeck : Singleton<CardDeck>
             {
                 remainingCardSlotCooldownInSeconds = ReplacementCooldownInSeconds;
                 DrawCardForEachEmptySlot();
-                Time.timeScale = 0;
+                //Time.timeScale = 0;
             }
         }
     }

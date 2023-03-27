@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using TMPro.Examples;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using USCG.Core.Telemetry;
 using static UnityEngine.UI.GridLayoutGroup;
 
 public class TutorialMangaer : Singleton<TutorialMangaer>
@@ -42,6 +44,7 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
             HUD.SetActive(false);
             Tutorial.SetActive(false);
             endUI.SetActive(true);
+            DistrictMetricsTelemetryManager.Instance.LossAtDistrict();
         }
 
         if (gameManager.gameState == 100)

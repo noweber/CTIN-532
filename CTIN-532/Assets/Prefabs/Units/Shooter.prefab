@@ -82,7 +82,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Owner: 1
-  Damage: 1
+  Damage: 2
   rateOfFire: 4
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 0
@@ -120,6 +120,7 @@ MonoBehaviour:
   maxDistanceAllowedToTarget: 8
   target: {fileID: 0}
   Owner: 1
+  CreateProjectilesWithoutTarget: 0
 --- !u!1 &4888236480934667968
 GameObject:
   m_ObjectHideFlags: 0

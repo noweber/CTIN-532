@@ -125,6 +125,7 @@ public class PlayerResourcesController : MonoBehaviour
             // TODO: temperate check for game end
             if (nodes.Count == 5 && gameManager.gameState >= 200)
             {
+                DistrictMetricsTelemetryManager.Instance.StartNextDistrict();
                 gameManager.gameState++;
                 gameManager.resetGame();
             }
@@ -139,8 +140,10 @@ public class PlayerResourcesController : MonoBehaviour
             {
                 Debug.Log("GameLose");
                 gameManager.gameState = 300;
+                DistrictMetricsTelemetryManager.Instance.LossAtDistrict();
 
-            }else if (nodes.Count == 5 && gameManager.gameState > 0 && gameManager.gameState < 200)
+            }
+            else if (nodes.Count == 5 && gameManager.gameState > 0 && gameManager.gameState < 200)
             {
                 gameManager.gameState = 100;
             }
