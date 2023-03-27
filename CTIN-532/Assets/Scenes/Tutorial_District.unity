@@ -11181,11 +11181,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2966026450388878508, guid: 529a71c06de0c71478e4a5bc766ca4c1, type: 3}
       propertyPath: m_text
-      value: N
+      value: A
       objectReference: {fileID: 0}
     - target: {fileID: 2966026450435819449, guid: 529a71c06de0c71478e4a5bc766ca4c1, type: 3}
       propertyPath: m_text
-      value: earest
+      value: ttack
       objectReference: {fileID: 0}
     - target: {fileID: 2966026450551139261, guid: 529a71c06de0c71478e4a5bc766ca4c1, type: 3}
       propertyPath: m_IsActive
@@ -11194,6 +11194,14 @@ PrefabInstance:
     - target: {fileID: 2966026451134485919, guid: 529a71c06de0c71478e4a5bc766ca4c1, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2966026451471426462, guid: 529a71c06de0c71478e4a5bc766ca4c1, type: 3}
+      propertyPath: m_text
+      value: plit
+      objectReference: {fileID: 0}
+    - target: {fileID: 2966026452138978227, guid: 529a71c06de0c71478e4a5bc766ca4c1, type: 3}
+      propertyPath: m_text
+      value: S
       objectReference: {fileID: 0}
     - target: {fileID: 2966026452166351469, guid: 529a71c06de0c71478e4a5bc766ca4c1, type: 3}
       propertyPath: m_Pivot.x
