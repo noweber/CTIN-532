@@ -9591,7 +9591,7 @@ PrefabInstance:
 
 
         Attack
-        unit goes straight to the closed emermy node.
+        unit goes straight to the closest enemy node.
 
         Defend unit stays
         at the spawn node.
