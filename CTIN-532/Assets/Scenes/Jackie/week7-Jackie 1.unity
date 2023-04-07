@@ -2130,9 +2130,9 @@ MonoBehaviour:
   resistPoints: 0
   speedPoints: 2
   Owner: 2
-  SecondsBetweenSpawns: 1.25
-  BurstSpawnDuration: 0
-  BurstSpawnRate: 1
+  SecondsBetweenSpawns: 0.5
+  BurstSpawnDuration: 1
+  BurstSpawnRate: 5
 --- !u!4 &2136319963
 Transform:
   m_ObjectHideFlags: 0

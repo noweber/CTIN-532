@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using TMPro.Examples;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static MapNodeController;
 using Random = UnityEngine.Random;
 
@@ -60,7 +63,12 @@ public class LevelMono : MonoBehaviour
     /// </summary>
     private bool[,] tilemap;
 
-    private SelectedObjects humanPlayerController;
+    /// <summary>
+    /// This 2D array stores the positions of level entites on top of the map data such as player headquarters.
+    /// </summary>
+    private int[,] levelmap;
+
+    private SelectedObjects humanPlayerController;  
 
     /// <summary>
     /// Stores which tiles on the map are impassable obstacles.
@@ -124,6 +132,7 @@ public class LevelMono : MonoBehaviour
         {
             Debug.LogWarning("The level generator was unable to find a reference to the map generator.");
         }
+
     }
 
     /// <summary>
@@ -541,4 +550,5 @@ public class LevelMono : MonoBehaviour
         CameraControl c = FindObjectOfType<CameraControl>();
         c.setFocus(getLevelmapPositionInWorldSpace(nodeTilemapPosition_1));
     }
+
 }
