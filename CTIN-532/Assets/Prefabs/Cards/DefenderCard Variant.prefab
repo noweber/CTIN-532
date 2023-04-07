@@ -24,6 +24,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: resist
       value: 1
       objectReference: {fileID: 0}
@@ -41,11 +45,11 @@ PrefabInstance:
       objectReference: {fileID: -2021247738, guid: c05b044666732a644b440151cea9056a, type: 3}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: unitName
-      value: Defender
+      value: Tank
       objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: hitPoints
-      value: 12
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: description

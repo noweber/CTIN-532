@@ -9,6 +9,7 @@ public class CameraControl : MonoBehaviour
 {
     private CameraAction cameraAction;
     private InputAction move;
+    private GameManager gameManager;
 
     private Vector3 targetPosition;
     private Vector3 velocity = Vector3.zero;
@@ -23,6 +24,7 @@ public class CameraControl : MonoBehaviour
     {
         cameraAction = new CameraAction();
         targetPosition = transform.position;
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     private void OnEnable()
@@ -40,7 +42,10 @@ public class CameraControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetKeyboardMovement();
+        if(gameManager.cameraControl_enabled)
+        {
+            GetKeyboardMovement();
+        }
         
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
     }

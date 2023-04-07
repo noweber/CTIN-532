@@ -112,6 +112,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
+      propertyPath: damage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: sprite
       value: 
       objectReference: {fileID: 439083993, guid: 915d4630149db9f49a98d81664a3568d, type: 3}
@@ -129,7 +133,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: hitPoints
-      value: 8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: description

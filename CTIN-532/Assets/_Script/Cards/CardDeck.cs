@@ -14,9 +14,17 @@ public class CardDeck : Singleton<CardDeck>
 
     private float remainingCardSlotCooldownInSeconds;
 
+    GameManager gameManager;
+    public GameObject EnenemyStat;
+
     private void Awake()
     {
         remainingCardSlotCooldownInSeconds = 0;
+        if (CardPrefabs.Count < CardSlots.Count)
+        {
+            Debug.LogError("There are not enough card prefabs to fill each slot.");
+        }
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     void Start()
@@ -26,6 +34,12 @@ public class CardDeck : Singleton<CardDeck>
 
     void FixedUpdate()
     {
+        if (gameManager.card_reset) {
+            remainingCardSlotCooldownInSeconds = 0;
+            gameManager.card_reset = false;
+        }
+
+        if(!gameManager.cardSelect_enabled) { return; }
         if (IsACardSlotEmpty())
         {
             remainingCardSlotCooldownInSeconds -= Time.fixedDeltaTime;
@@ -35,7 +49,7 @@ public class CardDeck : Singleton<CardDeck>
             {
                 remainingCardSlotCooldownInSeconds = ReplacementCooldownInSeconds;
                 DrawCardForEachEmptySlot();
-                Time.timeScale = 0;
+                //Time.timeScale = 0;
             }
         }
     }
@@ -58,11 +72,11 @@ public class CardDeck : Singleton<CardDeck>
 
     private void DrawCardForEachEmptySlot()
     {
-        foreach (var slot in CardSlots)
+        for (int i = 0; i < CardSlots.Count; i++)
         {
-            if (slot.DrawnCard == null)
+            if (CardSlots[i].DrawnCard == null)
             {
-                slot.DrawnCard = InstantiateNextCard(slot.transform.position, slot.transform, Quaternion.identity);
+                CardSlots[i].DrawnCard = InstantiateNextCard(CardSlots[i].transform.position, CardSlots[i].transform, Quaternion.identity, i);
             }
         }
     }
@@ -82,7 +96,7 @@ public class CardDeck : Singleton<CardDeck>
         }
     }
 
-    public GameObject InstantiateNextCard(Vector3 postion, Transform parent, Quaternion rotation)
+    public GameObject InstantiateNextCard(Vector3 postion, Transform parent, Quaternion rotation, int slotIndex)
     {
         if (CardPrefabs == null || CardPrefabs.Count == 0)
         {
@@ -97,7 +111,14 @@ public class CardDeck : Singleton<CardDeck>
             }
         }
 
-        return Instantiate(CardPrefabs[Random.Range(0, CardPrefabs.Count)], postion, rotation, parent);
+        return Instantiate(CardPrefabs[slotIndex], postion, rotation, parent);
     }
 
+    public void checkEnermy()
+    {
+        if(gameManager.cardSelect_enabled)
+        {
+            EnenemyStat.SetActive(!EnenemyStat.activeSelf);
+        }
+    }
 }

@@ -19,7 +19,7 @@ public class RandomMeander : MonoBehaviour
 
 	[Header("Max Meander Magnitude")]
 	[Tooltip("How far to randomly meander along each axis.")]
-	public Vector3 MaxMeanderMagnitude = new Vector3(0.25f, 0.25f, 0.25f);
+	public Vector3 MaxMeanderMagnitude = new Vector3(0.05f, 0, 0.05f);
 
 	[Header("Max Meander Speed")]
 	[Tooltip("How fast to randomly meander along each axis.")]
