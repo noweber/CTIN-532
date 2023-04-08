@@ -169,7 +169,7 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             for (int j = 0; j < _map.GetLength(1); j++)
             {
-                if(_map[i, j] == TileType.floor || _map[i, j] == TileType.door)
+                if((_map[i, j] == TileType.floor || _map[i, j] == TileType.door) && Obs_map[i,j]==0)
                 {
                     tilemap[i, j] = true;
                 } else
@@ -315,6 +315,7 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             caveIterate(c);
         }
+
         generateObs();
     }
 

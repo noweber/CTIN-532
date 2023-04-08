@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -9854,6 +9854,11 @@ MonoBehaviour:
   cave_wall_chance: 45
   iteration_num_total: 7
   iteration_num_round_1: 4
+  Obs_num: 0
+  Obs_prefabs:
+  - {fileID: 6212767972623595804, guid: 413c4fe347999a44ca1171452e307058, type: 3}
+  - {fileID: 6212767972623595804, guid: 9eeaa39f4a5b65e4dac56a399b779ec7, type: 3}
+  - {fileID: 6212767972623595804, guid: 563e4259bc09a4f4e9dda198f968ff21, type: 3}
   elements:
   - {fileID: 3287579429938044022, guid: 793b974eab802a34e899d6cef83d7a7e, type: 3}
   - {fileID: 3287579429938044022, guid: ff31aa941e49b684e983a0e76b1731cf, type: 3}
