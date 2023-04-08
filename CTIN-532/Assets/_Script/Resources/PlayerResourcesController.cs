@@ -15,7 +15,7 @@ public class PlayerResourcesController : MonoBehaviour
     public ResourceCountUiController NodeResourceCountController;
 
     [SerializeField]
-    private List<BaseUnitLogic> units;
+    private List<UnitController> units;
 
     [SerializeField]
     public HashSet<MapNodeController> nodes;
@@ -26,13 +26,13 @@ public class PlayerResourcesController : MonoBehaviour
     public int score = 0;
     public TextMeshProUGUI CountText;
 
-    public void AddUnit(BaseUnitLogic unit)
+    public void AddUnit(UnitController unit)
     {
         units.Add(unit);
         UpdateUnitCount();
     }
 
-    public void RemoveUnit(BaseUnitLogic unit)
+    public void RemoveUnit(UnitController unit)
     {
         if (units.Contains(unit))
         {
@@ -50,7 +50,7 @@ public class PlayerResourcesController : MonoBehaviour
             return units.Count < nodes.Count * NumberOfUnitsSupportedPerNodeControlled;
         } else
         {
-            return units.Count < nodes.Count * (NumberOfUnitsSupportedPerNodeControlled + gameManager.NumberOfDistrictLevelsCleared);
+            return units.Count < nodes.Count * (NumberOfUnitsSupportedPerNodeControlled + gameManager.DistrictNumber);
         }
     }
     public void AddNode(MapNodeController node)
@@ -77,7 +77,7 @@ public class PlayerResourcesController : MonoBehaviour
 
     private void Awake()
     {
-        units = new List<BaseUnitLogic>();
+        units = new List<UnitController>();
         nodes = new HashSet<MapNodeController>();
     }
 
@@ -88,7 +88,7 @@ public class PlayerResourcesController : MonoBehaviour
 
         // Find any starting nodes:
         var nodeControllers = FindObjectsOfType<MapNodeController>();
-        Debug.Log("Nodes found: " + nodeControllers.Length);
+        //Debug.Log("Nodes found: " + nodeControllers.Length);
         foreach (var node in nodeControllers)
         {
             if (node.Owner == PlayerToControlResourceFor)
@@ -101,7 +101,7 @@ public class PlayerResourcesController : MonoBehaviour
 
     private void RemoveNullUnits()
     {
-        List<BaseUnitLogic> nonNullUnits = new();
+        List<UnitController> nonNullUnits = new();
         for (int i = 0; i < units.Count; i++)
         {
             if (units[i] != null)
@@ -131,10 +131,9 @@ public class PlayerResourcesController : MonoBehaviour
             // TODO: temperate check for game end
             if (nodes.Count == 5 && gameManager.gameState >= 200)
             {
-                gameManager.NumberOfDistrictLevelsCleared++;
+                gameManager.DistrictNumber++;
                 gameManager.gameState++;
                 gameManager.resetGame();
-                DistrictMetricsTelemetryManager.Instance.TrackDistrictStartMetric();
             }
             else if (nodes.Count == 5 && (gameManager.gameState > 0 && gameManager.gameState < 200))
             {
@@ -142,12 +141,11 @@ public class PlayerResourcesController : MonoBehaviour
             }
         }else if(PlayerToControlResourceFor == Player.AI)
         {
-            Debug.Log("Node Count AI: "  + nodes.Count);
+            //Debug.Log("Node Count AI: "  + nodes.Count);
             if (nodes.Count == 5 && gameManager.gameState >= 200)
             {
-                Debug.Log("GameLose");
+                //Debug.Log("GameLose");
                 gameManager.gameState = 300;
-                DistrictMetricsTelemetryManager.Instance.TrackDistrictLossMetric();
 
             }
             else if (nodes.Count == 5 && gameManager.gameState > 0 && gameManager.gameState < 200)

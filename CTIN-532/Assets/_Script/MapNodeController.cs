@@ -127,7 +127,7 @@ public class MapNodeController : MonoBehaviour
     private void ConvertToTeamColor(Collider other)
     {
         // Convert the node to a team on collision with a unit:
-        BaseUnitLogic unitController = other.GetComponent<BaseUnitLogic>();
+        UnitController unitController = other.GetComponent<UnitController>();
         if (unitController != null)
         {
             if (unitController.Owner == Player.Human && Owner != Player.Human)

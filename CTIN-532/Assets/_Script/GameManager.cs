@@ -5,7 +5,7 @@ using static MapNodeController;
 
 public class GameManager : MonoBehaviour
 {
-    public int NumberOfDistrictLevelsCleared = -1;
+    public int DistrictNumber = -1;
 
     public List<MapNodeController> Selected_Nodes;
     public MapNodeController[] MapNodes;
@@ -41,12 +41,11 @@ public class GameManager : MonoBehaviour
     {
         FindMapNodes();
         ResetDistrict();
-        DistrictMetricsTelemetryManager.Instance.TrackDistrictStartMetric();
     }
 
     public void ResetDistrict()
     {
-        NumberOfDistrictLevelsCleared = 0;
+        DistrictNumber = 0;
     }
 
     #region MapNode Manager
@@ -63,10 +62,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public BaseUnitLogic GetClosestUnitByPlayer(Vector3 position, Player owner)
+    public UnitController GetClosestUnitByPlayer(Vector3 position, Player owner)
     {
-        List<BaseUnitLogic> unitsOfPlayer = new();
-        var units = FindObjectsOfType<BaseUnitLogic>();
+        List<UnitController> unitsOfPlayer = new();
+        var units = FindObjectsOfType<UnitController>();
         foreach (var unit in units)
         {
             if (unit.Owner == owner)
@@ -74,7 +73,7 @@ public class GameManager : MonoBehaviour
                 unitsOfPlayer.Add(unit);
             }
         }
-        BaseUnitLogic result = null;
+        UnitController result = null;
         float distance = float.MaxValue;
         foreach (var unit in unitsOfPlayer)
         {

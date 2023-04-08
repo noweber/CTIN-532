@@ -84,7 +84,7 @@ public class SelectedObjects : MonoBehaviour
             secondsLeftInSpawningBurst = BurstSpawnDuration;
         } else
         {
-            secondsLeftInSpawningBurst = BurstSpawnDuration + gameManager.NumberOfDistrictLevelsCleared;
+            secondsLeftInSpawningBurst = BurstSpawnDuration + gameManager.DistrictNumber;
         }
         hitPoints = hp;
         damagePoints = damage;
@@ -170,7 +170,7 @@ public class SelectedObjects : MonoBehaviour
         if (unitParent == null) unitParent = new GameObject("UnitParent");
         var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, unitParent.transform);
         // TODO: handle map scale factor on the unit's starting postion
-        BaseUnitLogic logicComponent = null;
+        UnitController logicComponent = null;
 
         // TODO: Refactor this so that the prefab contains the stat data and the UI card reads that instead of the UI card passing it to the prefab.
         // BaseUnitController controller;// = unit.GetComponent<BaseUnitController>();
@@ -192,7 +192,7 @@ public class SelectedObjects : MonoBehaviour
                     break;
                 case UnitLogic.Random:
                 default:
-                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
+                    logicComponent = unit.AddComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
                     break;
             }
         }
@@ -208,7 +208,7 @@ public class SelectedObjects : MonoBehaviour
                     logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
                     break;
                 default:
-                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
+                    logicComponent = unit.AddComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
                     break;
             }
         }

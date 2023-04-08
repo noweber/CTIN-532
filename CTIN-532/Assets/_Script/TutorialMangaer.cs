@@ -121,7 +121,7 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
         {
             Tutorial.SetActive(false);
             StartUI.SetActive(false);
-            Debug.Log("load game");
+            //Debug.Log("load game");
             gameManager.resetGame();
             gameManager.gameState = 200;
         }
