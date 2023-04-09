@@ -1,6 +1,6 @@
 ﻿namespace Assets._Script
 {
-    public class DependencyContainer : Singleton<DependencyContainer>
+    public class DependencyService : Singleton<DependencyService>
     {
         /*private DistrictController districtController;
         public DistrictController District()

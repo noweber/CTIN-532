@@ -10,7 +10,7 @@ public class DistrictNumberText : MonoBehaviour
     {
         if (DistrictNumber != null)
         {
-            DistrictNumber.text = DependencyContainer.Instance.Game().DistrictNumber.ToString();
+            DistrictNumber.text = DependencyService.Instance.Game().DistrictNumber.ToString();
         }
     }
 }

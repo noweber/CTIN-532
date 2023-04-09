@@ -153,7 +153,7 @@ public class UnitController : MonoBehaviour
         {
             targetPlayer = Player.Human;
         }
-        var nearestEnemy = DependencyContainer.Instance.Game().GetClosestUnitByPlayer(transform.position, targetPlayer);
+        var nearestEnemy = DependencyService.Instance.Game().GetClosestUnitByPlayer(transform.position, targetPlayer);
         if (nearestEnemy != null)
         {
             ChaseTarget = nearestEnemy.transform;
