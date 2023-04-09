@@ -152,8 +152,6 @@ public class UnitController : MonoBehaviour
         return hitBox.IsBeingHit;
     }
 
-    public bool IsFacingLeftEh;
-
     /// <summary>
     /// A method for determining which direction a unit is facing.
     /// If the unit is not facing left, then it is facing right.
@@ -165,12 +163,10 @@ public class UnitController : MonoBehaviour
     {
         if (ChaseTarget != null)
         {
-            IsFacingLeftEh= ChaseTarget.position.x < transform.position.x;
             return ChaseTarget.position.x < transform.position.x;
         }
         else if(Target != null)
         {
-            IsFacingLeftEh= Target.position.x < transform.position.x;
             return Target.position.x < transform.position.x;
         }
         return false;
