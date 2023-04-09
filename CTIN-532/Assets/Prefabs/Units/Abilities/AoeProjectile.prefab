@@ -150,7 +150,6 @@ MonoBehaviour:
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 0
   particlesPrefab: {fileID: 0}
-  IsArmed: 0
   speed: 0.5
   direction: {x: 0, y: 0, z: 0}
 --- !u!114 &2207737816328916852

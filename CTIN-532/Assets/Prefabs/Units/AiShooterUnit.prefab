@@ -83,7 +83,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Owner: 2
   Damage: 2
-  rateOfFire: 1
+  rateOfFire: 0.25
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 0
   particlesPrefab: {fileID: 0}
