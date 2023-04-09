@@ -82,8 +82,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Owner: 2
-  Damage: 2
-  rateOfFire: 4
+  Damage: 1
+  rateOfFire: 1
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 0
   particlesPrefab: {fileID: 0}
@@ -100,8 +100,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Owner: 2
+  IsBeingHit: 0
   MaxHitPoints: 4
   currentHitPoints: 4
+  damageTextPrefab: {fileID: 2617646000106490837, guid: ca5697d8e493e57408f0e77665f6ff49, type: 3}
+  maxSecondsToPausePerHit: 1
 --- !u!114 &1105279217412707334
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,7 +117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 714a28e0cf73de64dacfecd95319d918, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AbilityCooldown: 2
+  AbilityCooldown: 1
   CooldownRemainingInSeconds: 0
   prefabToSpawnWhenAbilityIsUsed: {fileID: 8944371612916874545, guid: 6e94e0eed70c5144889fe0d53b9bbe61, type: 3}
   maxDistanceAllowedToTarget: 8

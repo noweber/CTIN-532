@@ -87,6 +87,7 @@ public class UnitController : MonoBehaviour
         }
         timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
     }
+
     void FixedUpdate()
     {
         if (Target == null)
@@ -133,17 +134,26 @@ public class UnitController : MonoBehaviour
         }
         else
         {
-            // If the nearest enemy is within the chase distance, chase it before continuing on the path to the target:
-            float magnitude = Time.fixedDeltaTime / timeBetweenMovesInSeconds;
-            if (ChaseTarget != null)
+            // The unit does not move while it is engaged in combat or being hit:
+            if (!hitBox.IsBeingHit)
             {
-                transform.position = Vector3.MoveTowards(transform.position, new Vector3(ChaseTarget.transform.position.x, transform.position.y, ChaseTarget.transform.position.z), magnitude);
-            }
-            else
-            {
-                transform.position = Vector3.MoveTowards(transform.position, new Vector3(CurrentCoordinates.x, transform.position.y, CurrentCoordinates.y), magnitude);
+                // If the nearest enemy is within the chase distance, chase it before continuing on the path to the target:
+                float magnitude = Time.fixedDeltaTime / timeBetweenMovesInSeconds;
+                if (ChaseTarget != null)
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(ChaseTarget.transform.position.x, transform.position.y, ChaseTarget.transform.position.z), magnitude);
+                }
+                else
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(CurrentCoordinates.x, transform.position.y, CurrentCoordinates.y), magnitude);
+                }
             }
         }
+    }
+
+    public bool IsInCombat()
+    {
+        return hitBox.IsBeingHit;
     }
 
     protected virtual void SelectChaseTarget()
@@ -159,7 +169,7 @@ public class UnitController : MonoBehaviour
             ChaseTarget = nearestEnemy.transform;
         }
     }
-                                   
+
     protected virtual void SelectTarget()
     {
         var gameManager = FindObjectOfType<GameManager>();

@@ -178,8 +178,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Owner: 2
-  Damage: 2
-  rateOfFire: 4
+  Damage: 3
+  rateOfFire: 3
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 0
   particlesPrefab: {fileID: 0}
@@ -196,8 +196,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Owner: 2
+  IsBeingHit: 0
   MaxHitPoints: 8
   currentHitPoints: 8
+  damageTextPrefab: {fileID: 2617646000106490837, guid: ca5697d8e493e57408f0e77665f6ff49, type: 3}
+  maxSecondsToPausePerHit: 1
 --- !u!1 &7648849057480495776
 GameObject:
   m_ObjectHideFlags: 0
