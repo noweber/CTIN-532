@@ -34,9 +34,6 @@ public class UnitController : MonoBehaviour
 
     private const float BaseTimeBetweenMovesInSeconds = 1.0f;
 
-    [SerializeField]
-    private float timeRemainingUntilNextMoveInSeconds;
-
     private float timeBetweenTargetSelections = 1.0f;
 
     [SerializeField]
@@ -57,7 +54,6 @@ public class UnitController : MonoBehaviour
         CurrentCoordinates = new Vector2Int();
         timeUntilNextTargetSelection = 0;
         TimeUntilNextChaseTargetSelection = 0;
-        timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
         hitBox = GetComponent<HitBox>();
         hurtBox = GetComponent<HurtBox>();
     }
@@ -85,11 +81,11 @@ public class UnitController : MonoBehaviour
         {
             timeBetweenMovesInSeconds = BaseTimeBetweenMovesInSeconds;
         }
-        timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
     }
 
     void FixedUpdate()
     {
+        IsFacingLeft();
         if (Target == null)
         {
             if (timeUntilNextTargetSelection <= 0)
@@ -154,6 +150,30 @@ public class UnitController : MonoBehaviour
     public bool IsInCombat()
     {
         return hitBox.IsBeingHit;
+    }
+
+    public bool IsFacingLeftEh;
+
+    /// <summary>
+    /// A method for determining which direction a unit is facing.
+    /// If the unit is not facing left, then it is facing right.
+    /// </summary>
+    /// <returns>
+    /// Returns a bool of whether or not the unit is facing left.
+    /// </returns>
+    public bool IsFacingLeft()
+    {
+        if (ChaseTarget != null)
+        {
+            IsFacingLeftEh= ChaseTarget.position.x < transform.position.x;
+            return ChaseTarget.position.x < transform.position.x;
+        }
+        else if(Target != null)
+        {
+            IsFacingLeftEh= Target.position.x < transform.position.x;
+            return Target.position.x < transform.position.x;
+        }
+        return false;
     }
 
     protected virtual void SelectChaseTarget()
