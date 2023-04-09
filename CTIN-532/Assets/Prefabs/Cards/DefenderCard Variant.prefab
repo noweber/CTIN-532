@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 407705853898730218, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: name
       value: Defender
@@ -49,11 +53,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: hitPoints
-      value: 16
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: description
-      value: Defender
+      value: High HP
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
+      propertyPath: abilityDescription
+      value: Damage Sponge
       objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: UnitImageBackground

@@ -16,6 +16,8 @@ public class Card : MonoBehaviour
 
     public float speed;
 
+    public string description;
+
     public Image UnitImageComponent;
 
     public GameObject UnitImageBackground;
@@ -29,6 +31,8 @@ public class Card : MonoBehaviour
     public TextMeshProUGUI DamageTextComponent;
 
     public TextMeshProUGUI SpeedTextComponent;
+
+    public TextMeshProUGUI DescriptionTextComponent;
 
     public GameObject UnitWorldSpacePrefab;
 
@@ -73,6 +77,11 @@ public class Card : MonoBehaviour
         if (SpeedTextComponent != null)
         {
             SpeedTextComponent.text = "Speed: " + speed.ToString();
+        }
+
+        if (DescriptionTextComponent != null)
+        {
+            DescriptionTextComponent.text = description;
         }
 
         // TODO: Check this code for errors with debug statements

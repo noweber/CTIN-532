@@ -100,8 +100,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Owner: 2
   IsBeingHit: 0
-  MaxHitPoints: 12
-  currentHitPoints: 12
+  MaxHitPoints: 20
+  currentHitPoints: 20
   damageTextPrefab: {fileID: 2617646000106490837, guid: ca5697d8e493e57408f0e77665f6ff49, type: 3}
   maxSecondsToPausePerHit: 1
 --- !u!1 &2868038339066885786
