@@ -13020,7 +13020,15 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2966026451112089079, guid: 529a71c06de0c71478e4a5bc766ca4c1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2966026451134485919, guid: 529a71c06de0c71478e4a5bc766ca4c1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2966026451289641349, guid: 529a71c06de0c71478e4a5bc766ca4c1, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}

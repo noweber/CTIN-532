@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-public class CardDeck : Singleton<CardDeck>
+public class CardDeck : MonoBehaviour
 {
     public List<GameObject> CardPrefabs;
 

@@ -45,8 +45,6 @@ public class Card : MonoBehaviour
 
     private GameManager gameManager;
 
-    public bool isEnermy = false;
-
     private void Awake()
     {
         if (unitName == null)
@@ -102,15 +100,10 @@ public class Card : MonoBehaviour
 
     public void SelectCard()
     {
-        if(!gameManager.cardSelect_enabled) { return; }
+        if (!gameManager.cardSelect_enabled) { return; }
         // game state
 
         if (!isCardSelectable)
-        {
-            return;
-        }
-
-        if (isEnermy)
         {
             return;
         }
@@ -123,6 +116,7 @@ public class Card : MonoBehaviour
             {
                 // TODO: remove this hard-coding of unity type values and just push it to the unit prefabs instead of the player selection
                 playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, UnitType, hitPoints, damage, speed);
+                playerSelection.SpawnUnit(UnitWorldSpacePrefab);
             }
             else
             {
@@ -136,7 +130,7 @@ public class Card : MonoBehaviour
 
         // TODO: Refactor the way this interacts with audio manager to store the spawn clip on the base prefab instead.
         AudioManager.Instance.PlaySFX(AudioManager.Instance.SpawnSound.clip, 1.0f);
-        Destroy(this.gameObject);
+        //Destroy(this.gameObject);
     }
 
     public void AllowUse(bool state)

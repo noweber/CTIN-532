@@ -82,7 +82,8 @@ public class SelectedObjects : MonoBehaviour
         if (Owner == Player.Human)
         {
             secondsLeftInSpawningBurst = BurstSpawnDuration;
-        } else
+        }
+        else
         {
             secondsLeftInSpawningBurst = BurstSpawnDuration + gameManager.DistrictNumber;
         }
@@ -94,9 +95,12 @@ public class SelectedObjects : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Owner == Player.Human)
+        {
+            return;
+        }
         if (!gameManager.spawn_enabled) { return; }
-        
+
         secondsSinceLastSpawn += Time.deltaTime;
         while (secondsSinceLastSpawn >= SecondsBetweenSpawns)
         {
@@ -157,13 +161,27 @@ public class SelectedObjects : MonoBehaviour
         }
     }
 
-    private void SpawnUnit(GameObject unitPrefab, Transform parent)
+    public void SpawnUnit(GameObject unitPrefab, Transform parent = null)
     {
         PlayerResourcesController playerResources = PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner);
         // This block of code checks whether or not the player can support an additional unit being spawned based on their resources.
         if (!playerResources.CanSupportAnAdditionalUnit())
         {
             return;
+        }
+
+        if (Owner == Player.Human)
+        {
+            if (!CurrencyController.Instance.CanAffordAnotherUnit())
+            {
+                return;
+            }
+            CurrencyController.Instance.PurchaseUnit();
+        }
+
+        if (parent == null)
+        {
+            parent = SelectedMapNode.transform;
         }
 
         // var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, transform);

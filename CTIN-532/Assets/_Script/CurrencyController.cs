@@ -1,7 +1,6 @@
-using TMPro;
 using UnityEngine;
 
-public class CurrencyController : MonoBehaviour
+public class CurrencyController : Singleton<CurrencyController>
 {
     public ResourceCountUiController CurrencyResource;
 
@@ -16,17 +15,16 @@ public class CurrencyController : MonoBehaviour
 
     private float secondsElapsedSinceLastMoneyIncrement;
 
-    // Start is called before the first frame update
     void Start()
     {
         this.TotalCurrency = 0;
-        this.secondsBetweenIncrements = 1.0f;
+        this.secondsBetweenIncrements = 0.5f;
         this.secondsElapsedSinceLastMoneyIncrement = 0;
     }
 
     private void FixedUpdate()
     {
-        MaxCurrency = playerResources.GetMaxNumberOfUnitsThePlayerCanHave() * CostToDeployAUnit(); // TODO: Instead of 10, use a cost of units.
+        MaxCurrency = playerResources.GetMaxNumberOfUnitsThePlayerCanHave() * CostToDeployAUnit();
     }
 
     public bool CanAffordAnotherUnit()
@@ -36,7 +34,7 @@ public class CurrencyController : MonoBehaviour
 
     private int CostToDeployAUnit()
     {
-        return CurrencyIncrement * 10;
+        return 1000; // TODO: Instead of 10, use a cost of units.
     }
 
     // Update is called once per frame
@@ -53,6 +51,12 @@ public class CurrencyController : MonoBehaviour
                 this.UpdateMoneyText();
             }
         }
+    }
+
+    public void PurchaseUnit()
+    {
+        this.TotalCurrency -= CostToDeployAUnit();
+        this.UpdateMoneyText();
     }
 
     public void SpendMoney(int moneySpent)
