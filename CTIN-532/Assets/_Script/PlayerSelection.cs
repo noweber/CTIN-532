@@ -14,6 +14,11 @@ public class PlayerSelection : MonoBehaviour
 
     public UnitLogic SelectedLogic;
 
+    private void Awake()
+    {
+        SelectUnitLogic(UnitLogic.Random);
+    }
+
     public void SelectUnitLogic(UnitLogic selection)
     {
         SelectedLogic = selection;

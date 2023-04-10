@@ -10,9 +10,13 @@ public class PlayerResourcesController : MonoBehaviour
 
     public Player PlayerToControlResourceFor;
 
-    public ResourceCountUiController UnitResourceCountController;
+    public ResourceCountUiController CurrentNumberOfUnits;
+
+    public ResourceCountUiController MaxNumberOfUnits;
 
     public ResourceCountUiController NodeResourceCountController;
+
+    public ResourceCountUiController MaxNodesCount;
 
     [SerializeField]
     private List<UnitController> units;
@@ -22,8 +26,6 @@ public class PlayerResourcesController : MonoBehaviour
 
     GameManager gameManager;
 
-    // TODO replace temperate score counter
-    public int score = 0;
     public TextMeshProUGUI CountText;
 
     public void AddUnit(UnitController unit)
@@ -36,7 +38,6 @@ public class PlayerResourcesController : MonoBehaviour
     {
         if (units.Contains(unit))
         {
-            Debug.Log("Remove");
             units.Remove(unit);
             UpdateUnitCount();
         }
@@ -48,19 +49,29 @@ public class PlayerResourcesController : MonoBehaviour
         if (PlayerToControlResourceFor == Player.Human)
         {
             return units.Count < nodes.Count * NumberOfUnitsSupportedPerNodeControlled;
-        } else
+        }
+        else
         {
-            return units.Count < nodes.Count * (NumberOfUnitsSupportedPerNodeControlled + gameManager.DistrictNumber);
+            return units.Count < GetMaxNumberOfUnitsThePlayerCanHave(); ;
         }
     }
+
+    public int GetMaxNumberOfUnitsThePlayerCanHave()
+    {
+        if (nodes == null)
+        {
+            return 0;
+        }
+        return nodes.Count * (NumberOfUnitsSupportedPerNodeControlled + gameManager.DistrictNumber);
+    }
+
     public void AddNode(MapNodeController node)
     {
         if (!nodes.Contains(node))
         {
             nodes.Add(node);
             UpdateNodeCount();
-            score++;
-            CountText.text = "Score: " + score.ToString();
+            MaxNumberOfUnits.SetResourceCount(GetMaxNumberOfUnitsThePlayerCanHave());
         }
     }
 
@@ -70,8 +81,6 @@ public class PlayerResourcesController : MonoBehaviour
         {
             nodes.Remove(node);
             UpdateNodeCount();
-            score--;
-            CountText.text = "Score: " + score.ToString();
         }
     }
 
@@ -97,6 +106,7 @@ public class PlayerResourcesController : MonoBehaviour
             }
         }
         gameManager.FindMapNodes();
+        MaxNodesCount.SetResourceCount(gameManager.MapNodes.Length);
     }
 
     private void RemoveNullUnits()
@@ -114,9 +124,9 @@ public class PlayerResourcesController : MonoBehaviour
 
     private void UpdateUnitCount()
     {
-        if (UnitResourceCountController != null)
+        if (CurrentNumberOfUnits != null)
         {
-            UnitResourceCountController.SetResourceCount(units.Count);
+            CurrentNumberOfUnits.SetResourceCount(units.Count);
         }
     }
     private void UpdateNodeCount()
@@ -139,7 +149,8 @@ public class PlayerResourcesController : MonoBehaviour
             {
                 gameManager.gameState = 100;
             }
-        }else if(PlayerToControlResourceFor == Player.AI)
+        }
+        else if (PlayerToControlResourceFor == Player.AI)
         {
             //Debug.Log("Node Count AI: "  + nodes.Count);
             if (nodes.Count == 5 && gameManager.gameState >= 200)
@@ -164,7 +175,8 @@ public class PlayerResourcesController : MonoBehaviour
             UpdateUnitCount();
             UpdateNodeCount();
             gameManager.resource_reset = false;
-        }else if(gameManager.resource_reset_AI && PlayerToControlResourceFor == Player.AI)
+        }
+        else if (gameManager.resource_reset_AI && PlayerToControlResourceFor == Player.AI)
         {
             units.Clear();
             nodes.Clear();

@@ -93,15 +93,6 @@ public class MapGenerator : Singleton<MapGenerator>
         indexOfWall = new List<index>();
     }
 
-    /// <summary>
-    /// Start is called before the first frame update.
-    /// </summary>
-    void Start()
-    {
-        Debug.Log("Press P to Generate Pathos Type Map");
-        Debug.Log("Press C to Generate Cave Type Map");
-        Debug.Log("Press R to Clear the Board");
-    }
 
     private void Update()
     {

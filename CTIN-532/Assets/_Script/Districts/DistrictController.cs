@@ -10,6 +10,12 @@ namespace Assets._Script.Districts
         public int DistrictNumber { get; private set; }
 
         [SerializeField]
+        public Vector2Int DistrictSize { get; private set; }
+
+        [SerializeField]
+        public int DefaultDistrictSize = 16;
+
+        [SerializeField]
         private GameObject tilePrefab;
 
         // TODO: Store all of the tiles.
@@ -34,11 +40,8 @@ namespace Assets._Script.Districts
             {
                 Debug.LogError("The tile prefab does not contain a tile controller.");
             }
-        }
-
-        private void Start()
-        {
-            CreateDistrict(DistrictNumber);
+            DistrictNumber = 0;
+            DistrictSize = new Vector2Int();
         }
 
         public bool IsTilePassable(int x, int y)
@@ -139,8 +142,8 @@ namespace Assets._Script.Districts
         public void CreateDistrict(int districtNumber)
         {
             ResetLevelData();
-            var sizeOfDistrict = GetDistrictSize(districtNumber);
-            CreateTiles(sizeOfDistrict);
+            DistrictSize = GetDistrictSize(districtNumber);
+            CreateTiles(DistrictSize);
             // TODO: place hqs
             // TODO: place additional nodes based on level size
         }
@@ -170,7 +173,7 @@ namespace Assets._Script.Districts
 
         private Vector2Int GetDistrictSize(int districtNumber)
         {
-            int size = 16 + Mathf.FloorToInt(Mathf.Pow((float)districtNumber, 0.8f));
+            int size = DefaultDistrictSize + Mathf.FloorToInt(Mathf.Pow((float)districtNumber, 0.8f));
             return new Vector2Int(size, size);
         }
     }

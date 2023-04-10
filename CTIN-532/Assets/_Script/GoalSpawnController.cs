@@ -6,7 +6,7 @@ public class GoalSpawnController : MonoBehaviour
     [Tooltip("The game object (prefabs) to spawn when the mouse is clicked.")]
     public GameObject SpawnPrefab;
 
-    public PlayerMoneyController MoneyController;
+    public CurrencyController MoneyController;
 
     private Vector3 mouseScreenPosition;
 
@@ -31,7 +31,7 @@ public class GoalSpawnController : MonoBehaviour
         }
 
         // Check for mouse left-click:
-        if (Input.GetMouseButtonDown(0) && this.MoneyController.TotalMoney != 0)
+        if (Input.GetMouseButtonDown(0) && this.MoneyController.TotalCurrency != 0)
         {
             if (SpawnPrefab != null)
             {
@@ -40,10 +40,10 @@ public class GoalSpawnController : MonoBehaviour
                 GoalController goalController = spawnedObject.GetComponent<GoalController>();
                 if(goalController != null)
                 {
-                    goalController.SetGoalAmount(this.MoneyController.TotalMoney);
-                    goalController.SetGoalText("$" + this.MoneyController.TotalMoney);
+                    goalController.SetGoalAmount(this.MoneyController.TotalCurrency);
+                    goalController.SetGoalText("$" + this.MoneyController.TotalCurrency);
                 }
-                this.MoneyController.SpendMoney(this.MoneyController.TotalMoney);
+                this.MoneyController.SpendMoney(this.MoneyController.TotalCurrency);
             }
         }
     }
