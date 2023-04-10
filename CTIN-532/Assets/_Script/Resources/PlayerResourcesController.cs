@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -10,33 +9,34 @@ public class PlayerResourcesController : MonoBehaviour
 
     public Player PlayerToControlResourceFor;
 
-    public ResourceCountUiController UnitResourceCountController;
+    public ResourceCountUiController CurrentNumberOfUnits;
+
+    public ResourceCountUiController MaxNumberOfUnits;
 
     public ResourceCountUiController NodeResourceCountController;
 
+    public ResourceCountUiController MaxNodesCount;
+
     [SerializeField]
-    private List<BaseUnitLogic> units;
+    private List<UnitController> units;
 
     [SerializeField]
     public HashSet<MapNodeController> nodes;
 
     GameManager gameManager;
 
-    // TODO replace temperate score counter
-    public int score = 0;
     public TextMeshProUGUI CountText;
 
-    public void AddUnit(BaseUnitLogic unit)
+    public void AddUnit(UnitController unit)
     {
         units.Add(unit);
         UpdateUnitCount();
     }
 
-    public void RemoveUnit(BaseUnitLogic unit)
+    public void RemoveUnit(UnitController unit)
     {
         if (units.Contains(unit))
         {
-            Debug.Log("Remove");
             units.Remove(unit);
             UpdateUnitCount();
         }
@@ -48,19 +48,29 @@ public class PlayerResourcesController : MonoBehaviour
         if (PlayerToControlResourceFor == Player.Human)
         {
             return units.Count < nodes.Count * NumberOfUnitsSupportedPerNodeControlled;
-        } else
+        }
+        else
         {
-            return units.Count < nodes.Count * (NumberOfUnitsSupportedPerNodeControlled + gameManager.NumberOfDistrictLevelsCleared);
+            return units.Count < GetMaxNumberOfUnitsThePlayerCanHave(); ;
         }
     }
+
+    public int GetMaxNumberOfUnitsThePlayerCanHave()
+    {
+        if (nodes == null)
+        {
+            return 0;
+        }
+        return nodes.Count * (NumberOfUnitsSupportedPerNodeControlled + gameManager.DistrictNumber);
+    }
+
     public void AddNode(MapNodeController node)
     {
         if (!nodes.Contains(node))
         {
             nodes.Add(node);
             UpdateNodeCount();
-            score++;
-            CountText.text = "Score: " + score.ToString();
+            MaxNumberOfUnits.SetResourceCount(GetMaxNumberOfUnitsThePlayerCanHave());
         }
     }
 
@@ -70,14 +80,12 @@ public class PlayerResourcesController : MonoBehaviour
         {
             nodes.Remove(node);
             UpdateNodeCount();
-            score--;
-            CountText.text = "Score: " + score.ToString();
         }
     }
 
     private void Awake()
     {
-        units = new List<BaseUnitLogic>();
+        units = new List<UnitController>();
         nodes = new HashSet<MapNodeController>();
     }
 
@@ -88,7 +96,7 @@ public class PlayerResourcesController : MonoBehaviour
 
         // Find any starting nodes:
         var nodeControllers = FindObjectsOfType<MapNodeController>();
-        Debug.Log("Nodes found: " + nodeControllers.Length);
+        //Debug.Log("Nodes found: " + nodeControllers.Length);
         foreach (var node in nodeControllers)
         {
             if (node.Owner == PlayerToControlResourceFor)
@@ -97,11 +105,12 @@ public class PlayerResourcesController : MonoBehaviour
             }
         }
         gameManager.FindMapNodes();
+        MaxNodesCount.SetResourceCount(gameManager.MapNodes.Length);
     }
 
     private void RemoveNullUnits()
     {
-        List<BaseUnitLogic> nonNullUnits = new();
+        List<UnitController> nonNullUnits = new();
         for (int i = 0; i < units.Count; i++)
         {
             if (units[i] != null)
@@ -114,9 +123,9 @@ public class PlayerResourcesController : MonoBehaviour
 
     private void UpdateUnitCount()
     {
-        if (UnitResourceCountController != null)
+        if (CurrentNumberOfUnits != null)
         {
-            UnitResourceCountController.SetResourceCount(units.Count);
+            CurrentNumberOfUnits.SetResourceCount(units.Count);
         }
     }
     private void UpdateNodeCount()
@@ -131,23 +140,22 @@ public class PlayerResourcesController : MonoBehaviour
             // TODO: temperate check for game end
             if (nodes.Count == 5 && gameManager.gameState >= 200)
             {
-                gameManager.NumberOfDistrictLevelsCleared++;
+                gameManager.DistrictNumber++;
                 gameManager.gameState++;
                 gameManager.resetGame();
-                DistrictMetricsTelemetryManager.Instance.TrackDistrictStartMetric();
             }
             else if (nodes.Count == 5 && (gameManager.gameState > 0 && gameManager.gameState < 200))
             {
                 gameManager.gameState = 100;
             }
-        }else if(PlayerToControlResourceFor == Player.AI)
+        }
+        else if (PlayerToControlResourceFor == Player.AI)
         {
-            Debug.Log("Node Count AI: "  + nodes.Count);
+            //Debug.Log("Node Count AI: "  + nodes.Count);
             if (nodes.Count == 5 && gameManager.gameState >= 200)
             {
-                Debug.Log("GameLose");
+                //Debug.Log("GameLose");
                 gameManager.gameState = 300;
-                DistrictMetricsTelemetryManager.Instance.TrackDistrictLossMetric();
 
             }
             else if (nodes.Count == 5 && gameManager.gameState > 0 && gameManager.gameState < 200)
@@ -166,7 +174,8 @@ public class PlayerResourcesController : MonoBehaviour
             UpdateUnitCount();
             UpdateNodeCount();
             gameManager.resource_reset = false;
-        }else if(gameManager.resource_reset_AI && PlayerToControlResourceFor == Player.AI)
+        }
+        else if (gameManager.resource_reset_AI && PlayerToControlResourceFor == Player.AI)
         {
             units.Clear();
             nodes.Clear();

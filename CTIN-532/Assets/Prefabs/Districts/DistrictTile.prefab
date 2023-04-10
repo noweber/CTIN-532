@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4738082602502201296
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4738082602502200878}
+  - component: {fileID: 4738082602502200879}
+  m_Layer: 0
+  m_Name: DistrictTile
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4738082602502200878
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4738082602502201296}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4738082602502200879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4738082602502201296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a64a60776ba1d64888ff18282b395db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GroundTilePrefabs:
+  - {fileID: 3287579429938044022, guid: 793b974eab802a34e899d6cef83d7a7e, type: 3}
+  WaterTilePrefabs:
+  - {fileID: 3287579429938044022, guid: ed86b73ca6833f64e9f7bfc3d75e77b1, type: 3}
+  ObstaclePrefabs:
+  - {fileID: 6212767972623595804, guid: 413c4fe347999a44ca1171452e307058, type: 3}
+  - {fileID: 6212767972623595804, guid: 9eeaa39f4a5b65e4dac56a399b779ec7, type: 3}
+  - {fileID: 6212767972623595804, guid: 563e4259bc09a4f4e9dda198f968ff21, type: 3}

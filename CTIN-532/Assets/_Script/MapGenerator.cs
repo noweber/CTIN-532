@@ -28,7 +28,7 @@ public class MapGenerator : Singleton<MapGenerator>
     // height width of the map
     [Header("General")]
     public Vector3 position = Vector3.zero;
-    public int map_height = 50, map_width = 50;
+    public int MapHeight = 50, MapWidth = 50;
 
     [Header("Pathos Map")]
     public int room_height_min = 5;
@@ -87,21 +87,12 @@ public class MapGenerator : Singleton<MapGenerator>
     private void Awake()
     {
         RespondsToInputSystem = true;
-        _map = new TileType[map_width, map_height];
-        _mainIsland = new bool[map_width,map_height];
-        Obs_map = new int[map_width,map_height];
+        _map = new TileType[MapWidth, MapHeight];
+        _mainIsland = new bool[MapWidth,MapHeight];
+        Obs_map = new int[MapWidth,MapHeight];
         indexOfWall = new List<index>();
     }
 
-    /// <summary>
-    /// Start is called before the first frame update.
-    /// </summary>
-    void Start()
-    {
-        Debug.Log("Press P to Generate Pathos Type Map");
-        Debug.Log("Press C to Generate Cave Type Map");
-        Debug.Log("Press R to Clear the Board");
-    }
 
     private void Update()
     {
@@ -159,7 +150,7 @@ public class MapGenerator : Singleton<MapGenerator>
     /// <returns>Returns a 2D array of bools representing the map data where true means the tile is blocked by an obstacle, wall, or not part of the map.</returns>
     public bool[,] GetBinaryTilemap()
     {
-        bool[,] tilemap = new bool[map_width, map_height];
+        bool[,] tilemap = new bool[MapWidth, MapHeight];
         if (_map == null)
         {
             return tilemap;
@@ -207,8 +198,8 @@ public class MapGenerator : Singleton<MapGenerator>
         roomH += 2;
         roomW += 2;
 
-        int x = (map_width - roomW) / 2;
-        int y = (map_height - roomH) / 2;
+        int x = (MapWidth - roomW) / 2;
+        int y = (MapHeight - roomH) / 2;
 
         for (int i = x; i < x + roomW; i++)
         {
@@ -244,12 +235,12 @@ public class MapGenerator : Singleton<MapGenerator>
                     direction = 0;
                     break;
                 }
-                else if (p.y + 1 < map_height && _map[p.x, p.y + 1] == TileType.empty)
+                else if (p.y + 1 < MapHeight && _map[p.x, p.y + 1] == TileType.empty)
                 {
                     direction = 1;
                     break;
                 }
-                else if (p.x + 1 < map_width && _map[p.x + 1, p.y] == TileType.empty)
+                else if (p.x + 1 < MapWidth && _map[p.x + 1, p.y] == TileType.empty)
                 {
                     direction = 2;
                     break;
@@ -296,9 +287,9 @@ public class MapGenerator : Singleton<MapGenerator>
     public void generateCaveMap()
     {
         // init the map
-        for (int i = 0; i < map_width; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for (int j = 0; j < map_height; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
                 if (Random.Range(0, 100) < cave_wall_chance)
                 {
@@ -327,9 +318,9 @@ public class MapGenerator : Singleton<MapGenerator>
 
         float x = position.x, y = position.y, z = position.z;
 
-        for (int i = 0; i < map_width; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for (int j = 0; j < map_height; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
 
                 switch (_map[i, j])
@@ -359,12 +350,12 @@ public class MapGenerator : Singleton<MapGenerator>
     {
         noiseOffset = Random.Range(0, 1);
         
-        for (int i = 0; i < map_width; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for (int j = 0; j < map_height; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
-                float x = noiseOffset + (float)i / map_width * 10;
-                float y = noiseOffset + (float)j / map_height * 10;
+                float x = noiseOffset + (float)i / MapWidth * 10;
+                float y = noiseOffset + (float)j / MapHeight * 10;
                 float v = Mathf.PerlinNoise(x, y);
 
                 if (v > 0.7)
@@ -391,9 +382,9 @@ public class MapGenerator : Singleton<MapGenerator>
     {
         float x = position.x, y = position.y, z = position.z;
 
-        for (int i = 0; i < map_width; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for (int j = 0; j < map_height; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
                 if (Obs_map[i, j] == 1)
                 {
@@ -459,7 +450,7 @@ public class MapGenerator : Singleton<MapGenerator>
                 break;
         }
         // check out of bound error
-        if (xStart < 0 || xEnd >= map_width || yStart < 0 || yEnd >= map_height)
+        if (xStart < 0 || xEnd >= MapWidth || yStart < 0 || yEnd >= MapHeight)
             return false;
 
         for (int i = xStart; i <= xEnd; i++)
@@ -538,7 +529,7 @@ public class MapGenerator : Singleton<MapGenerator>
                 break;
         }
 
-        if (xStart < 0 || xEnd >= map_width || yStart < 0 || yEnd >= map_height)
+        if (xStart < 0 || xEnd >= MapWidth || yStart < 0 || yEnd >= MapHeight)
             return false;
 
         for (int i = xStart; i <= xEnd; i++)
@@ -585,9 +576,9 @@ public class MapGenerator : Singleton<MapGenerator>
 
     private void clearMap()
     {
-        for (int i = 0; i < map_width; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for (int j = 0; j < map_height; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
                 _map[i, j] = 0;
             }
@@ -602,11 +593,11 @@ public class MapGenerator : Singleton<MapGenerator>
         int res = 0;
         for (int i = x - range; i <= x + range; i++)
         {
-            if (i > 0 && i < map_width)
+            if (i > 0 && i < MapWidth)
             {
                 for (int j = y - range; j <= y + range; j++)
                 {
-                    if (j > 0 && j < map_height)
+                    if (j > 0 && j < MapHeight)
                     {
                         if (_map[i, j] == TileType.floor) { res++; }
                     }
@@ -618,9 +609,9 @@ public class MapGenerator : Singleton<MapGenerator>
 
     private void caveIterate(int c)
     {
-        for (int i = 0; i < map_width; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for (int j = 0; j < map_height; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
                 if (c <= iteration_num_round_1)
                 {
@@ -656,9 +647,9 @@ public class MapGenerator : Singleton<MapGenerator>
         int maxSize = 0;
         int maxX = 0, maxY = 0;
 
-        for(int i = 0; i<map_width; i++)
+        for(int i = 0; i<MapWidth; i++)
         {
-            for(int j = 0; j<map_height; j++)
+            for(int j = 0; j<MapHeight; j++)
             {
                 if (isOpen(i,j) && _mainIsland[i,j] == false)
                 {
@@ -675,9 +666,9 @@ public class MapGenerator : Singleton<MapGenerator>
         }
 
         // reset _mainIsland
-        for (int i = 0; i < map_width; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for (int j = 0; j < map_height; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
                 _mainIsland[i, j] = false;
             }
@@ -692,9 +683,9 @@ public class MapGenerator : Singleton<MapGenerator>
         int maxSize = 0;
         int maxX = 0, maxY = 0;
 
-        for (int i = 0; i < map_width; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for (int j = 0; j < map_height; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
                 if (Obs_map[i,j] == 0 && _obsIsland[i, j] == false)
                 {
@@ -711,9 +702,9 @@ public class MapGenerator : Singleton<MapGenerator>
         }
 
         // reset _mainIsland
-        for (int i = 0; i < map_width; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for (int j = 0; j < map_height; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
                 _obsIsland[i, j] = false;
             }
@@ -730,11 +721,11 @@ public class MapGenerator : Singleton<MapGenerator>
 
         if (i - 1 >= 0 && isOpen(i - 1, j) && _mainIsland[i - 1, j] == false) dfs(i - 1, j,ref size);
         
-        if (i + 1 < map_width && isOpen(i+1,j) && _mainIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
+        if (i + 1 < MapWidth && isOpen(i+1,j) && _mainIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
 
         if (j - 1 >= 0 && isOpen(i, j-1) && _mainIsland[i , j - 1] == false) dfs(i, j - 1, ref size);
         
-        if (j + 1 < map_height && isOpen(i, j+1) && _mainIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
+        if (j + 1 < MapHeight && isOpen(i, j+1) && _mainIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
     }
 
     private void dfs_obs(int i, int j, ref int size)
@@ -743,11 +734,11 @@ public class MapGenerator : Singleton<MapGenerator>
         _obsIsland[i, j] = true;
         if (i - 1 >= 0 && Obs_map[i-1,j] == 0 && _obsIsland[i - 1, j] == false) dfs(i - 1, j, ref size);
 
-        if (i + 1 < map_width && Obs_map[i + 1, j] == 0 && _obsIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
+        if (i + 1 < MapWidth && Obs_map[i + 1, j] == 0 && _obsIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
 
         if (j - 1 >= 0 && Obs_map[i, j - 1] == 0 && _obsIsland[i, j - 1] == false) dfs(i, j - 1, ref size);
 
-        if (j + 1 < map_height && Obs_map[i, j + 1] == 0 && _obsIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
+        if (j + 1 < MapHeight && Obs_map[i, j + 1] == 0 && _obsIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
     }
 
     private bool isOpen(int i, int j)
@@ -763,9 +754,9 @@ public class MapGenerator : Singleton<MapGenerator>
         highlightGrid = new GameObject();
         float x = position.x, y = position.y+1, z = position.z;
 
-        for (int i = 0; i < map_width; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for (int j = 0; j < map_height; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
 
                 switch (_mainIsland[i, j])
@@ -794,10 +785,10 @@ public class MapGenerator : Singleton<MapGenerator>
     private void printMap()
     {
 
-        for (int i = 0; i < map_width; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
             string res = "";
-            for (int j = 0; j < map_height; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
                 switch (_map[i, j])
                 {

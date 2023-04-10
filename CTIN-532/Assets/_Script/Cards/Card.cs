@@ -16,6 +16,8 @@ public class Card : MonoBehaviour
 
     public float speed;
 
+    public string description;
+
     public Image UnitImageComponent;
 
     public GameObject UnitImageBackground;
@@ -30,6 +32,8 @@ public class Card : MonoBehaviour
 
     public TextMeshProUGUI SpeedTextComponent;
 
+    public TextMeshProUGUI DescriptionTextComponent;
+
     public GameObject UnitWorldSpacePrefab;
 
     // TODO: remove this when refactoring SelectCard() below!
@@ -40,8 +44,6 @@ public class Card : MonoBehaviour
     private bool isCardSelectable;
 
     private GameManager gameManager;
-
-    public bool isEnermy = false;
 
     private void Awake()
     {
@@ -75,6 +77,11 @@ public class Card : MonoBehaviour
             SpeedTextComponent.text = "Speed: " + speed.ToString();
         }
 
+        if (DescriptionTextComponent != null)
+        {
+            DescriptionTextComponent.text = description;
+        }
+
         // TODO: Check this code for errors with debug statements
         // TODO: Refactor this to make it re-usable by other classes.. probably has PSController or a game manager be able to provde the human controller.
         SelectedObjects[] controllers = FindObjectsOfType<SelectedObjects>();
@@ -93,15 +100,10 @@ public class Card : MonoBehaviour
 
     public void SelectCard()
     {
-        if(!gameManager.cardSelect_enabled) { return; }
+        if (!gameManager.cardSelect_enabled) { return; }
         // game state
 
         if (!isCardSelectable)
-        {
-            return;
-        }
-
-        if (isEnermy)
         {
             return;
         }
@@ -114,6 +116,7 @@ public class Card : MonoBehaviour
             {
                 // TODO: remove this hard-coding of unity type values and just push it to the unit prefabs instead of the player selection
                 playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, UnitType, hitPoints, damage, speed);
+                playerSelection.SpawnUnit(UnitWorldSpacePrefab);
             }
             else
             {
@@ -127,7 +130,7 @@ public class Card : MonoBehaviour
 
         // TODO: Refactor the way this interacts with audio manager to store the spawn clip on the base prefab instead.
         AudioManager.Instance.PlaySFX(AudioManager.Instance.SpawnSound.clip, 1.0f);
-        Destroy(this.gameObject);
+        //Destroy(this.gameObject);
     }
 
     public void AllowUse(bool state)

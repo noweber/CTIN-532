@@ -1,9 +1,10 @@
+using Assets._Script;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static MapNodeController;
 
-public class BaseUnitLogic : MonoBehaviour
+public class UnitController : MonoBehaviour
 {
     public AudioClip FightSound;
 
@@ -33,9 +34,6 @@ public class BaseUnitLogic : MonoBehaviour
 
     private const float BaseTimeBetweenMovesInSeconds = 1.0f;
 
-    [SerializeField]
-    private float timeRemainingUntilNextMoveInSeconds;
-
     private float timeBetweenTargetSelections = 1.0f;
 
     [SerializeField]
@@ -50,25 +48,17 @@ public class BaseUnitLogic : MonoBehaviour
     [SerializeField]
     protected float MaxChaseDistance = 10.0f;
 
-    private GameManager gameManager;
-
 
     void Awake()
     {
         CurrentCoordinates = new Vector2Int();
         timeUntilNextTargetSelection = 0;
         TimeUntilNextChaseTargetSelection = 0;
-        timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
         hitBox = GetComponent<HitBox>();
         hurtBox = GetComponent<HurtBox>();
     }
 
-    private void Start()
-    {
-        gameManager = FindObjectOfType<GameManager>();
-    }
-
-    public BaseUnitLogic Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float damagePoints, float speedPoints)
+    public UnitController Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float damagePoints, float speedPoints)
     {
         Owner = owner;
         CurrentCoordinates = new Vector2Int(xCoordinate, yCoordinate);
@@ -91,10 +81,11 @@ public class BaseUnitLogic : MonoBehaviour
         {
             timeBetweenMovesInSeconds = BaseTimeBetweenMovesInSeconds;
         }
-        timeRemainingUntilNextMoveInSeconds = timeBetweenMovesInSeconds;
     }
+
     void FixedUpdate()
     {
+        IsFacingLeft();
         if (Target == null)
         {
             if (timeUntilNextTargetSelection <= 0)
@@ -139,19 +130,46 @@ public class BaseUnitLogic : MonoBehaviour
         }
         else
         {
-            // If the nearest enemy is within the chase distance, chase it before continuing on the path to the target:
-            if (ChaseTarget != null)
+            // The unit does not move while it is engaged in combat or being hit:
+            if (!hitBox.IsBeingHit)
             {
-                transform.LookAt(new Vector3(ChaseTarget.transform.position.x, transform.position.y, ChaseTarget.transform.position.z));
+                // If the nearest enemy is within the chase distance, chase it before continuing on the path to the target:
+                float magnitude = Time.fixedDeltaTime / timeBetweenMovesInSeconds;
+                if (ChaseTarget != null)
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(ChaseTarget.transform.position.x, transform.position.y, ChaseTarget.transform.position.z), magnitude);
+                }
+                else
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(CurrentCoordinates.x, transform.position.y, CurrentCoordinates.y), magnitude);
+                }
             }
-            else
-            {
-                transform.LookAt(new Vector3(CurrentCoordinates.x, transform.position.y, CurrentCoordinates.y));
-            }
-
-            float magnitude = Time.fixedDeltaTime / timeBetweenMovesInSeconds;
-            transform.position += transform.forward * magnitude;
         }
+    }
+
+    public bool IsInCombat()
+    {
+        return hitBox.IsBeingHit;
+    }
+
+    /// <summary>
+    /// A method for determining which direction a unit is facing.
+    /// If the unit is not facing left, then it is facing right.
+    /// </summary>
+    /// <returns>
+    /// Returns a bool of whether or not the unit is facing left.
+    /// </returns>
+    public bool IsFacingLeft()
+    {
+        if (ChaseTarget != null)
+        {
+            return ChaseTarget.position.x < transform.position.x;
+        }
+        else if(Target != null)
+        {
+            return Target.position.x < transform.position.x;
+        }
+        return false;
     }
 
     protected virtual void SelectChaseTarget()
@@ -161,7 +179,7 @@ public class BaseUnitLogic : MonoBehaviour
         {
             targetPlayer = Player.Human;
         }
-        var nearestEnemy = gameManager.GetClosestUnitByPlayer(transform.position, targetPlayer);
+        var nearestEnemy = DependencyService.Instance.Game().GetClosestUnitByPlayer(transform.position, targetPlayer);
         if (nearestEnemy != null)
         {
             ChaseTarget = nearestEnemy.transform;

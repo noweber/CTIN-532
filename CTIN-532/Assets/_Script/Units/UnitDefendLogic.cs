@@ -1,7 +1,7 @@
 using UnityEngine;
 using static MapNodeController;
 
-public class UnitDefendLogic : BaseUnitLogic
+public class UnitDefendLogic : UnitController
 {
     public float radius = 8f;
 

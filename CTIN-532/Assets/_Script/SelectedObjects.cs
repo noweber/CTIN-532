@@ -82,9 +82,10 @@ public class SelectedObjects : MonoBehaviour
         if (Owner == Player.Human)
         {
             secondsLeftInSpawningBurst = BurstSpawnDuration;
-        } else
+        }
+        else
         {
-            secondsLeftInSpawningBurst = BurstSpawnDuration + gameManager.NumberOfDistrictLevelsCleared;
+            secondsLeftInSpawningBurst = BurstSpawnDuration + gameManager.DistrictNumber;
         }
         hitPoints = hp;
         damagePoints = damage;
@@ -94,9 +95,12 @@ public class SelectedObjects : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Owner == Player.Human)
+        {
+            return;
+        }
         if (!gameManager.spawn_enabled) { return; }
-        
+
         secondsSinceLastSpawn += Time.deltaTime;
         while (secondsSinceLastSpawn >= SecondsBetweenSpawns)
         {
@@ -157,7 +161,7 @@ public class SelectedObjects : MonoBehaviour
         }
     }
 
-    private void SpawnUnit(GameObject unitPrefab, Transform parent)
+    public void SpawnUnit(GameObject unitPrefab, Transform parent = null)
     {
         PlayerResourcesController playerResources = PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner);
         // This block of code checks whether or not the player can support an additional unit being spawned based on their resources.
@@ -166,11 +170,25 @@ public class SelectedObjects : MonoBehaviour
             return;
         }
 
+        if (Owner == Player.Human)
+        {
+            if (!CurrencyController.Instance.CanAffordAnotherUnit())
+            {
+                return;
+            }
+            CurrencyController.Instance.PurchaseUnit();
+        }
+
+        if (parent == null)
+        {
+            parent = SelectedMapNode.transform;
+        }
+
         // var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, transform);
         if (unitParent == null) unitParent = new GameObject("UnitParent");
         var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, unitParent.transform);
         // TODO: handle map scale factor on the unit's starting postion
-        BaseUnitLogic logicComponent = null;
+        UnitController logicComponent = null;
 
         // TODO: Refactor this so that the prefab contains the stat data and the UI card reads that instead of the UI card passing it to the prefab.
         // BaseUnitController controller;// = unit.GetComponent<BaseUnitController>();
@@ -192,7 +210,7 @@ public class SelectedObjects : MonoBehaviour
                     break;
                 case UnitLogic.Random:
                 default:
-                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
+                    logicComponent = unit.AddComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
                     break;
             }
         }
@@ -208,7 +226,7 @@ public class SelectedObjects : MonoBehaviour
                     logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
                     break;
                 default:
-                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
+                    logicComponent = unit.AddComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
                     break;
             }
         }

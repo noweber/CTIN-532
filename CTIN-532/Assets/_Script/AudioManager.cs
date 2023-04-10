@@ -24,8 +24,10 @@ public class AudioManager : Singleton<AudioManager>
 
     public AudioSource DistrictMusic;
 
+    public AudioSource DistrictStartZinger;
+
     // Used for UI
-    public void PlaySFX(AudioClip audioClip, float volume)
+    public void PlaySFX(AudioClip audioClip, float volume = 1.0f)
     {
         if (IsAudioClipNull(audioClip)) return;
         SFXPlayer.PlayOneShot(audioClip, volume);

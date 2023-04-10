@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using TMPro.Examples;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.UIElements;
 using static MapNodeController;
 using Random = UnityEngine.Random;
 

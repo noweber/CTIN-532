@@ -1,7 +1,7 @@
 using UnityEngine;
 using static MapNodeController;
 
-public class UnitAttackLogic : BaseUnitLogic
+public class UnitAttackLogic : UnitController
 {
     protected override void SelectTarget()
     {

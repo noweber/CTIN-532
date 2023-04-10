@@ -38,8 +38,7 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
 
         if (gameManager.gameState == 300)
         {
-            PlayerResourcesController p = PlayerResourcesManager.Instance.GetPlayerResourcesController(MapNodeController.Player.Human); ;
-            CountText.text = p.score.ToString();
+            PlayerResourcesController p = PlayerResourcesManager.Instance.GetPlayerResourcesController(MapNodeController.Player.Human);
             StartUI.SetActive(false);
             HUD.SetActive(false);
             Tutorial.SetActive(false);
@@ -100,8 +99,6 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
         gameManager.gameState = 200;
         Tutorial.SetActive(false);
         PlayerResourcesController p = PlayerResourcesManager.Instance.GetPlayerResourcesController(MapNodeController.Player.Human);
-        p.score = 0;
-
     }
 
     public void showTutorial(bool s)
@@ -121,7 +118,7 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
         {
             Tutorial.SetActive(false);
             StartUI.SetActive(false);
-            Debug.Log("load game");
+            //Debug.Log("load game");
             gameManager.resetGame();
             gameManager.gameState = 200;
         }
@@ -129,16 +126,13 @@ public class TutorialMangaer : Singleton<TutorialMangaer>
         AudioManager.Instance.DistrictMusic.Play();
         StartUI.SetActive(false);
         HUD.SetActive(true);
-        PlayerResourcesController p = PlayerResourcesManager.Instance.GetPlayerResourcesController(MapNodeController.Player.Human); ;
-        p.score = 0;
+        PlayerResourcesController p = PlayerResourcesManager.Instance.GetPlayerResourcesController(MapNodeController.Player.Human);
     }
 
     public void returnToMainmenu()
     {
         gameManager.resetGame();
         gameManager.gameState = 0;
-        PlayerResourcesController p = PlayerResourcesManager.Instance.GetPlayerResourcesController(MapNodeController.Player.Human); ;
-        p.score = 0;
+        PlayerResourcesController p = PlayerResourcesManager.Instance.GetPlayerResourcesController(MapNodeController.Player.Human);
     }
-
 }
