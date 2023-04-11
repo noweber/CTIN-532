@@ -7,8 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public int DistrictNumber = -1;
 
-    public List<MapNodeController> Selected_Nodes;
-    public MapNodeController[] MapNodes;
+    //public List<MapNodeController> Selected_Nodes;
+    //public MapNodeController[] MapNodes;
 
     //public List<BaseUnitController> Player_Units;
     //public List<BaseUnitController> Enemy_Units;
@@ -34,12 +34,11 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        Selected_Nodes = new List<MapNodeController>();
+        //Selected_Nodes = new List<MapNodeController>();
     }
 
     private void Start()
     {
-        FindMapNodes();
         ResetDistrict();
     }
 
@@ -50,18 +49,6 @@ public class GameManager : MonoBehaviour
 
     #region MapNode Manager
 
-    public bool FindMapNodes()
-    {
-        if (MapNodes.Length == 0 || MapNodes[0] == null)
-        {
-            MapNodes = FindObjectsOfType<MapNodeController>();
-            return true;
-        }else
-        {
-            return false;
-        }
-    }
-    
     public UnitController GetClosestUnitByPlayer(Vector3 position, Player owner)
     {
         List<UnitController> unitsOfPlayer = new();
@@ -89,9 +76,9 @@ public class GameManager : MonoBehaviour
 
     public MapNodeController GetRandomNodeByPlayerOrNeutral(Player owner)
     {
-        FindMapNodes();
+        var mapNodes = FindObjectsOfType<MapNodeController>();
         List<MapNodeController> possibleNodes = new();
-        foreach (var node in MapNodes)
+        foreach (var node in mapNodes)
         {
             if (node.Owner == owner || node.Owner == Player.Neutral)
             {
@@ -108,89 +95,42 @@ public class GameManager : MonoBehaviour
 
     public MapNodeController GetClosestNodeByPlayerOrNeutral(Vector3 fromPosition, Player owner)
     {
-        FindMapNodes();
+        var mapNodes = FindObjectsOfType<MapNodeController>();
         MapNodeController result = null;
         float distance = float.MaxValue;
-        for (int i = 0; i < MapNodes.Length; i++)
+        for (int i = 0; i < mapNodes.Length; i++)
         {
-            if (MapNodes[i].Owner == owner || MapNodes[i].Owner == Player.Neutral)
+            if (mapNodes[i].Owner == owner || mapNodes[i].Owner == Player.Neutral)
             {
-                float tempDistance = Vector3.Distance(MapNodes[i].transform.position, fromPosition);
+                float tempDistance = Vector3.Distance(mapNodes[i].transform.position, fromPosition);
                 if (tempDistance < distance)
                 {
                     distance = tempDistance;
-                    result = MapNodes[i];
+                    result = mapNodes[i];
                 }
             }
         }
         return result;
     }
 
-    public MapNodeController getRandomSelectedNode()
-    {
-        if (Selected_Nodes.Count == 0) return null;
-        return Selected_Nodes[UnityEngine.Random.Range(0, Selected_Nodes.Count)];
-    }
-
-    public MapNodeController closestSelected(Vector3 pos, MapNodeController.Player owner, bool isAlly)
-    {
-        if (Selected_Nodes.Count == 0) return null;
-        MapNodeController res = null;
-        float dist = float.MaxValue;
-        for (int i = 0; i < Selected_Nodes.Count; i++)
-        {
-            if ((Selected_Nodes[i].Owner == owner) == isAlly)
-            {
-                float cur = Vector3.Distance(Selected_Nodes[i].transform.position, pos);
-                if (cur < dist)
-                {
-                    dist = cur;
-                    res = Selected_Nodes[i];
-                }
-            }
-        }
-        return res;
-    }
-
-    public MapNodeController closestNode(Vector3 pos, MapNodeController.Player owner, bool isAlly)
-    {
-        FindMapNodes();
-        if (MapNodes.Length == 0) return null;
-        MapNodeController res = null;
-        float dist = float.MaxValue;
-        for (int i = 0; i < MapNodes.Length; i++)
-        {
-            if ((MapNodes[i].Owner == owner) == isAlly)
-            {
-                float cur = Vector3.Distance(MapNodes[i].transform.position, pos);
-                if (cur < dist)
-                {
-                    dist = cur;
-                    res = MapNodes[i];
-                }
-            }
-        }
-        return res;
-    }
-
     public MapNodeController closestNode(Vector3 pos)
     {
-        FindMapNodes();
-        if (MapNodes.Length == 0) return null;
+        var mapNodes = FindObjectsOfType<MapNodeController>();
+        if (mapNodes.Length == 0) return null;
         MapNodeController res = null;
         float dist = float.MaxValue;
-        for (int i = 0; i < MapNodes.Length; i++)
+        for (int i = 0; i < mapNodes.Length; i++)
         {
-            float cur = Vector3.Distance(MapNodes[i].transform.position, pos);
+            float cur = Vector3.Distance(mapNodes[i].transform.position, pos);
             if (cur < dist)
             {
                 dist = cur;
-                res = MapNodes[i];
+                res = mapNodes[i];
             }
         }
         return res;
     }
-    
+
     #endregion
 
     #region Inpute Manager
@@ -201,11 +141,11 @@ public class GameManager : MonoBehaviour
 
     private void updateControls()
     {
-        if(gameState >= 200 && gameState < 300)
+        if (gameState >= 200 && gameState < 300)
         {
             enableAll();
         }
-        if(gameState == 0 || gameState >= 300)
+        if (gameState == 0 || gameState >= 300)
         {
             disableAll();
         }
@@ -232,7 +172,7 @@ public class GameManager : MonoBehaviour
         cameraControl_enabled = false;
         mapGeneerate_enable = false;
     }
-    
+
     public void resetGame()
     {
         SelectedObjects[] unit = FindObjectsOfType<SelectedObjects>();
@@ -242,10 +182,9 @@ public class GameManager : MonoBehaviour
             Destroy(obj.unitParent);
         }
         level_reset = true;
-        Array.Clear(MapNodes, 0, MapNodes.Length);
-        card_reset= true;
+        card_reset = true;
         resource_reset = true;
-        resource_reset_AI= true;
+        resource_reset_AI = true;
     }
     #endregion
 }
