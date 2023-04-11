@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using static MapNodeController;
 using static PlayerSelection;
@@ -195,7 +194,7 @@ public class SelectedObjects : MonoBehaviour
 
         if (Owner == Player.Human)
         {
-            unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, playerSelection.SelectedLogic);
+            logicComponent = unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, playerSelection.SelectedLogic);
         }
         else
         {

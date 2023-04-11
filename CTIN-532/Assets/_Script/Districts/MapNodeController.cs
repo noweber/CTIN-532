@@ -1,6 +1,4 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MapNodeController : MonoBehaviour
 {
@@ -21,9 +19,9 @@ public class MapNodeController : MonoBehaviour
 
     private SelectedObjects playerSelection;
 
-    private bool isCurrentlyCollidingWithTrigger;
+    private bool collisionToCheck;
 
-    private float timeBetweenCollisionChecks = 0.5f;
+    private float timeBetweenCollisionChecks = 0.25f;
 
     private float timeUntilNextCollisionCheck;
 
@@ -83,44 +81,29 @@ public class MapNodeController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isCurrentlyCollidingWithTrigger)
+        if (collisionToCheck)
         {
             timeUntilNextCollisionCheck -= Time.deltaTime;
         }
     }
 
-    bool initialOwnerSet = false;
-
-    void LateUpdate()
+    public void OnTriggerEnter(Collider other)
     {
-        if (!initialOwnerSet)
-        {
-            // If this is not a neutral node, ensure its ownership is captured the first time the level starts.
-            if (Owner == Player.Human || Owner == Player.AI)
-            {
-                PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner).AddNode(this);
-            }
-        }
-        initialOwnerSet = true;
-    }
-
-    public virtual void OnTriggerStay(Collider other)
-    {
-        isCurrentlyCollidingWithTrigger = true;
+        collisionToCheck = true;
         if (timeUntilNextCollisionCheck <= 0)
         {
+            timeUntilNextCollisionCheck = timeBetweenCollisionChecks;
             ConvertToTeamColor(other);
         }
     }
 
-    public void OnTriggerEnter(Collider other)
-    {
-        ConvertToTeamColor(other);
-    }
-
     public void OnTriggerExit(Collider other)
     {
-        isCurrentlyCollidingWithTrigger = false;
+        if (timeUntilNextCollisionCheck <= 0)
+        {
+            ConvertToTeamColor(other);
+        }
+        collisionToCheck = false;
         timeUntilNextCollisionCheck = timeBetweenCollisionChecks;
     }
 
@@ -132,17 +115,17 @@ public class MapNodeController : MonoBehaviour
         {
             if (unitController.Owner == Player.Human && Owner != Player.Human)
             {
-                SetOwner(Player.Human);
-                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).AddNode(this);
-                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).RemoveNode(this);
                 AudioManager.Instance.PlaySFX(GainNodeSound, 1.0f);
+                SetOwner(Player.Human);
+                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).AddNode();
+                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).RemoveNode();
             }
             else if (unitController.Owner == Player.AI && Owner != Player.AI)
             {
                 AudioManager.Instance.PlaySFX(LoseNodeSound, 1.0f);
                 SetOwner(Player.AI);
-                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).AddNode(this);
-                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).RemoveNode(this);
+                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).RemoveNode();
+                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).AddNode();
             }
         }
     }

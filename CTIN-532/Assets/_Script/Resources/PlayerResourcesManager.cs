@@ -7,12 +7,13 @@ public class PlayerResourcesManager : Singleton<PlayerResourcesManager>
 
     private PlayerResourcesController aiResourcesController;
 
+    private void Start()
+    {
+        FetchResourceControllers();
+    }
+
     public PlayerResourcesController GetPlayerResourcesController(Player player)
     {
-        if (humanResourcesController == null || aiResourcesController == null)
-        {
-            FetchResourceControllers();
-        }
         if (player == Player.Human)
         {
             return humanResourcesController;

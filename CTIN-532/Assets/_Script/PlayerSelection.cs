@@ -1,4 +1,3 @@
-
 using Assets._Script;
 using UnityEngine;
 
@@ -15,7 +14,7 @@ public class PlayerSelection : MonoBehaviour
 
     public UnitLogic SelectedLogic;
 
-    private void Awake()
+    private void Start()
     {
         SelectUnitLogic(UnitLogic.Split);
     }

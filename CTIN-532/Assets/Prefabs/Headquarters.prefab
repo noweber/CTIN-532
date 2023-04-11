@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 8703065350162745709}
   m_Layer: 3
   m_Name: Headquarters
-  m_TagString: Untagged
+  m_TagString: DistrictMapNode
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Minimap
+  - DistrictMapNode
+  - District Map Node
   layers:
   - Default
   - TransparentFX

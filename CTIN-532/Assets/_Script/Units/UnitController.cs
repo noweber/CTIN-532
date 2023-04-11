@@ -77,6 +77,10 @@ public class UnitController : MonoBehaviour
         ChangeLogic(logic);
         return this;
     }
+    void OnDestroy()
+    {
+        PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner).RemoveUnit(this);
+    }
 
     public void ChangeLogic(UnitLogic logic)
     {
