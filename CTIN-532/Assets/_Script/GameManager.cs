@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
     public List<MapNodeController> Selected_Nodes;
     public MapNodeController[] MapNodes;
 
-    public List<BaseUnitController> Player_Units;
-    public List<BaseUnitController> Enemy_Units;
+    //public List<BaseUnitController> Player_Units;
+    //public List<BaseUnitController> Enemy_Units;
 
     public bool refreshGoal = true;
     public bool enermyRefreshGoal = true;
@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
             return false;
         }
     }
-
+    
     public UnitController GetClosestUnitByPlayer(Vector3 position, Player owner)
     {
         List<UnitController> unitsOfPlayer = new();
@@ -190,46 +190,7 @@ public class GameManager : MonoBehaviour
         }
         return res;
     }
-
-    public BaseUnitController closestEnermy(Vector3 pos, MapNodeController.Player owner, bool repeat)
-    {
-        if (owner == MapNodeController.Player.Human)
-        {
-            if (Enemy_Units.Count == 0) return null;
-            BaseUnitController res = null;
-            float dist = float.MaxValue;
-            for (int i = 0; i < Enemy_Units.Count; i++)
-            {
-                if (Enemy_Units[i].hunterTargeted && !repeat) continue;
-                float cur = Vector3.Distance(Enemy_Units[i].transform.position, pos);
-                if (cur < dist)
-                {
-                    dist = cur;
-                    res = Enemy_Units[i];
-                }
-            }
-            return res;
-        }
-        else
-        {
-            if (Player_Units.Count == 0) return null;
-            BaseUnitController res = null;
-            float dist = float.MaxValue;
-            for (int i = 0; i < Player_Units.Count; i++)
-            {
-                if (Player_Units[i].hunterTargeted && !repeat) continue;
-                float cur = Vector3.Distance(Player_Units[i].transform.position, pos);
-                if (cur < dist)
-                {
-                    dist = cur;
-                    res = Player_Units[i];
-                }
-            }
-            return res;
-        }
-
-    }
-
+    
     #endregion
 
     #region Inpute Manager

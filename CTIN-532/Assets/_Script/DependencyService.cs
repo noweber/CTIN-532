@@ -1,5 +1,6 @@
 ﻿using Assets._Script.Districts;
 using Assets._Script.Game;
+using Assets._Script.Units;
 using UnityEngine;
 
 namespace Assets._Script
@@ -14,6 +15,9 @@ namespace Assets._Script
 
         [SerializeField]
         private DistrictStateMachine districtStateMachine;
+
+        [SerializeField]
+        private PlayerSelection playerSelection;
 
         public GameStateMachine GameFsm()
         {
@@ -41,7 +45,16 @@ namespace Assets._Script
             }
             return districtController;
         }
-        
+
+        public PlayerSelection Player()
+        {
+            if (playerSelection == null)
+            {
+                playerSelection = FindObjectOfType<PlayerSelection>();
+            }
+            return playerSelection;
+        }
+
         private GameManager gameManager;
         public GameManager Game()
         {

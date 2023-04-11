@@ -141,32 +141,6 @@ public class LevelMono : MonoBehaviour
             regenerateCaveMap();
             gameManager.level_reset = false;
         }
-
-        if (mapGenerator != null && gameManager.mapGeneerate_enable)
-        {
-            if (Input.GetKeyDown(KeyCode.O))
-            {
-                RegenerateRoomMap();
-            }
-
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                regenerateCaveMap();
-            }
-        }
-
-        if (tilemap != null && gameManager.mapGeneerate_enable)
-        {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                RegenerateLevel();
-            }
-        }
-        else if(gameManager.mapGeneerate_enable)
-        {
-            // Generate a cave map by default:
-            regenerateCaveMap();
-        }
     }
 
     private void RegenerateRoomMap()
@@ -271,16 +245,6 @@ public class LevelMono : MonoBehaviour
         {
             Debug.LogError("Failed to select headquarter positions for the player positions.");
             return;
-        }
-
-        //Debug.Log("Nearest passable tile for player one's HQ is: " + playerOneHqTilemapPosition);
-        //Debug.Log("Tilemap (" + playerOneHqTilemapPosition.Item1 + ", " + playerOneHqTilemapPosition.Item2 + ") is: " + tilemap[playerOneHqTilemapPosition.Item1, playerOneHqTilemapPosition.Item2]);
-        //Debug.Log("Nearest passable tile for player two's HQ is: " + playerTwoHqTilemapPosition);
-        //Debug.Log("Tilemap (" + playerTwoHqTilemapPosition.Item1 + ", " + playerTwoHqTilemapPosition.Item2 + ") is: " + tilemap[playerTwoHqTilemapPosition.Item1, playerTwoHqTilemapPosition.Item2]);
-        if (mapGenerator != null)
-        {
-            mapGenerator.PrintMapLocation(playerOneHqTilemapPosition.Item1, playerOneHqTilemapPosition.Item2);
-            mapGenerator.PrintMapLocation(playerTwoHqTilemapPosition.Item1, playerTwoHqTilemapPosition.Item2);
         }
 
         if (HeadquartersPrefab != null)

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using static MapNodeController;
 
 namespace Assets._Script.Districts
 {
@@ -17,16 +18,6 @@ namespace Assets._Script.Districts
 
         [SerializeField]
         private GameObject tilePrefab;
-
-        // TODO: Store all of the tiles.
-
-        // TODO: Store the map nodes
-
-        private HashSet<UnitController> humanUnits;
-
-        private HashSet<UnitController> aiUnits;
-
-        private HashSet<MapNodeController> mapNodes;
 
         private Dictionary<Vector2Int, TileController> mapTiles;
 
@@ -56,87 +47,48 @@ namespace Assets._Script.Districts
 
         private void ResetLevelData()
         {
-            if (humanUnits != null)
+            var units = GameObject.FindObjectsOfType<UnitController>();
+            foreach (var unit in units)
             {
-                foreach (var unit in humanUnits)
-                {
-                    Destroy(unit.gameObject);
-                }
+                Destroy(unit.gameObject);
             }
-            humanUnits = new();
-            if (aiUnits != null)
+            var nodes = GameObject.FindObjectsOfType<MapNodeController>();
+            foreach (var node in nodes)
             {
-                foreach (var unit in aiUnits)
-                {
-                    Destroy(unit.gameObject);
-                }
+                Destroy(node.gameObject);
             }
-            aiUnits = new();
-            if (mapNodes != null)
-            {
-                foreach (var node in mapNodes)
-                {
-                    Destroy(node.gameObject);
-                }
-            }
-            mapNodes = new();
         }
 
         public List<UnitController> GetUnitsByPlayer(bool getHumanUnits)
         {
-            if (getHumanUnits)
+            var units = GameObject.FindObjectsOfType<UnitController>();
+            List<UnitController> result = new();
+            foreach (var unit in units)
             {
-                return humanUnits.ToList();
+                if ((getHumanUnits && unit.Owner == Player.Human) ||
+                    (!getHumanUnits && unit.Owner == Player.AI)
+                    )
+                {
+                    result.Add(unit);
+                }
             }
-            return aiUnits.ToList();
+            return result;
         }
 
-        public void AddUnit(UnitController unitToAdd, bool isHumanUnit)
+        public List<UnitController> GetNodesByPlayer(bool getHumanNodes)
         {
-            if (isHumanUnit)
+            var nodes = GameObject.FindObjectsOfType<UnitController>();
+            List<UnitController> result = new();
+            foreach (var node in nodes)
             {
-                if (humanUnits.Contains(unitToAdd))
+                if ((getHumanNodes && node.Owner == Player.Human) ||
+                    (!getHumanNodes && node.Owner == Player.AI)
+                    )
                 {
-                    Debug.LogError(nameof(unitToAdd));
+                    result.Add(node);
                 }
-                else
-                {
-                    humanUnits.Add(unitToAdd);
-                }
-                return;
             }
-            if (aiUnits.Contains(unitToAdd))
-            {
-                Debug.LogError(nameof(unitToAdd));
-            }
-            else
-            {
-                aiUnits.Add(unitToAdd);
-            }
-        }
-
-        public void RemoveUnit(UnitController unitToRemove, bool isHumanUnit)
-        {
-            if (isHumanUnit)
-            {
-                if (!humanUnits.Contains(unitToRemove))
-                {
-                    Debug.LogError(nameof(unitToRemove));
-                }
-                else
-                {
-                    humanUnits.Remove(unitToRemove);
-                }
-                return;
-            }
-            if (!aiUnits.Contains(unitToRemove))
-            {
-                Debug.LogError(nameof(unitToRemove));
-            }
-            else
-            {
-                aiUnits.Remove(unitToRemove);
-            }
+            return result;
         }
 
         public void CreateDistrict(int districtNumber)

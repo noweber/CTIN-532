@@ -28,7 +28,9 @@ public class MapGenerator : Singleton<MapGenerator>
     // height width of the map
     [Header("General")]
     public Vector3 position = Vector3.zero;
-    public int MapHeight = 50, MapWidth = 50;
+
+    public int MapWidth { get; private set; } = 50;
+    public int MapHeight { get; private set; } = 50;
 
     [Header("Pathos Map")]
     public int room_height_min = 5;
@@ -53,6 +55,12 @@ public class MapGenerator : Singleton<MapGenerator>
     public GameObject[] Obs_prefabs;
     private int[,] Obs_map;
     private float noiseOffset;
+
+    public void CreateMap(Vector2Int mapSize)
+    {
+        MapWidth = mapSize.x;
+        MapHeight = mapSize.y;
+    }
 
 
     /* a list of prafabs used in map
@@ -88,45 +96,9 @@ public class MapGenerator : Singleton<MapGenerator>
     {
         RespondsToInputSystem = true;
         _map = new TileType[MapWidth, MapHeight];
-        _mainIsland = new bool[MapWidth,MapHeight];
-        Obs_map = new int[MapWidth,MapHeight];
+        _mainIsland = new bool[MapWidth, MapHeight];
+        Obs_map = new int[MapWidth, MapHeight];
         indexOfWall = new List<index>();
-    }
-
-
-    private void Update()
-    {
-        if (RespondsToInputSystem)
-        {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                RegenerateRoomMap();
-            }
-
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                RegenerateCaveMap();
-            }
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                clearMap();
-            }
-
-            // mainIsland Debug
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                isOnMainIsland(0, 0);
-                MainislandLoad();
-            }
-
-
-            if (Input.GetKeyDown(KeyCode.J))
-            {
-                MainIslandDestory();
-            }
-
-        }
     }
 
     public void RegenerateRoomMap()
@@ -160,10 +132,11 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             for (int j = 0; j < _map.GetLength(1); j++)
             {
-                if((_map[i, j] == TileType.floor || _map[i, j] == TileType.door) && Obs_map[i,j]==0)
+                if ((_map[i, j] == TileType.floor || _map[i, j] == TileType.door) && Obs_map[i, j] == 0)
                 {
                     tilemap[i, j] = true;
-                } else
+                }
+                else
                 {
                     tilemap[i, j] = false;
                 }
@@ -182,7 +155,7 @@ public class MapGenerator : Singleton<MapGenerator>
             islandFilled = true;
         }
 
-        return _mainIsland[x, y] && _obsIsland[x,y];
+        return _mainIsland[x, y] && _obsIsland[x, y];
     }
 
     private void generateRoomMap()
@@ -284,7 +257,7 @@ public class MapGenerator : Singleton<MapGenerator>
         Debug.Log("Room: " + room + " //Cor: " + cor);
     }
 
-    public void generateCaveMap()
+    private void generateCaveMap()
     {
         // init the map
         for (int i = 0; i < MapWidth; i++)
@@ -310,7 +283,7 @@ public class MapGenerator : Singleton<MapGenerator>
         generateObs();
     }
 
-    public void mapLoad()
+    private void mapLoad()
     {
         grid = new GameObject();
         grid.name = "grid";
@@ -346,10 +319,10 @@ public class MapGenerator : Singleton<MapGenerator>
         obsLoad();
     }
 
-    public void generateObs()
+    private void generateObs()
     {
         noiseOffset = Random.Range(0, 1);
-        
+
         for (int i = 0; i < MapWidth; i++)
         {
             for (int j = 0; j < MapHeight; j++)
@@ -378,7 +351,7 @@ public class MapGenerator : Singleton<MapGenerator>
         }
     }
 
-    public void obsLoad()
+    private void obsLoad()
     {
         float x = position.x, y = position.y, z = position.z;
 
@@ -409,7 +382,7 @@ public class MapGenerator : Singleton<MapGenerator>
     }
 
     #region Help Funcs
-    
+
     private bool addRoom(index pos, int direction)
     {
         int roomH = Random.Range(room_height_min, room_height_max);
@@ -647,14 +620,14 @@ public class MapGenerator : Singleton<MapGenerator>
         int maxSize = 0;
         int maxX = 0, maxY = 0;
 
-        for(int i = 0; i<MapWidth; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for(int j = 0; j<MapHeight; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
-                if (isOpen(i,j) && _mainIsland[i,j] == false)
+                if (isOpen(i, j) && _mainIsland[i, j] == false)
                 {
                     int size = 0;
-                    dfs(i, j,ref size);
+                    dfs(i, j, ref size);
                     if (size >= maxSize)
                     {
                         maxSize = size;
@@ -687,7 +660,7 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             for (int j = 0; j < MapHeight; j++)
             {
-                if (Obs_map[i,j] == 0 && _obsIsland[i, j] == false)
+                if (Obs_map[i, j] == 0 && _obsIsland[i, j] == false)
                 {
                     int size = 0;
                     dfs_obs(i, j, ref size);
@@ -719,20 +692,20 @@ public class MapGenerator : Singleton<MapGenerator>
         size++;
         _mainIsland[i, j] = true;
 
-        if (i - 1 >= 0 && isOpen(i - 1, j) && _mainIsland[i - 1, j] == false) dfs(i - 1, j,ref size);
-        
-        if (i + 1 < MapWidth && isOpen(i+1,j) && _mainIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
+        if (i - 1 >= 0 && isOpen(i - 1, j) && _mainIsland[i - 1, j] == false) dfs(i - 1, j, ref size);
 
-        if (j - 1 >= 0 && isOpen(i, j-1) && _mainIsland[i , j - 1] == false) dfs(i, j - 1, ref size);
-        
-        if (j + 1 < MapHeight && isOpen(i, j+1) && _mainIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
+        if (i + 1 < MapWidth && isOpen(i + 1, j) && _mainIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
+
+        if (j - 1 >= 0 && isOpen(i, j - 1) && _mainIsland[i, j - 1] == false) dfs(i, j - 1, ref size);
+
+        if (j + 1 < MapHeight && isOpen(i, j + 1) && _mainIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
     }
 
     private void dfs_obs(int i, int j, ref int size)
     {
         size++;
         _obsIsland[i, j] = true;
-        if (i - 1 >= 0 && Obs_map[i-1,j] == 0 && _obsIsland[i - 1, j] == false) dfs(i - 1, j, ref size);
+        if (i - 1 >= 0 && Obs_map[i - 1, j] == 0 && _obsIsland[i - 1, j] == false) dfs(i - 1, j, ref size);
 
         if (i + 1 < MapWidth && Obs_map[i + 1, j] == 0 && _obsIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
 
@@ -752,7 +725,7 @@ public class MapGenerator : Singleton<MapGenerator>
     {
         if (highlightGrid != null) return;
         highlightGrid = new GameObject();
-        float x = position.x, y = position.y+1, z = position.z;
+        float x = position.x, y = position.y + 1, z = position.z;
 
         for (int i = 0; i < MapWidth; i++)
         {
@@ -777,10 +750,6 @@ public class MapGenerator : Singleton<MapGenerator>
 
     private void MainIslandDestory() { Destroy(highlightGrid); }
 
-    public void PrintMapLocation(int x, int y)
-    {
-        Debug.Log("Generated map location (" + x + ", " + y + "): " + _map[x, y]);
-    }
 
     private void printMap()
     {

@@ -195,42 +195,24 @@ public class SelectedObjects : MonoBehaviour
 
         if (Owner == Player.Human)
         {
-            switch (playerSelection.SelectedLogic)
-            {
-                case UnitLogic.Attack:
-                    logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
-                    break;
-                case UnitLogic.Defend:
-                    unit.AddComponent<RandomMeander>();
-                    logicComponent = unit.AddComponent<UnitDefendLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
-                    break;
-                case UnitLogic.Hunt:
-                    break;
-                case UnitLogic.Intercept:
-                    break;
-                case UnitLogic.Random:
-                default:
-                    logicComponent = unit.AddComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
-                    break;
-            }
+            unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, playerSelection.SelectedLogic);
         }
         else
         {
             damagePoints = unitPrefab.GetComponent<HurtBox>().Damage;
             hitPoints = unitPrefab.GetComponent<HitBox>().MaxHitPoints;
 
-            int randomLogic = Random.Range(0, 5);
+            int randomLogic = Random.Range(0, 2);
             switch (randomLogic)
             {
                 case 0:
-                    logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
+                    logicComponent = unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, UnitLogic.Attack);
                     break;
                 default:
-                    logicComponent = unit.AddComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints);
+                    logicComponent = unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, UnitLogic.Split);
                     break;
             }
         }
-        logicComponent.FightSound = AudioManager.Instance.FightSound.clip;
 
         // This adds the unit to the player's set of resources for tracking.
         playerResources.AddUnit(logicComponent);

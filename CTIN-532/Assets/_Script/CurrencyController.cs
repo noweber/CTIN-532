@@ -17,7 +17,7 @@ public class CurrencyController : Singleton<CurrencyController>
 
     void Start()
     {
-        this.TotalCurrency = 0;
+        this.TotalCurrency = CostToDeployAUnit();
         this.secondsBetweenIncrements = 0.5f;
         this.secondsElapsedSinceLastMoneyIncrement = 0;
     }
@@ -34,7 +34,7 @@ public class CurrencyController : Singleton<CurrencyController>
 
     private int CostToDeployAUnit()
     {
-        return 1000; // TODO: Instead of 10, use a cost of units.
+        return 1000;
     }
 
     // Update is called once per frame

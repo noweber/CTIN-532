@@ -7,6 +7,8 @@ public class UnitLogicSelectionButton : MonoBehaviour
 
     public GameObject Highlight;
 
+    public KeyCode Keybind = KeyCode.None;
+
     PlayerSelection playerSelection;
 
     GameManager gameManager;
@@ -32,5 +34,16 @@ public class UnitLogicSelectionButton : MonoBehaviour
     public void FlagSelectionHighlight(bool highlightOn)
     {
         Highlight.SetActive(highlightOn);
+    }
+
+    private void Update()
+    {
+        if(Keybind != KeyCode.None)
+        {
+            if(Input.GetKeyDown(Keybind))
+            {
+                SetUnitLogicOnClick();
+            }
+        }
     }
 }
