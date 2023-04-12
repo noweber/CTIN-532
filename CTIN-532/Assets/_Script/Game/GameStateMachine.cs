@@ -22,7 +22,8 @@ namespace Assets._Script.Game
 
         private Dictionary<GameState, GameObject> gameObjects;
 
-        private GameState currentState;
+        [SerializeField]
+        public GameState CurrentState { get; private set; }
 
         void Awake()
         {
@@ -49,15 +50,15 @@ namespace Assets._Script.Game
                 return;
             }
 
-            if (exitCurrentState && gameStates.ContainsKey(currentState))
+            if (exitCurrentState && gameStates.ContainsKey(CurrentState))
             {
-                gameStates[currentState].OnExit();
-                gameObjects[currentState].SetActive(false);
+                gameStates[CurrentState].OnExit();
+                gameObjects[CurrentState].SetActive(false);
             }
 
-            currentState = nextState;
-            gameStates[currentState].OnEnter();
-            gameObjects[currentState].SetActive(true);
+            CurrentState = nextState;
+            gameStates[CurrentState].OnEnter();
+            gameObjects[CurrentState].SetActive(true);
         }
     }
 }

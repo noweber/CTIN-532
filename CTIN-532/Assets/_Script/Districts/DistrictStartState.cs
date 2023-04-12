@@ -14,15 +14,6 @@ namespace Assets._Script.Districts
             AudioManager.Instance.DistrictStartZinger.Play();
             DependencyService.Instance.DistrictController().CreateDistrict();
             DependencyService.Instance.DistrictFsm().ChangeState(DistrictState.Play);
-            
-            foreach(var controller in FindObjectsOfType<SelectedObjects>())
-            {
-                controller.ResetData();
-            }
-            foreach (var controller in FindObjectsOfType<PlayerResourcesController>())
-            {
-                controller.ResetData();
-            }
         }
 
         public void OnExit()

@@ -1,3 +1,4 @@
+using Assets._Script;
 using UnityEngine;
 
 public class MapNodeController : MonoBehaviour
@@ -71,6 +72,14 @@ public class MapNodeController : MonoBehaviour
                     ToggleSelect();
                 }
             }
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (DependencyService.Instance.GameFsm().CurrentState != Assets._Script.Game.GameState.District || DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            Destroy(gameObject);
         }
     }
 

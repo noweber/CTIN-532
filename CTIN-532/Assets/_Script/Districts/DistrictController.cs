@@ -65,7 +65,7 @@ namespace Assets._Script.Districts
             return FindObjectsOfType<MapNodeController>().Length;
         }
 
-        private void ResetLevelData()
+        private void ResetDistrictData()
         {
             var units = GameObject.FindObjectsOfType<UnitController>();
             foreach (var unit in units)
@@ -76,6 +76,14 @@ namespace Assets._Script.Districts
             foreach (var node in nodes)
             {
                 Destroy(node.gameObject);
+            }
+            foreach (var controller in FindObjectsOfType<SelectedObjects>())
+            {
+                controller.ResetData();
+            }
+            foreach (var controller in FindObjectsOfType<PlayerResourcesController>())
+            {
+                controller.ResetData();
             }
         }
 
@@ -117,7 +125,8 @@ namespace Assets._Script.Districts
             {
                 DistrictNumber = districtNumber.Value;
             }
-            // TODO: ResetLevelData();
+            ResetDistrictData();
+            //// TODO: ResetLevelData();
             DistrictSize = GetDistrictSize(DistrictNumber);
             // TODO: CreateTiles(DistrictSize);
             // TODO: place hqs
