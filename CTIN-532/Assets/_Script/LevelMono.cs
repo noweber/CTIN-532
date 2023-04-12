@@ -71,8 +71,6 @@ public class LevelMono : MonoBehaviour
     /// </summary>
     private HashSet<Tuple<int, int>> obstacleMap;
 
-    private GameManager gameManager;
-
     /// <summary>
     /// TODO
     /// </summary>
@@ -104,8 +102,6 @@ public class LevelMono : MonoBehaviour
     /// </summary>
     void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
-
         // Find the human player selection controller:
         SelectedObjects[] controllers = FindObjectsOfType<SelectedObjects>();
         foreach (var controller in controllers)
@@ -118,41 +114,11 @@ public class LevelMono : MonoBehaviour
 
         // Search the scene for a reference to the map generator:
         mapGenerator = FindObjectOfType<MapGenerator>();
-
-        // Turn off the map generator's response to input so that the level generator can clear its entities before a new map is generated and add them back in afterwards.
-        if (mapGenerator != null)
-        {
-            mapGenerator.RespondsToInputSystem = false;
-        }
-        else
-        {
-            Debug.LogWarning("The level generator was unable to find a reference to the map generator.");
-        }
-
     }
 
-    /// <summary>
-    /// Update is called once per frame
-    /// </summary>
-    void Update()
+    public void CreateCaveMap(Vector2Int mapSize)
     {
-        if (gameManager.level_reset)
-        {
-            regenerateCaveMap();
-            gameManager.level_reset = false;
-        }
-    }
-
-    private void RegenerateRoomMap()
-    {
-        mapGenerator.RegenerateRoomMap();
-        tilemap = mapGenerator.GetBinaryTilemap();
-        RegenerateLevel();
-    }
-
-    public void regenerateCaveMap()
-    {
-        mapGenerator.RegenerateCaveMap();
+        mapGenerator.CreateMap(mapSize);
         tilemap = mapGenerator.GetBinaryTilemap();
         RegenerateLevel();
     }
@@ -508,7 +474,7 @@ public class LevelMono : MonoBehaviour
         }
 
         CameraControl c = FindObjectOfType<CameraControl>();
-        c.setFocus(getLevelmapPositionInWorldSpace(nodeTilemapPosition_1));
+        c.SetFocus(getLevelmapPositionInWorldSpace(nodeTilemapPosition_1));
     }
 
 }

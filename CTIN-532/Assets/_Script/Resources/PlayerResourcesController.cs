@@ -1,5 +1,4 @@
 using Assets._Script;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using static MapNodeController;
@@ -27,13 +26,13 @@ public class PlayerResourcesController : MonoBehaviour
 
     public TextMeshProUGUI CountText;
 
-    public void AddUnit(UnitController unit)
+    public void AddUnit()
     {
         unitCount++;
         UpdateUnitCount();
     }
 
-    public void RemoveUnit(UnitController unit)
+    public void RemoveUnit()
     {
         if (unitCount == 0)
         {
@@ -52,7 +51,7 @@ public class PlayerResourcesController : MonoBehaviour
         }
         else
         {
-            return unitCount < GetMaxNumberOfUnitsThePlayerCanHave(); ;
+            return unitCount < GetMaxNumberOfUnitsThePlayerCanHave();
         }
     }
 
@@ -60,7 +59,7 @@ public class PlayerResourcesController : MonoBehaviour
     {
         if (PlayerToControlResourceFor == Player.AI)
         {
-            return nodeCount * (NumberOfUnitsSupportedPerNodeControlled + DependencyService.Instance.Game().DistrictNumber);
+            return nodeCount * (NumberOfUnitsSupportedPerNodeControlled + DependencyService.Instance.DistrictController().DistrictNumber);
         }
         else
         {
@@ -81,6 +80,11 @@ public class PlayerResourcesController : MonoBehaviour
     }
 
     private void Awake()
+    {
+        ResetData();
+    }
+
+    public void ResetData()
     {
         unitCount = 0;
         nodeCount = 1;
@@ -122,49 +126,16 @@ public class PlayerResourcesController : MonoBehaviour
             }
         }
 
-        if (PlayerToControlResourceFor == Player.Human)
+        if (nodeCount > 0 && nodeCount == DependencyService.Instance.DistrictController().NumberOfNodes())
         {
-            // TODO: temperate check for game end
-            if (nodeCount == 5 && DependencyService.Instance.Game().gameState >= 200)
+            if (PlayerToControlResourceFor == Player.Human)
             {
-                DependencyService.Instance.Game().DistrictNumber++;
-                DependencyService.Instance.Game().gameState++;
-                DependencyService.Instance.Game().resetGame();
+                DependencyService.Instance.DistrictFsm().ChangeState(DistrictState.Victory);
             }
-            else if (nodeCount == 5 && (DependencyService.Instance.Game().gameState > 0 && DependencyService.Instance.Game().gameState < 200))
+            else if (PlayerToControlResourceFor == Player.AI)
             {
-                DependencyService.Instance.Game().gameState = 100;
+                DependencyService.Instance.DistrictFsm().ChangeState(DistrictState.Defeat);
             }
-        }
-        else if (PlayerToControlResourceFor == Player.AI)
-        {
-            //Debug.Log("Node Count AI: "  + nodes.Count);
-            if (nodeCount == 5 && DependencyService.Instance.Game().gameState >= 200)
-            {
-                //Debug.Log("GameLose");
-                DependencyService.Instance.Game().gameState = 300;
-
-            }
-            else if (nodeCount == 5 && DependencyService.Instance.Game().gameState > 0 && DependencyService.Instance.Game().gameState < 200)
-            {
-                DependencyService.Instance.Game().gameState = 100;
-            }
-        }
-    }
-
-    private void LateUpdate()
-    {
-        if (DependencyService.Instance.Game().resource_reset && PlayerToControlResourceFor == Player.Human)
-        {
-            UpdateUnitCount();
-            UpdateNodeCount();
-            DependencyService.Instance.Game().resource_reset = false;
-        }
-        else if (DependencyService.Instance.Game().resource_reset_AI && PlayerToControlResourceFor == Player.AI)
-        {
-            UpdateUnitCount();
-            UpdateNodeCount();
-            DependencyService.Instance.Game().resource_reset_AI = false;
         }
     }
 }

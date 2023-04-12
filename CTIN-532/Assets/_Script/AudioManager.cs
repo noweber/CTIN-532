@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : Singleton<AudioManager>
@@ -25,6 +23,10 @@ public class AudioManager : Singleton<AudioManager>
     public AudioSource DistrictMusic;
 
     public AudioSource DistrictStartZinger;
+
+    public AudioSource Victory;
+
+    public AudioSource Defeat;
 
     // Used for UI
     public void PlaySFX(AudioClip audioClip, float volume = 1.0f)

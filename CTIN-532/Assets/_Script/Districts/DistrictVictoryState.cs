@@ -1,10 +1,4 @@
 ﻿using Assets._Script.Game;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets._Script.Districts
@@ -13,6 +7,10 @@ namespace Assets._Script.Districts
     {
         public void OnEnter()
         {
+            //DependencyService.Instance.Game().resetGame();
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.Victory.clip);
+            DependencyService.Instance.DistrictController().NextDistrict();
+            DependencyService.Instance.DistrictFsm().ChangeState(DistrictState.Start);
         }
 
         public void OnExit()

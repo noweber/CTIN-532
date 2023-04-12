@@ -12,6 +12,12 @@ public class PlayerResourcesManager : Singleton<PlayerResourcesManager>
         FetchResourceControllers();
     }
 
+    public void ResetData()
+    {
+        humanResourcesController.ResetData();
+        aiResourcesController.ResetData();
+    }
+
     public PlayerResourcesController GetPlayerResourcesController(Player player)
     {
         if (player == Player.Human)

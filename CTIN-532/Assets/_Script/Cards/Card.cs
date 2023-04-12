@@ -43,7 +43,7 @@ public class Card : MonoBehaviour
 
     private bool isCardSelectable;
 
-    private GameManager gameManager;
+    //private GameManager gameManager;
 
     private void Awake()
     {
@@ -95,12 +95,12 @@ public class Card : MonoBehaviour
 
         isCardSelectable = true;
 
-        gameManager = FindObjectOfType<GameManager>();
+        //gameManager = FindObjectOfType<GameManager>();
     }
 
     public void SelectCard()
     {
-        if (!gameManager.cardSelect_enabled) { return; }
+        //if (!gameManager.cardSelect_enabled) { return; }
         // game state
 
         if (!isCardSelectable)

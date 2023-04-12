@@ -20,6 +20,8 @@ namespace Assets._Script.Game
 
         private Dictionary<GameState, IGameState> gameStates;
 
+        private Dictionary<GameState, GameObject> gameObjects;
+
         private GameState currentState;
 
         void Awake()
@@ -28,6 +30,10 @@ namespace Assets._Script.Game
             gameStates.Add(GameState.Menu, MenuState);
             gameStates.Add(GameState.Credits, CreditsState);
             gameStates.Add(GameState.District, DistrictState);
+            gameObjects = new();
+            gameObjects.Add(GameState.Menu, MenuState.gameObject);
+            gameObjects.Add(GameState.Credits, CreditsState.gameObject);
+            gameObjects.Add(GameState.District, DistrictState.gameObject);
         }
 
         private void Start()
@@ -46,10 +52,12 @@ namespace Assets._Script.Game
             if (exitCurrentState && gameStates.ContainsKey(currentState))
             {
                 gameStates[currentState].OnExit();
+                gameObjects[currentState].SetActive(false);
             }
 
             currentState = nextState;
             gameStates[currentState].OnEnter();
+            gameObjects[currentState].SetActive(true);
         }
     }
 }

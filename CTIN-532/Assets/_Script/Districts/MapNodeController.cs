@@ -19,13 +19,9 @@ public class MapNodeController : MonoBehaviour
 
     private SelectedObjects playerSelection;
 
-    private bool collisionToCheck;
-
-    private float timeBetweenCollisionChecks = 0.25f;
+    private float timeBetweenCollisionChecks = 1.0f;
 
     private float timeUntilNextCollisionCheck;
-
-    private GameManager gameManager;
 
     public enum Player
     {
@@ -36,7 +32,6 @@ public class MapNodeController : MonoBehaviour
 
     public void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
         playerSelection = FindObjectOfType<SelectedObjects>();
         SelectedObjects[] controllers = FindObjectsOfType<SelectedObjects>();
         foreach (var controller in controllers)
@@ -65,7 +60,7 @@ public class MapNodeController : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetMouseButtonDown(0) && gameManager.nodeSelect_enabled)
+        if (Input.GetMouseButtonDown(0))
         {
             RaycastHit raycastHit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -81,30 +76,34 @@ public class MapNodeController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (collisionToCheck)
+        if (timeUntilNextCollisionCheck > 0)
         {
             timeUntilNextCollisionCheck -= Time.deltaTime;
         }
+
+    }
+    public void OnTriggerStay(Collider other)
+    {
+        CheckIfShouldConvertColor(other);
     }
 
     public void OnTriggerEnter(Collider other)
     {
-        collisionToCheck = true;
+        CheckIfShouldConvertColor(other);
+    }
+
+    public void OnTriggerExit(Collider other)
+    {
+        CheckIfShouldConvertColor(other);
+    }
+
+    private void CheckIfShouldConvertColor(Collider other)
+    {
         if (timeUntilNextCollisionCheck <= 0)
         {
             timeUntilNextCollisionCheck = timeBetweenCollisionChecks;
             ConvertToTeamColor(other);
         }
-    }
-
-    public void OnTriggerExit(Collider other)
-    {
-        if (timeUntilNextCollisionCheck <= 0)
-        {
-            ConvertToTeamColor(other);
-        }
-        collisionToCheck = false;
-        timeUntilNextCollisionCheck = timeBetweenCollisionChecks;
     }
 
     private void ConvertToTeamColor(Collider other)
@@ -126,6 +125,10 @@ public class MapNodeController : MonoBehaviour
                 SetOwner(Player.AI);
                 PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).RemoveNode();
                 PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).AddNode();
+                if (playerSelection.SelectedMapNode == this)
+                {
+                    playerSelection.SetSelectedMapNode(null);
+                }
             }
         }
     }
@@ -140,7 +143,6 @@ public class MapNodeController : MonoBehaviour
     {
         if (Owner == Player.Human)
         {
-            AudioManager.Instance.PlaySFX(SelectSound, 1.0f);
             if (isSelected)
             {
                 playerSelection.SetSelectedMapNode(null);
@@ -148,6 +150,7 @@ public class MapNodeController : MonoBehaviour
             }
             else
             {
+                AudioManager.Instance.PlaySFX(SelectSound, 1.0f);
                 playerSelection.SetSelectedMapNode(this);
                 Select_Sphere.SetActive(true);
                 isSelected = true;

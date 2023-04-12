@@ -54,15 +54,5 @@ namespace Assets._Script
             }
             return playerSelection;
         }
-
-        private GameManager gameManager;
-        public GameManager Game()
-        {
-            if (gameManager == null)
-            {
-                gameManager = FindObjectOfType<GameManager>();
-            }
-            return gameManager;
-        }
     }
 }

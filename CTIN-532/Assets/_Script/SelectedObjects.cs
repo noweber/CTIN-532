@@ -1,3 +1,5 @@
+using Assets._Script;
+using System.Collections.Generic;
 using UnityEngine;
 using static MapNodeController;
 using static PlayerSelection;
@@ -23,18 +25,11 @@ public class SelectedObjects : MonoBehaviour
 
     private float secondsSinceLastSpawn;
 
-    public float BurstSpawnDuration = 1.0f;
-
-    [Min(1)]
-    public int BurstSpawnRate = 4;
-
-    private float secondsLeftInSpawningBurst;
-
     private int type;
 
     private PlayerSelection playerSelection;
 
-    private GameManager gameManager;
+    //private GameManager gameManager;
 
     public GameObject unitParent;
 
@@ -61,31 +56,26 @@ public class SelectedObjects : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        secondsSinceLastSpawn = 0;
-        secondsLeftInSpawningBurst = 0;
+        //secondsSinceLastSpawn = 0;
         playerSelection = GetComponent<PlayerSelection>();
-        gameManager = FindObjectOfType<GameManager>();
-        unitParent = new GameObject("UnitParent");
+        //gameManager = FindObjectOfType<GameManager>();
+        ResetData();
     }
-
-    public void reset()
+    
+    public void ResetData()
     {
         secondsSinceLastSpawn = 0;
-        secondsLeftInSpawningBurst = 0;
+        if (unitParent != null)
+        {
+            Destroy(unitParent);
+        }
+        unitParent = new GameObject("UnitParent");
     }
 
     public void SelectUnitToSpawn(GameObject prefab, int type, float hp, float damage, float speed)
     {
         SelectedUnitPrefab = prefab;
         this.type = type;
-        if (Owner == Player.Human)
-        {
-            secondsLeftInSpawningBurst = BurstSpawnDuration;
-        }
-        else
-        {
-            secondsLeftInSpawningBurst = BurstSpawnDuration + gameManager.DistrictNumber;
-        }
         hitPoints = hp;
         damagePoints = damage;
         speedPoints = speed;
@@ -94,11 +84,16 @@ public class SelectedObjects : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            return;
+        }
+
         if (Owner == Player.Human)
         {
             return;
         }
-        if (!gameManager.spawn_enabled) { return; }
+        //if (!gameManager.spawn_enabled) { return; }
 
         secondsSinceLastSpawn += Time.deltaTime;
         while (secondsSinceLastSpawn >= SecondsBetweenSpawns)
@@ -111,10 +106,6 @@ public class SelectedObjects : MonoBehaviour
                     if (SelectedMapNode.Owner == Owner)
                     {
                         int spawnCount = 1;
-                        if (secondsLeftInSpawningBurst > 0)
-                        {
-                            spawnCount = BurstSpawnRate;
-                        }
                         for (int i = 0; i < spawnCount; i++)
                         {
                             SpawnUnit(list_Of_UnitPrefab[type], SelectedMapNode.transform);
@@ -153,15 +144,16 @@ public class SelectedObjects : MonoBehaviour
                 }
             }
         }
-
-        if (secondsLeftInSpawningBurst > 0)
-        {
-            secondsLeftInSpawningBurst -= Time.deltaTime;
-        }
     }
 
     public void SpawnUnit(GameObject unitPrefab, Transform parent = null)
     {
+        // TODO: Refactor this so that the game object does not exist outside of this state and does not need this dependency 
+        if(DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            return;
+        }
+
         PlayerResourcesController playerResources = PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner);
         // This block of code checks whether or not the player can support an additional unit being spawned based on their resources.
         if (!playerResources.CanSupportAnAdditionalUnit())
@@ -183,18 +175,11 @@ public class SelectedObjects : MonoBehaviour
             parent = SelectedMapNode.transform;
         }
 
-        // var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, transform);
         if (unitParent == null) unitParent = new GameObject("UnitParent");
         var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, unitParent.transform);
-        // TODO: handle map scale factor on the unit's starting postion
-        UnitController logicComponent = null;
-
-        // TODO: Refactor this so that the prefab contains the stat data and the UI card reads that instead of the UI card passing it to the prefab.
-        // BaseUnitController controller;// = unit.GetComponent<BaseUnitController>();
-
         if (Owner == Player.Human)
         {
-            logicComponent = unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, playerSelection.SelectedLogic);
+            unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, playerSelection.SelectedLogic);
         }
         else
         {
@@ -205,15 +190,15 @@ public class SelectedObjects : MonoBehaviour
             switch (randomLogic)
             {
                 case 0:
-                    logicComponent = unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, UnitLogic.Attack);
+                    unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, UnitLogic.Attack);
                     break;
                 default:
-                    logicComponent = unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, UnitLogic.Split);
+                    unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, UnitLogic.Split);
                     break;
             }
         }
 
         // This adds the unit to the player's set of resources for tracking.
-        playerResources.AddUnit(logicComponent);
+        playerResources.AddUnit();
     }
 }

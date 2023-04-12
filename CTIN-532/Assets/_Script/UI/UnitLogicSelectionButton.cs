@@ -11,17 +11,13 @@ public class UnitLogicSelectionButton : MonoBehaviour
 
     PlayerSelection playerSelection;
 
-    GameManager gameManager;
-
     private void Start()
     {
         playerSelection = FindObjectOfType<PlayerSelection>();
-        gameManager = FindObjectOfType<GameManager>();
     }
 
     public void SetUnitLogicOnClick()
     {
-        if(!gameManager.logicSelect_enabled) { return; }
         playerSelection.SelectUnitLogic(UnitLogicForButton);
         UnitLogicSelectionButton[] buttons = Object.FindObjectsOfType<UnitLogicSelectionButton>();
         foreach (var button in buttons)

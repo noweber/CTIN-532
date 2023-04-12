@@ -79,7 +79,7 @@ public class UnitController : MonoBehaviour
     }
     void OnDestroy()
     {
-        PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner).RemoveUnit(this);
+        PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner).RemoveUnit();
     }
 
     public void ChangeLogic(UnitLogic logic)
@@ -110,6 +110,11 @@ public class UnitController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            Destroy(gameObject);
+        }
+
         IsFacingLeft();
         if (Target == null)
         {
@@ -159,7 +164,7 @@ public class UnitController : MonoBehaviour
             if (!hitBox.IsBeingHit)
             {
                 // If the nearest enemy is within the chase distance, chase it before continuing on the path to the target:
-                float magnitude = Time.fixedDeltaTime / timeBetweenMovesInSeconds;
+                float magnitude = UnityEngine.Random.Range(0.8f * Time.fixedDeltaTime / timeBetweenMovesInSeconds, Time.fixedDeltaTime / timeBetweenMovesInSeconds);
                 if (ChaseTarget != null)
                 {
                     transform.position = Vector3.MoveTowards(transform.position, new Vector3(ChaseTarget.transform.position.x, transform.position.y, ChaseTarget.transform.position.z), magnitude);
@@ -258,31 +263,22 @@ public class UnitController : MonoBehaviour
 
     protected void SelectTarget()
     {
-        var gameManager = FindObjectOfType<GameManager>();
-
-        // TODO: Refactor
         switch (CurrentLogic)
         {
             case UnitLogic.Attack:
                 if (Owner == Player.Human)
                 {
-                    Target = gameManager.GetClosestNodeByPlayerOrNeutral(this.transform.position, Player.AI).transform;
+                    Target = UnitHelpers.GetClosestNodeByPlayerOrNeutral(this.transform.position, Player.AI).transform;
                 }
                 else
                 {
-                    Target = gameManager.GetClosestNodeByPlayerOrNeutral(this.transform.position, Player.Human).transform;
+                    Target = UnitHelpers.GetClosestNodeByPlayerOrNeutral(this.transform.position, Player.Human).transform;
                 }
                 TargetCoordinates = new Vector2Int((int)Target.transform.position.x, (int)Target.transform.position.z);
                 break;
             case UnitLogic.Defend:
-                if (Owner == Player.Human)
-                {
-                    Target = gameManager.GetClosestUnitByPlayer(this.transform.position, Player.AI).transform;
-                }
-                else
-                {
-                    Target = gameManager.GetClosestUnitByPlayer(this.transform.position, Player.Human).transform;
-                }
+
+                Target = UnitHelpers.GetNearestHostileUnit(this).transform;
 
                 if (Vector3.Distance(this.transform.position, Target.transform.position) > defenseRadius)
                 {
@@ -318,11 +314,11 @@ public class UnitController : MonoBehaviour
             default:
                 if (this.Owner == Player.Human)
                 {
-                    Target = gameManager.GetRandomNodeByPlayerOrNeutral(Player.AI).transform;
+                    Target = UnitHelpers.GetRandomNodeByPlayerOrNeutral(Player.AI).transform;
                 }
                 else
                 {
-                    Target = gameManager.GetRandomNodeByPlayerOrNeutral(Player.Human).transform;
+                    Target = UnitHelpers.GetRandomNodeByPlayerOrNeutral(Player.Human).transform;
                 }
                 TargetCoordinates = new Vector2Int((int)Target.transform.position.x, (int)Target.transform.position.z);
                 break;

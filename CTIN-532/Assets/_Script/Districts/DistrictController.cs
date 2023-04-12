@@ -34,6 +34,22 @@ namespace Assets._Script.Districts
             DistrictSize = new Vector2Int();
         }
 
+        public void NextDistrict()
+        {
+            if (DistrictNumber < int.MaxValue)
+            {
+                DistrictNumber++;
+            }
+        }
+
+        public void PreviousDistrict()
+        {
+            if (DistrictNumber > 0)
+            {
+                DistrictNumber++;
+            }
+        }
+
         public bool IsTilePassable(int x, int y)
         {
             var tileKey = new Vector2Int(x, y);
@@ -42,6 +58,11 @@ namespace Assets._Script.Districts
                 return false;
             }
             return mapTiles[tileKey].IsPassable;
+        }
+
+        public int NumberOfNodes()
+        {
+            return FindObjectsOfType<MapNodeController>().Length;
         }
 
         private void ResetLevelData()
@@ -74,10 +95,10 @@ namespace Assets._Script.Districts
             return result;
         }
 
-        public List<UnitController> GetNodesByPlayer(bool getHumanNodes)
+        public List<MapNodeController> GetNodesByPlayer(bool getHumanNodes)
         {
-            var nodes = GameObject.FindObjectsOfType<UnitController>();
-            List<UnitController> result = new();
+            var nodes = GameObject.FindObjectsOfType<MapNodeController>();
+            List<MapNodeController> result = new();
             foreach (var node in nodes)
             {
                 if ((getHumanNodes && node.Owner == Player.Human) ||
@@ -90,13 +111,21 @@ namespace Assets._Script.Districts
             return result;
         }
 
-        public void CreateDistrict(int districtNumber)
+        public void CreateDistrict(int? districtNumber = null)
         {
-            ResetLevelData();
-            DistrictSize = GetDistrictSize(districtNumber);
-            CreateTiles(DistrictSize);
+            if (districtNumber != null && districtNumber.HasValue)
+            {
+                DistrictNumber = districtNumber.Value;
+            }
+            // TODO: ResetLevelData();
+            DistrictSize = GetDistrictSize(DistrictNumber);
+            // TODO: CreateTiles(DistrictSize);
             // TODO: place hqs
             // TODO: place additional nodes based on level size
+
+            // TEMP:
+            var level = GameObject.FindObjectOfType<LevelMono>();
+            level.CreateCaveMap(DistrictSize);
         }
 
         private void CreateTiles(Vector2Int mapSize)

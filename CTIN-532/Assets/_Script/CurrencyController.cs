@@ -1,3 +1,4 @@
+using Assets._Script;
 using UnityEngine;
 
 public class CurrencyController : Singleton<CurrencyController>
@@ -16,6 +17,11 @@ public class CurrencyController : Singleton<CurrencyController>
     private float secondsElapsedSinceLastMoneyIncrement;
 
     void Start()
+    {
+        ResetData();
+    }
+
+    public void ResetData()
     {
         this.TotalCurrency = CostToDeployAUnit();
         this.secondsBetweenIncrements = 0.5f;
@@ -40,6 +46,11 @@ public class CurrencyController : Singleton<CurrencyController>
     // Update is called once per frame
     void Update()
     {
+        if (DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            return;
+        }
+
         this.secondsElapsedSinceLastMoneyIncrement += Time.deltaTime;
 
         while (this.secondsElapsedSinceLastMoneyIncrement > this.secondsBetweenIncrements)
