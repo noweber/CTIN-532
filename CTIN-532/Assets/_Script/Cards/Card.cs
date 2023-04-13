@@ -36,9 +36,6 @@ public class Card : MonoBehaviour
 
     public GameObject UnitWorldSpacePrefab;
 
-    // TODO: remove this when refactoring SelectCard() below!
-    public int UnitType;
-
     private SelectedObjects playerSelection;
 
     private bool isCardSelectable;
@@ -101,6 +98,7 @@ public class Card : MonoBehaviour
             return;
         }
 
+
         Time.timeScale = 1;
 
         if (playerSelection != null)
@@ -108,7 +106,7 @@ public class Card : MonoBehaviour
             if (UnitWorldSpacePrefab != null)
             {
                 // TODO: remove this hard-coding of unity type values and just push it to the unit prefabs instead of the player selection
-                playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, UnitType, hitPoints, damage, speed);
+                playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, unitName, hitPoints, damage, speed);
                 playerSelection.SpawnUnit(UnitWorldSpacePrefab);
             }
             else

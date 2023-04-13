@@ -26,7 +26,7 @@ public class SelectedObjects : MonoBehaviour
 
     private float secondsSinceLastSpawn;
 
-    private int type;
+    private string unitName;
 
     private PlayerSelection playerSelection;
 
@@ -71,10 +71,10 @@ public class SelectedObjects : MonoBehaviour
         unitParent = new GameObject("UnitParent");
     }
 
-    public void SelectUnitToSpawn(GameObject prefab, int type, float hp, float damage, float speed)
+    public void SelectUnitToSpawn(GameObject prefab, string unitName, float hp, float damage, float speed)
     {
         SelectedUnitPrefab = prefab;
-        this.type = type;
+        this.unitName = unitName;
         hitPoints = hp;
         damagePoints = damage;
         speedPoints = speed;
@@ -157,6 +157,7 @@ public class SelectedObjects : MonoBehaviour
                 return;
             }
             CurrencyController.Instance.PurchaseUnit();
+            Analytics.Instance.SendUnitAnalytics(this.unitName);
         }
 
         if (parent == null)
