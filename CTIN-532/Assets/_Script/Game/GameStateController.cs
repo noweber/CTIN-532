@@ -11,5 +11,10 @@ namespace Assets._Script.Game
         {
             DependencyService.Instance.GameFsm().ChangeState(GameState.District);
         }
+
+        public void ChangeToMenu()
+        {
+            DependencyService.Instance.GameFsm().ChangeState(GameState.Menu);
+        }
     }
 }

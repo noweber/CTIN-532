@@ -1,4 +1,5 @@
 ﻿using Assets._Script.Game;
+using TMPro;
 using UnityEngine;
 
 namespace Assets._Script.Districts
@@ -8,16 +9,18 @@ namespace Assets._Script.Districts
         [SerializeField]
         private GameObject defeatUi;
 
+        [SerializeField]
+        private TextMeshProUGUI scoreText;
+
         public void OnEnter()
         {
             defeatUi.SetActive(true);
-            //DependencyService.Instance.Game().resetGame();
             AudioManager.Instance.PlaySFX(AudioManager.Instance.Defeat.clip);
-            // TODO: transition to main menu instead
-            //TutorialMangaer.Instance.returnToMainmenu();
-            //DependencyService.Instance.DistrictController().PreviousDistrict();
-            //DependencyService.Instance.DistrictFsm().ChangeState(DistrictState.Start);
-            //DependencyService.Instance.Game().gameState = 0;
+            if (scoreText != null)
+            {
+                scoreText.text = (DependencyService.Instance.DistrictController().DistrictNumber * 1000).ToString();
+            }
+            DependencyService.Instance.DistrictController().PreviousDistrict();
         }
 
         public void OnExit()

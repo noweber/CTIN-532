@@ -22,7 +22,7 @@ public class PlayerResourcesController : MonoBehaviour
     private int unitCount;
 
     [SerializeField]
-    private int nodeCount;
+    public int NodeCount { get; set; }
 
     public TextMeshProUGUI CountText;
 
@@ -47,7 +47,7 @@ public class PlayerResourcesController : MonoBehaviour
     {
         if (PlayerToControlResourceFor == Player.Human)
         {
-            return unitCount < nodeCount * NumberOfUnitsSupportedPerNodeControlled;
+            return unitCount < NodeCount * NumberOfUnitsSupportedPerNodeControlled;
         }
         else
         {
@@ -59,11 +59,11 @@ public class PlayerResourcesController : MonoBehaviour
     {
         if (PlayerToControlResourceFor == Player.AI)
         {
-            return nodeCount * (NumberOfUnitsSupportedPerNodeControlled + DependencyService.Instance.DistrictController().DistrictNumber);
+            return NodeCount * (NumberOfUnitsSupportedPerNodeControlled + DependencyService.Instance.DistrictController().DistrictNumber);
         }
         else
         {
-            return nodeCount * (NumberOfUnitsSupportedPerNodeControlled);
+            return NodeCount * (NumberOfUnitsSupportedPerNodeControlled);
         }
     }
 
@@ -87,7 +87,7 @@ public class PlayerResourcesController : MonoBehaviour
     public void ResetData()
     {
         unitCount = 0;
-        nodeCount = 1;
+        NodeCount = 1;
     }
 
     private void UpdateUnitCount()
@@ -119,14 +119,14 @@ public class PlayerResourcesController : MonoBehaviour
                     nodesOwned++;
                 }
             }
-            nodeCount = nodesOwned;
+            NodeCount = nodesOwned;
             if (NodeResourceCountController != null)
             {
-                NodeResourceCountController.SetResourceCount(nodeCount);
+                NodeResourceCountController.SetResourceCount(NodeCount);
             }
         }
 
-        if (nodeCount > 0 && nodeCount == DependencyService.Instance.DistrictController().NumberOfNodes())
+        if (NodeCount > 0 && NodeCount == DependencyService.Instance.DistrictController().NumberOfNodes())
         {
             if (PlayerToControlResourceFor == Player.Human)
             {

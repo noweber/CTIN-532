@@ -87,10 +87,6 @@ public class MapGenerator : Singleton<MapGenerator>
         mapLoad();
     }
 
-    /// <summary>
-    /// This function exposed the underlying map data as a 2D array of integers.
-    /// </summary>
-    /// <returns>Returns a 2D array of bools representing the map data where true means the tile is blocked by an obstacle, wall, or not part of the map.</returns>
     public bool[,] GetBinaryTilemap()
     {
         bool[,] tilemap = new bool[MapWidth, MapHeight];
@@ -103,7 +99,7 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             for (int j = 0; j < _map.GetLength(1); j++)
             {
-                if ((_map[i, j] == TileType.floor || _map[i, j] == TileType.door) && Obs_map[i, j] == 0)
+                if ((_map[i, j] == TileType.floor || _map[i, j] == TileType.door || _map[i, j] == TileType.empty) && Obs_map[i, j] == 0)
                 {
                     tilemap[i, j] = true;
                 }
@@ -126,7 +122,7 @@ public class MapGenerator : Singleton<MapGenerator>
             islandFilled = true;
         }
 
-        return _mainIsland[x, y] && _obsIsland[x, y];
+        return _mainIsland[x, y];// && _obsIsland[x, y];
     }
 
     private void generateCaveMap()
@@ -203,15 +199,15 @@ public class MapGenerator : Singleton<MapGenerator>
                 float y = noiseOffset + (float)j / MapHeight * 10;
                 float v = Mathf.PerlinNoise(x, y);
 
-                if (v > 0.7)
+                if (v > 0.88)
                 {
                     Obs_map[i, j] = 3;
                 }
-                else if (v > 0.6)
+                else if (v > 0.76)
                 {
                     Obs_map[i, j] = 2;
                 }
-                else if (v > 0.5)
+                else if (v > 0.64)
                 {
                     Obs_map[i, j] = 1;
                 }
@@ -423,7 +419,7 @@ public class MapGenerator : Singleton<MapGenerator>
 
     private bool isOpen(int i, int j)
     {
-        return _map[i, j] == TileType.floor || _map[i, j] == TileType.door;
+        return _map[i, j] == TileType.floor || _map[i, j] == TileType.door || _map[i, j] == TileType.empty;
     }
     #endregion
 

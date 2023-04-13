@@ -6,8 +6,7 @@ namespace Assets._Script.Districts
 {
     public class DistrictController : MonoBehaviour
     {
-        [SerializeField]
-        public int DistrictNumber { get; private set; }
+        public int DistrictNumber = 0;
 
         [SerializeField]
         public Vector2Int DistrictSize { get; private set; }
@@ -30,7 +29,6 @@ namespace Assets._Script.Districts
             {
                 Debug.LogError("The tile prefab does not contain a tile controller.");
             }
-            DistrictNumber = 0;
             DistrictSize = new Vector2Int();
         }
 
@@ -46,7 +44,7 @@ namespace Assets._Script.Districts
         {
             if (DistrictNumber > 0)
             {
-                DistrictNumber++;
+                DistrictNumber /= 2;
             }
         }
 
@@ -164,7 +162,9 @@ namespace Assets._Script.Districts
 
         private Vector2Int GetDistrictSize(int districtNumber)
         {
-            int size = DefaultDistrictSize + Mathf.FloorToInt(Mathf.Pow((float)districtNumber, 0.8f));
+            int size = DefaultDistrictSize + 2 * districtNumber;// Mathf.FloorToInt(Mathf.Pow((float)districtNumber + 1, 0.75F));
+            Debug.Log("District Number: " + districtNumber);
+            Debug.Log("District Size: " + size);
             return new Vector2Int(size, size);
         }
     }

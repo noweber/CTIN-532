@@ -5,6 +5,7 @@ using UnityEngine;
 using static MapNodeController;
 using Random = UnityEngine.Random;
 using System.Linq;
+using Assets._Script;
 
 /// <summary>
 /// This class creates the game's entities procedurally which sets up a playable level within the game.
@@ -110,7 +111,24 @@ public class LevelMono : MonoBehaviour
     {
         mapGenerator.CreateMap(mapSize);
         obstacleBinaryMap = mapGenerator.GetBinaryTilemap();
-        PlaceFortressNodes();
+        //DebugUtils.PrintBoolArray(obstacleBinaryMap);
+        //PlaceFortressNodes();
+        int radius = (int)Math.Sqrt(((mapSize.x + mapSize.y) / 4) + 1);
+        //int radius = DependencyService.Instance.DistrictController().DistrictNumber + 4;
+        //Debug.Log("radius: " + radius);
+        //var nodePositions = PoissonDiscSampling.GeneratePoints(obstacleBinaryMap, radius);
+        var nodePositions = RandomSampling.GetRandomPointsFromGrid(obstacleBinaryMap, 1, 1 + (int)Math.Sqrt(DependencyService.Instance.DistrictController().DistrictNumber));
+        if (nodePositions == null || !placePlayerHeadquarters())
+        {
+            Debug.LogError("Failed to generate node positions on the map.");
+            CreateCaveMap(mapSize);
+            return;
+        }
+        Debug.Log("Number of Nodes: " + (nodePositions.Count + 2));
+        foreach (var position in nodePositions)
+        {
+            PlaceFortressNode(new Tuple<int, int>(position.x, position.y), false, false);
+        }
     }
 
     /// <summary>
@@ -118,15 +136,8 @@ public class LevelMono : MonoBehaviour
     /// The HQs are always placed on passable tiles of the map (assuming these exist).
     /// Corners without passable tiles are searched for the nearest passable tile to place an HQ on.
     /// </summary>
-    private void placePlayerHeadquarters()
+    private bool placePlayerHeadquarters()
     {
-        if (obstacleBinaryMap == null)
-        {
-            Debug.LogError("Tilemap data is null.");
-            return;
-        }
-
-        //Debug.Log("Placing two player headquarters within the level.");
 
         // Each player needs to be in a different corner of the map:
         int playerOneCornerIndex = (int)math.floor(Random.Range(0, 4));
@@ -154,7 +165,7 @@ public class LevelMono : MonoBehaviour
         if (playerOneCornerPosition == null || playerTwoCornerPosition == null)
         {
             Debug.LogError("Failed to select corners for player positions.");
-            return;
+            return false;
         }
 
         // The corner tiles might not be passable, so a search must execute to find the nearest passable tile.
@@ -163,7 +174,7 @@ public class LevelMono : MonoBehaviour
         if (playerOneHqTilemapPosition == null || playerTwoHqTilemapPosition == null)
         {
             Debug.LogError("Failed to select headquarter positions for the player positions.");
-            return;
+            return false;
         }
 
         if (HeadquartersPrefab != null)
@@ -172,12 +183,15 @@ public class LevelMono : MonoBehaviour
             PlaceFortressNode(playerOneHqTilemapPosition, true);
 
             // Place Player Two's HQ:
-            PlaceFortressNode(playerTwoHqTilemapPosition);
+            PlaceFortressNode(playerTwoHqTilemapPosition, false, true);
         }
         else
         {
             Debug.LogWarning("Headquarters prefab is null.");
         }
+        CameraControl c = FindObjectOfType<CameraControl>();
+        c.SetFocus(getLevelmapPositionInWorldSpace(playerOneHqTilemapPosition));
+        return true;
     }
 
     private void PlaceFortressNode(Tuple<int, int> tilemapPosition, bool isHumanPlayerHq = false, bool isAiPlayerHq = false)

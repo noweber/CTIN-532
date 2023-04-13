@@ -21,7 +21,8 @@ public class SelectedObjects : MonoBehaviour
 
     public Player Owner;
 
-    public float SecondsBetweenSpawns = 0.5f;
+    [Range(1f, float.MaxValue)]
+    public float DefaultSecondsBetweenSpawns = 5f;
 
     private float secondsSinceLastSpawn;
 
@@ -56,12 +57,10 @@ public class SelectedObjects : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //secondsSinceLastSpawn = 0;
         playerSelection = GetComponent<PlayerSelection>();
-        //gameManager = FindObjectOfType<GameManager>();
         ResetData();
     }
-    
+
     public void ResetData()
     {
         secondsSinceLastSpawn = 0;
@@ -81,10 +80,15 @@ public class SelectedObjects : MonoBehaviour
         speedPoints = speed;
     }
 
+    private float GetSecondsBetweenSpawns()
+    {
+        return Mathf.Max(1, DefaultSecondsBetweenSpawns - Mathf.Sqrt(DependencyService.Instance.DistrictController().DistrictNumber + 1));
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if(DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        if (DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
         {
             return;
         }
@@ -93,27 +97,12 @@ public class SelectedObjects : MonoBehaviour
         {
             return;
         }
-        //if (!gameManager.spawn_enabled) { return; }
 
         secondsSinceLastSpawn += Time.deltaTime;
-        while (secondsSinceLastSpawn >= SecondsBetweenSpawns)
+        while (secondsSinceLastSpawn >= GetSecondsBetweenSpawns())
         {
-            secondsSinceLastSpawn -= SecondsBetweenSpawns;
-            if (Owner == Player.Human)
-            {
-                if (SelectedUnitPrefab != null && SelectedMapNode != null)
-                {
-                    if (SelectedMapNode.Owner == Owner)
-                    {
-                        int spawnCount = 1;
-                        for (int i = 0; i < spawnCount; i++)
-                        {
-                            SpawnUnit(list_Of_UnitPrefab[type], SelectedMapNode.transform);
-                        }
-                    }
-                }
-            }
-            else if (Owner == Player.AI)
+            secondsSinceLastSpawn -= GetSecondsBetweenSpawns();
+            if (Owner == Player.AI)
             {
                 // Select a random unit prefab:
                 SelectedUnitPrefab = list_Of_UnitPrefab[Random.Range(0, list_Of_UnitPrefab.Length)];
@@ -149,7 +138,7 @@ public class SelectedObjects : MonoBehaviour
     public void SpawnUnit(GameObject unitPrefab, Transform parent = null)
     {
         // TODO: Refactor this so that the game object does not exist outside of this state and does not need this dependency 
-        if(DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        if (DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
         {
             return;
         }

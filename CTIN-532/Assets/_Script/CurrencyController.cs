@@ -10,6 +10,7 @@ public class CurrencyController : Singleton<CurrencyController>
     public const int CurrencyIncrement = 100;
 
     public int TotalCurrency { get; private set; }
+
     public int MaxCurrency { get; private set; }
 
     private float secondsBetweenIncrements;
@@ -58,8 +59,12 @@ public class CurrencyController : Singleton<CurrencyController>
             this.secondsElapsedSinceLastMoneyIncrement -= this.secondsBetweenIncrements;
             if (this.TotalCurrency < MaxCurrency)
             {
-                this.TotalCurrency += CurrencyIncrement;
+                this.TotalCurrency += (int)(CurrencyIncrement * Mathf.Pow(playerResources.NodeCount, 0.5F));
                 this.UpdateMoneyText();
+            }
+            if (this.TotalCurrency > MaxCurrency)
+            {
+                TotalCurrency = MaxCurrency;
             }
         }
     }
