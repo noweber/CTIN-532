@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using static MapNodeController;
 using Random = UnityEngine.Random;
+using System.Linq;
 
 /// <summary>
 /// This class creates the game's entities procedurally which sets up a playable level within the game.
@@ -59,12 +60,7 @@ public class LevelMono : MonoBehaviour
     /// </summary>
     private bool[,] obstacleBinaryMap;
 
-    /// <summary>
-    /// This 2D array stores the positions of level entites on top of the map data such as player headquarters.
-    /// </summary>
-    private int[,] levelmap;
-
-    private SelectedObjects humanPlayerController;  
+    private SelectedObjects humanPlayerController;
 
     /// <summary>
     /// TODO
@@ -74,7 +70,7 @@ public class LevelMono : MonoBehaviour
     /// <returns></returns>
     public bool IsTilePassable(int x, int y)
     {
-        return obstacleBinaryMap[x,y];
+        return obstacleBinaryMap[x, y];
     }
 
 
@@ -367,7 +363,6 @@ public class LevelMono : MonoBehaviour
 
         return true;
     }
-
 
     private void PlaceFortressNodes()
     {

@@ -147,6 +147,8 @@ namespace Assets._Script.Districts
                 }
             }
             mapTiles = new();
+
+
             // TODO: make new water tiles
             // TODO: make new grass tiles
             // TODO: make new obstacle tiles
