@@ -7,19 +7,17 @@ public class UnitLogicSelectionButton : MonoBehaviour
 
     public GameObject Highlight;
 
-    PlayerSelection playerSelection;
+    public KeyCode Keybind = KeyCode.None;
 
-    GameManager gameManager;
+    PlayerSelection playerSelection;
 
     private void Start()
     {
         playerSelection = FindObjectOfType<PlayerSelection>();
-        gameManager = FindObjectOfType<GameManager>();
     }
 
     public void SetUnitLogicOnClick()
     {
-        if(!gameManager.logicSelect_enabled) { return; }
         playerSelection.SelectUnitLogic(UnitLogicForButton);
         UnitLogicSelectionButton[] buttons = Object.FindObjectsOfType<UnitLogicSelectionButton>();
         foreach (var button in buttons)
@@ -32,5 +30,16 @@ public class UnitLogicSelectionButton : MonoBehaviour
     public void FlagSelectionHighlight(bool highlightOn)
     {
         Highlight.SetActive(highlightOn);
+    }
+
+    private void Update()
+    {
+        if(Keybind != KeyCode.None)
+        {
+            if(Input.GetKeyDown(Keybind))
+            {
+                SetUnitLogicOnClick();
+            }
+        }
     }
 }

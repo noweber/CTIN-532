@@ -1,11 +1,12 @@
-using System.Collections.Generic;
+using Assets._Script;
 using TMPro;
 using UnityEngine;
 using static MapNodeController;
 
 public class PlayerResourcesController : MonoBehaviour
 {
-    public int NumberOfUnitsSupportedPerNodeControlled = 5;
+    [SerializeField]
+    public int NumberOfUnitsSupportedPerNodeControlled { get; private set; } = 5;
 
     public Player PlayerToControlResourceFor;
 
@@ -18,170 +19,123 @@ public class PlayerResourcesController : MonoBehaviour
     public ResourceCountUiController MaxNodesCount;
 
     [SerializeField]
-    public List<UnitController> units;
+    private int unitCount;
 
     [SerializeField]
-    public HashSet<MapNodeController> nodes;
-
-    GameManager gameManager;
+    public int NodeCount { get; set; }
 
     public TextMeshProUGUI CountText;
 
-    public void AddUnit(UnitController unit)
+    public void AddUnit()
     {
-        units.Add(unit);
+        unitCount++;
         UpdateUnitCount();
     }
 
-    public void RemoveUnit(UnitController unit)
+    public void RemoveUnit()
     {
-        if (units.Contains(unit))
+        if (unitCount == 0)
         {
-            units.Remove(unit);
-            UpdateUnitCount();
+            Debug.LogError(nameof(unitCount));
+            return;
         }
+        unitCount--;
+        UpdateUnitCount();
     }
 
     public bool CanSupportAnAdditionalUnit()
     {
-        RemoveNullUnits();
         if (PlayerToControlResourceFor == Player.Human)
         {
-            return units.Count < nodes.Count * NumberOfUnitsSupportedPerNodeControlled;
+            return unitCount < NodeCount * NumberOfUnitsSupportedPerNodeControlled;
         }
         else
         {
-            return units.Count < GetMaxNumberOfUnitsThePlayerCanHave(); ;
+            return unitCount < GetMaxNumberOfUnitsThePlayerCanHave();
         }
     }
 
     public int GetMaxNumberOfUnitsThePlayerCanHave()
     {
-        if (nodes == null)
+        if (PlayerToControlResourceFor == Player.AI)
         {
-            return 0;
+            return NodeCount * (NumberOfUnitsSupportedPerNodeControlled + DependencyService.Instance.DistrictController().DistrictNumber);
         }
-        return nodes.Count * (NumberOfUnitsSupportedPerNodeControlled + gameManager.DistrictNumber);
-    }
-
-    public void AddNode(MapNodeController node)
-    {
-        if (!nodes.Contains(node))
+        else
         {
-            nodes.Add(node);
-            UpdateNodeCount();
-            MaxNumberOfUnits.SetResourceCount(GetMaxNumberOfUnitsThePlayerCanHave());
+            return NodeCount * (NumberOfUnitsSupportedPerNodeControlled);
         }
     }
 
-    public void RemoveNode(MapNodeController node)
+    public void AddNode()
     {
-        if (nodes.Contains(node))
-        {
-            nodes.Remove(node);
-            UpdateNodeCount();
-        }
+        UpdateNodeCount();
+        UpdateUnitCount();
+    }
+
+    public void RemoveNode()
+    {
+        UpdateNodeCount();
+        UpdateUnitCount();
     }
 
     private void Awake()
     {
-        units = new List<UnitController>();
-        nodes = new HashSet<MapNodeController>();
+        ResetData();
     }
 
-    private void Start()
+    public void ResetData()
     {
-        gameManager = FindObjectOfType<GameManager>();
-        // TODO: Find any starting units
-
-        // Find any starting nodes:
-        var nodeControllers = FindObjectsOfType<MapNodeController>();
-        //Debug.Log("Nodes found: " + nodeControllers.Length);
-        foreach (var node in nodeControllers)
-        {
-            if (node.Owner == PlayerToControlResourceFor)
-            {
-                AddNode(node);
-            }
-        }
-        gameManager.FindMapNodes();
-        MaxNodesCount.SetResourceCount(gameManager.MapNodes.Length);
-    }
-
-    private void RemoveNullUnits()
-    {
-        List<UnitController> nonNullUnits = new();
-        for (int i = 0; i < units.Count; i++)
-        {
-            if (units[i] != null)
-            {
-                nonNullUnits.Add(units[i]);
-            }
-        }
-        units = nonNullUnits;
+        unitCount = 0;
+        NodeCount = 1;
     }
 
     private void UpdateUnitCount()
     {
         if (CurrentNumberOfUnits != null)
         {
-            CurrentNumberOfUnits.SetResourceCount(units.Count);
+            CurrentNumberOfUnits.SetResourceCount(unitCount);
+        }
+        if (MaxNumberOfUnits != null)
+        {
+            MaxNumberOfUnits.SetResourceCount(GetMaxNumberOfUnitsThePlayerCanHave());
         }
     }
+
     private void UpdateNodeCount()
     {
-        if (NodeResourceCountController != null)
+        var nodeControllers = FindObjectsOfType<MapNodeController>();
+        if (nodeControllers != null)
         {
-            NodeResourceCountController.SetResourceCount(nodes.Count);
+            if (MaxNodesCount != null)
+            {
+                MaxNodesCount.SetResourceCount(nodeControllers.Length);
+            }
+            int nodesOwned = 0;
+            foreach (var node in nodeControllers)
+            {
+                if (node.Owner == PlayerToControlResourceFor)
+                {
+                    nodesOwned++;
+                }
+            }
+            NodeCount = nodesOwned;
+            if (NodeResourceCountController != null)
+            {
+                NodeResourceCountController.SetResourceCount(NodeCount);
+            }
         }
 
-        if (PlayerToControlResourceFor == Player.Human)
+        if (NodeCount > 0 && NodeCount == DependencyService.Instance.DistrictController().NumberOfNodes())
         {
-            // TODO: temperate check for game end
-            if (nodes.Count == 5 && gameManager.gameState >= 200)
+            if (PlayerToControlResourceFor == Player.Human)
             {
-                gameManager.DistrictNumber++;
-                gameManager.gameState++;
-                gameManager.resetGame();
+                DependencyService.Instance.DistrictFsm().ChangeState(DistrictState.Victory);
             }
-            else if (nodes.Count == 5 && (gameManager.gameState > 0 && gameManager.gameState < 200))
+            else if (PlayerToControlResourceFor == Player.AI)
             {
-                gameManager.gameState = 100;
+                DependencyService.Instance.DistrictFsm().ChangeState(DistrictState.Defeat);
             }
-        }
-        else if (PlayerToControlResourceFor == Player.AI)
-        {
-            //Debug.Log("Node Count AI: "  + nodes.Count);
-            if (nodes.Count == 5 && gameManager.gameState >= 200)
-            {
-                //Debug.Log("GameLose");
-                gameManager.gameState = 300;
-
-            }
-            else if (nodes.Count == 5 && gameManager.gameState > 0 && gameManager.gameState < 200)
-            {
-                gameManager.gameState = 100;
-            }
-        }
-    }
-
-    private void Update()
-    {
-        if (gameManager.resource_reset && PlayerToControlResourceFor == Player.Human)
-        {
-            units.Clear();
-            nodes.Clear();
-            UpdateUnitCount();
-            UpdateNodeCount();
-            gameManager.resource_reset = false;
-        }
-        else if (gameManager.resource_reset_AI && PlayerToControlResourceFor == Player.AI)
-        {
-            units.Clear();
-            nodes.Clear();
-            UpdateUnitCount();
-            UpdateNodeCount();
-            gameManager.resource_reset_AI = false;
         }
     }
 }

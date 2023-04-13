@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using Assets._Script.Units;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MinimapManager : Singleton<MinimapManager>
 {
@@ -10,7 +8,6 @@ public class MinimapManager : Singleton<MinimapManager>
     public float unit_height;
     public float HQ_height;
 
-    private GameManager game_manager;
     private CameraControl main_camera_control;
 
     public RectTransform miniMap_Rect;
@@ -22,19 +19,17 @@ public class MinimapManager : Singleton<MinimapManager>
 
     private void Start()
     {
-        game_manager = FindObjectOfType<GameManager>();
         main_camera_control = FindObjectOfType<CameraControl>();
     }
 
     private void Update()
     {
         findMapNode();
-        if (Input.GetMouseButtonDown(0) && game_manager.minimap_enabled)
+        if (Input.GetMouseButtonDown(0))
         {
             if(cur_Node != null)
             {
-                main_camera_control.setFocus(cur_Node.transform.position);
-                cur_Node.ToggleSelect();
+                main_camera_control.SetFocus(cur_Node.transform.position);
             }
         }
     }
@@ -55,7 +50,7 @@ public class MinimapManager : Singleton<MinimapManager>
                 mouse_worldPosition.y = map_height;
 
                 if (cur_Node != null) { cur_Node.minimap_icon.highlighted(false); }
-                cur_Node = game_manager.closestNode(mouse_worldPosition);
+                cur_Node = UnitHelpers.GetClosestNode(mouse_worldPosition);
                 cur_Node.minimap_icon.highlighted(true);
             }
             else

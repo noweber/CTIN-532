@@ -3,6 +3,8 @@ using static MapNodeController;
 
 public class HurtBox : MonoBehaviour
 {
+    public AudioClip HurtSound;
+
     public Player Owner;
 
     [SerializeField]
@@ -37,6 +39,11 @@ public class HurtBox : MonoBehaviour
         if (particlesPrefab != null)
         {
             Instantiate(particlesPrefab, transform);
+        }
+
+        if (HurtSound != null)
+        {
+            AudioManager.Instance.PlaySFX(HurtSound);
         }
     }
 

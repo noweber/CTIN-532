@@ -1,12 +1,18 @@
 using Assets._Script;
+using Assets._Script.SFX;
+using Assets._Script.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static MapNodeController;
+using static PlayerSelection;
 
 public class UnitController : MonoBehaviour
 {
     public AudioClip FightSound;
+
+    [SerializeField]
+    private GameObject LogicChangeParticlesPrefab;
 
     [SerializeField]
     public Player Owner { get; protected set; }
@@ -49,6 +55,11 @@ public class UnitController : MonoBehaviour
     protected float MaxChaseDistance = 10.0f;
 
 
+    private float defenseRadius = 8f;
+
+    [SerializeField]
+    public UnitLogic CurrentLogic { get; private set; }
+
     void Awake()
     {
         CurrentCoordinates = new Vector2Int();
@@ -58,12 +69,26 @@ public class UnitController : MonoBehaviour
         hurtBox = GetComponent<HurtBox>();
     }
 
-    public UnitController Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float damagePoints, float speedPoints)
+    public UnitController Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float damagePoints, float speedPoints, UnitLogic logic)
     {
         Owner = owner;
         CurrentCoordinates = new Vector2Int(xCoordinate, yCoordinate);
         SetUnitStats(hitPoints, damagePoints, speedPoints);
+        ChangeLogic(logic);
         return this;
+    }
+    void OnDestroy()
+    {
+        PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner).RemoveUnit();
+    }
+
+    public void ChangeLogic(UnitLogic logic)
+    {
+        CurrentLogic = logic;
+        var gameObject = Instantiate(LogicChangeParticlesPrefab, transform.position, Quaternion.identity, transform);
+        var text = gameObject.GetComponent<FloatingTextController>();
+        text.SetText(CurrentLogic.ToString());
+        SelectTarget();
     }
 
     private void SetUnitStats(float hitPoints, float damagePoints, float speedPoints)
@@ -85,6 +110,11 @@ public class UnitController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            Destroy(gameObject);
+        }
+
         IsFacingLeft();
         if (Target == null)
         {
@@ -134,7 +164,7 @@ public class UnitController : MonoBehaviour
             if (!hitBox.IsBeingHit)
             {
                 // If the nearest enemy is within the chase distance, chase it before continuing on the path to the target:
-                float magnitude = Time.fixedDeltaTime / timeBetweenMovesInSeconds;
+                float magnitude = UnityEngine.Random.Range(0.8f * Time.fixedDeltaTime / timeBetweenMovesInSeconds, Time.fixedDeltaTime / timeBetweenMovesInSeconds);
                 if (ChaseTarget != null)
                 {
                     transform.position = Vector3.MoveTowards(transform.position, new Vector3(ChaseTarget.transform.position.x, transform.position.y, ChaseTarget.transform.position.z), magnitude);
@@ -165,7 +195,7 @@ public class UnitController : MonoBehaviour
         {
             return ChaseTarget.position.x < transform.position.x;
         }
-        else if(Target != null)
+        else if (Target != null)
         {
             return Target.position.x < transform.position.x;
         }
@@ -174,31 +204,15 @@ public class UnitController : MonoBehaviour
 
     protected virtual void SelectChaseTarget()
     {
-        var targetPlayer = Player.AI;
-        if (Owner == Player.AI)
+        if (CurrentLogic == UnitLogic.Defend)
         {
-            targetPlayer = Player.Human;
+            return;
         }
-        var nearestEnemy = DependencyService.Instance.Game().GetClosestUnitByPlayer(transform.position, targetPlayer);
+        var nearestEnemy = UnitHelpers.GetNearestHostileUnit(this);
         if (nearestEnemy != null)
         {
             ChaseTarget = nearestEnemy.transform;
         }
-    }
-
-    protected virtual void SelectTarget()
-    {
-        var gameManager = FindObjectOfType<GameManager>();
-
-        if (this.Owner == Player.Human)
-        {
-            Target = gameManager.GetRandomNodeByPlayerOrNeutral(Player.AI).transform;
-        }
-        else
-        {
-            Target = gameManager.GetRandomNodeByPlayerOrNeutral(Player.Human).transform;
-        }
-        TargetCoordinates = new Vector2Int((int)Target.transform.position.x, (int)Target.transform.position.z);
     }
 
     protected void SelectNextMapTile()
@@ -244,6 +258,71 @@ public class UnitController : MonoBehaviour
             {
                 Target = null;
             }
+        }
+    }
+
+    protected void SelectTarget()
+    {
+        switch (CurrentLogic)
+        {
+            case UnitLogic.Attack:
+                if (Owner == Player.Human)
+                {
+                    Target = UnitHelpers.GetClosestNodeByPlayerOrNeutral(this.transform.position, Player.AI).transform;
+                }
+                else
+                {
+                    Target = UnitHelpers.GetClosestNodeByPlayerOrNeutral(this.transform.position, Player.Human).transform;
+                }
+                TargetCoordinates = new Vector2Int((int)Target.transform.position.x, (int)Target.transform.position.z);
+                break;
+            case UnitLogic.Defend:
+
+                Target = UnitHelpers.GetNearestHostileUnit(this).transform;
+
+                if (Vector3.Distance(this.transform.position, Target.transform.position) > defenseRadius)
+                {
+                    Target = null;
+                }
+
+                if (Target != null)
+                {
+                    TargetCoordinates = new Vector2Int((int)Target.transform.position.x, (int)Target.transform.position.z);
+                }
+                else
+                {
+                    var controlledNodes = DependencyService.Instance.DistrictController().GetNodesByPlayer(true);
+                    Transform temporaryTarget = null;
+                    float minimumDistance = float.MaxValue;
+                    if (controlledNodes != null)
+                    {
+                        foreach (var node in controlledNodes)
+                        {
+                            float distance = Vector3.Distance(node.transform.position, transform.position);
+                            if (distance < minimumDistance)
+                            {
+                                temporaryTarget = node.transform;
+                                minimumDistance = distance;
+                            }
+                        }
+                        Target = temporaryTarget;
+                    }
+                }
+                break;
+
+            case UnitLogic.Split:
+            default:
+                if (this.Owner == Player.Human)
+                {
+                    Target = UnitHelpers.GetRandomNodeByPlayerOrNeutral(Player.AI).transform;
+                }
+                else
+                {
+                    Target = UnitHelpers.GetRandomNodeByPlayerOrNeutral(Player.Human).transform;
+                }
+                TargetCoordinates = new Vector2Int((int)Target.transform.position.x, (int)Target.transform.position.z);
+                break;
+
         }
     }
 }

@@ -5,7 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Minimap
-  - Menu
+  - DistrictMapNode
+  - District Map Node
   layers:
   - Default
   - TransparentFX
@@ -40,9 +41,6 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Background
-    uniqueID: 3891415859
-    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

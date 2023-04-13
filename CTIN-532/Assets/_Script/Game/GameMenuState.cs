@@ -14,6 +14,7 @@ namespace Assets._Script.Game
 
         public void OnExit()
         {
+            AudioManager.Instance.MainMenuMusic.Stop();
             Menu.SetActive(false);
         }
     }

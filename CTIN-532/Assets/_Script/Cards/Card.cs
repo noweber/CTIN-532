@@ -43,8 +43,6 @@ public class Card : MonoBehaviour
 
     private bool isCardSelectable;
 
-    private GameManager gameManager;
-
     private void Awake()
     {
         if (unitName == null)
@@ -94,15 +92,10 @@ public class Card : MonoBehaviour
         }
 
         isCardSelectable = true;
-
-        gameManager = FindObjectOfType<GameManager>();
     }
 
     public void SelectCard()
     {
-        if (!gameManager.cardSelect_enabled) { return; }
-        // game state
-
         if (!isCardSelectable)
         {
             return;
@@ -130,7 +123,6 @@ public class Card : MonoBehaviour
 
         // TODO: Refactor the way this interacts with audio manager to store the spawn clip on the base prefab instead.
         AudioManager.Instance.PlaySFX(AudioManager.Instance.SpawnSound.clip, 1.0f);
-        //Destroy(this.gameObject);
     }
 
     public void AllowUse(bool state)

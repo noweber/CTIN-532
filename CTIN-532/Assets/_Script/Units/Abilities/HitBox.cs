@@ -1,3 +1,4 @@
+using Assets._Script.SFX;
 using TMPro;
 using UnityEngine;
 using static MapNodeController;
@@ -71,11 +72,8 @@ public class HitBox : MonoBehaviour
             return;
         }
         var gameObject = Instantiate(damageTextPrefab, transform.position, Quaternion.identity, transform);
-        var text = gameObject.GetComponent<TextMeshPro>();
-        if (text != null)
-        {
-            text.text = damage.ToString();
-        }
+        var text = gameObject.GetComponent<FloatingTextController>();
+        text.SetText(damage.ToString());
     }
 
     private void OnTriggerEnter(Collider other)
