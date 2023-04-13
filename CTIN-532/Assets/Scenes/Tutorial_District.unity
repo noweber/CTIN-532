@@ -4566,7 +4566,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Start
+  m_text: Ready
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6146,7 +6146,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Replay
+  m_text: Play Again
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7559,9 +7559,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1136354489}
-        m_TargetAssemblyTypeName: Assets._Script.Districts.DistrictStateChangeHelpers,
-          Assembly-CSharp
-        m_MethodName: ChangeToDistrictStart
+        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
+        m_MethodName: LoadScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7618,9 +7617,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1136354484}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c1aaba0b4ae00249bc02c90eaaeba8b, type: 3}
+  m_Script: {fileID: 11500000, guid: cb844d1c4c54e3149a085c1cea79534e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneName: MainMenuTest
 --- !u!1 &1141490706
 GameObject:
   m_ObjectHideFlags: 0
@@ -11735,6 +11735,50 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6713785821353847368, guid: f4be4476ce489184c87ffa4f41741828, type: 3}
   m_PrefabInstance: {fileID: 1777521625}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1782592158
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1782592160}
+  - component: {fileID: 1782592159}
+  m_Layer: 0
+  m_Name: SceneHack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1782592159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1782592158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94691e4f15241ca49a6b057a251dc164, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1782592160
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1782592158}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 748.0252, y: 171.5485, z: -5.461326}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1791177188
 PrefabInstance:
   m_ObjectHideFlags: 0
