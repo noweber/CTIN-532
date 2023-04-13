@@ -126,7 +126,7 @@ PrefabInstance:
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: sprite
       value: 
-      objectReference: {fileID: 21300016, guid: 9df5e3b2c3bb89643b849b1770a068ac, type: 3}
+      objectReference: {fileID: 569151702, guid: 915d4630149db9f49a98d81664a3568d, type: 3}
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: UnitType
       value: 0
