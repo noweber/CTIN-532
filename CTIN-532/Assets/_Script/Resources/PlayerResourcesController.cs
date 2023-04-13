@@ -18,7 +18,7 @@ public class PlayerResourcesController : MonoBehaviour
     public ResourceCountUiController MaxNodesCount;
 
     [SerializeField]
-    private List<UnitController> units;
+    public List<UnitController> units;
 
     [SerializeField]
     public HashSet<MapNodeController> nodes;

@@ -181,8 +181,7 @@ public class MapGenerator : Singleton<MapGenerator>
             findMainIslandObs();
             islandFilled = true;
         }
-
-        return _mainIsland[x, y] && _obsIsland[x,y];
+        return _mainIsland[x, y];
     }
 
     private void generateRoomMap()
