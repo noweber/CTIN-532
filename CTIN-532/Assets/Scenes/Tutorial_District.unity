@@ -1595,7 +1595,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3c82ed7d4c3908429595d121c0d3b68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DistrictNumber: 10
+  DistrictNumber: 0
   DefaultDistrictSize: 20
   tilePrefab: {fileID: 4738082602502201296, guid: 2312932d3f9675746b79d52149de20c2, type: 3}
 --- !u!1001 &275567361
@@ -13045,7 +13045,7 @@ MonoBehaviour:
   damagePoints: 0
   speedPoints: 2
   Owner: 2
-  DefaultSecondsBetweenSpawns: 5
+  DefaultSecondsBetweenSpawns: 8
   unitParent: {fileID: 0}
 --- !u!4 &2136319963
 Transform:
