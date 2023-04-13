@@ -8,19 +8,18 @@ namespace Assets._Script.Districts
     {
         public GameObject StartOfLevelUi;
 
-        public Guid SessionId;
-
-        void Awake()
-        {
-            SessionId = Guid.NewGuid();
-        }
+        public Guid? SessionId = null;
 
         public void OnEnter()
         {
+            if (SessionId == null)
+            {
+                SessionId = Guid.NewGuid();
+            }
             StartOfLevelUi.SetActive(true);
             AudioManager.Instance.DistrictStartZinger.Play();
             DependencyService.Instance.DistrictController().CreateDistrict();
-            Analytics.Instance.SendAnalyticsData(SessionId.ToString(), DependencyService.Instance.DistrictController().DistrictNumber);
+            Analytics.Instance.SendAnalyticsData(SessionId.Value.ToString(), DependencyService.Instance.DistrictController().DistrictNumber);
             DependencyService.Instance.DistrictFsm().ChangeState(DistrictState.Play);
         }
 
