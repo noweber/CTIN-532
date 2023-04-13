@@ -16,11 +16,11 @@ public class UnitList : MonoBehaviour
         List<UnitController> list;
         if (isPlayer)
         {
-            list = PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).units;
+            *//*list = PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).units;*//*
         }
         else
         {
-            list = PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).units;
+*//*            list = PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).units;*//*
         }
         for(int i = 0; i < list.Count; i++)
         {
