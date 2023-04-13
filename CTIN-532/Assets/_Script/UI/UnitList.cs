@@ -12,18 +12,18 @@ public class UnitList : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        List<UnitController> list;
+        /*List<UnitController> list;
         if (isPlayer)
         {
-            list = PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).units;
+            *//*list = PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).units;*//*
         }
         else
         {
-            list = PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).units;
+*//*            list = PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).units;*//*
         }
         for(int i = 0; i < list.Count; i++)
         {
             
-        }
+        }*/
     }
 }
