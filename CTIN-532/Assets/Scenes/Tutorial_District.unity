@@ -13089,7 +13089,7 @@ MonoBehaviour:
   damagePoints: 0
   speedPoints: 2
   Owner: 2
-  DefaultSecondsBetweenSpawns: 8
+  DefaultSecondsBetweenSpawns: 6.4
   unitParent: {fileID: 0}
 --- !u!4 &2136319963
 Transform:

@@ -16,7 +16,7 @@ public class PauseController : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))// && gameManager.cardSelect_enabled)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             isPaused = !isPaused;
             if (Time.timeScale == 0 && !isPaused)
