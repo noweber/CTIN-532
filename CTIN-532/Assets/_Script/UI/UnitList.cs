@@ -12,6 +12,7 @@ public class UnitList : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
         List<UnitController> list;
         if (isPlayer)
         {
@@ -24,6 +25,6 @@ public class UnitList : MonoBehaviour
         for(int i = 0; i < list.Count; i++)
         {
             
-        }
+        }*/
     }
 }
