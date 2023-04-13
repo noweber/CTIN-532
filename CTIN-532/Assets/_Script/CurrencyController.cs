@@ -59,7 +59,7 @@ public class CurrencyController : Singleton<CurrencyController>
             this.secondsElapsedSinceLastMoneyIncrement -= this.secondsBetweenIncrements;
             if (this.TotalCurrency < MaxCurrency)
             {
-                this.TotalCurrency += (int)(CurrencyIncrement * Mathf.Pow(playerResources.NodeCount, 0.5F));
+                this.TotalCurrency += (int)(CurrencyIncrement * Mathf.Pow(playerResources.NodeCount, 0.25F));
                 this.UpdateMoneyText();
             }
             if (this.TotalCurrency > MaxCurrency)

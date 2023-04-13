@@ -12,7 +12,8 @@ public class UnitList : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*List<UnitController> list;
+        /*
+        List<UnitController> list;
         if (isPlayer)
         {
             *//*list = PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).units;*//*

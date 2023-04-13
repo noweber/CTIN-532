@@ -9,12 +9,12 @@ namespace Assets._Script.Game
         public void OnEnter()
         {
             Menu.SetActive(true);
-            AudioManager.Instance.MainMenuMusic.Play();
+            //AudioManager.Instance.MainMenuMusic.Play();
         }
 
         public void OnExit()
         {
-            AudioManager.Instance.MainMenuMusic.Stop();
+            //AudioManager.Instance.MainMenuMusic.Stop();
             Menu.SetActive(false);
         }
     }
