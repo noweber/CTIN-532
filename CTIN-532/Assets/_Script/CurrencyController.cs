@@ -7,7 +7,7 @@ public class CurrencyController : Singleton<CurrencyController>
 
     public PlayerResourcesController playerResources;
 
-    public const int CurrencyIncrement = 100;
+    public const int CurrencyIncrement = 200;
 
     public int TotalCurrency { get; private set; }
 
@@ -25,7 +25,7 @@ public class CurrencyController : Singleton<CurrencyController>
     public void ResetData()
     {
         this.TotalCurrency = CostToDeployAUnit();
-        this.secondsBetweenIncrements = 0.5f;
+        this.secondsBetweenIncrements = 1.0f;
         this.secondsElapsedSinceLastMoneyIncrement = 0;
     }
 

@@ -36,7 +36,7 @@ public class AudioManager : Singleton<AudioManager>
     }
 
     // Used for repeat-play SFX
-    public void PlayRandomSFX(AudioClip audioClip, float volume)
+    public void PlayRandomSFX(AudioClip audioClip, float volume = 1.0f)
     {
         if (IsAudioClipNull(audioClip)) return;
         SFXPlayer.pitch = Random.Range(min_pitch, max_pitch);
