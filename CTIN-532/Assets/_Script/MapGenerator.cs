@@ -40,9 +40,14 @@ public class MapGenerator : Singleton<MapGenerator>
 
     [Header("Obstacles")]
     public int Obs_num;
-    public GameObject[] Obs_prefabs;
     private int[,] Obs_map;
     private float noiseOffset;
+    [SerializeField] private GameObject[] lowLandObstacles;
+    [SerializeField] private GameObject[] midLandObstacles;
+    [SerializeField] private GameObject[] highLandObstacles;
+    [SerializeField] private GameObject[] lowWaterObstacles;
+    [SerializeField] private GameObject[] midWaterObstacles;
+    [SerializeField] private GameObject[] highWaterObstacles;
 
     public void CreateMap(Vector2Int mapSize)
     {
@@ -229,24 +234,58 @@ public class MapGenerator : Singleton<MapGenerator>
             {
                 if (Obs_map[i, j] == 1)
                 {
-                    Instantiate(Obs_prefabs[0], new Vector3(x, y, z),
-                        Quaternion.identity, grid.transform);
+                    if (_map[i, j] == TileType.wall)
+                    {
+                        Instantiate(GetRandomPrefab(lowWaterObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
+                    else
+                    {
+                        Instantiate(GetRandomPrefab(lowLandObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
                 }
                 else if (Obs_map[i, j] == 2)
                 {
-                    Instantiate(Obs_prefabs[1], new Vector3(x, y, z),
-                        Quaternion.identity, grid.transform);
+                    if (_map[i, j] == TileType.wall)
+                    {
+                        Instantiate(GetRandomPrefab(midWaterObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
+                    else
+                    {
+                        Instantiate(GetRandomPrefab(midLandObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
                 }
                 else if (Obs_map[i, j] == 3)
                 {
-                    Instantiate(Obs_prefabs[2], new Vector3(x, y, z),
-                        Quaternion.identity, grid.transform);
+                    if (_map[i, j] == TileType.wall)
+                    {
+                        Instantiate(GetRandomPrefab(highWaterObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
+                    else
+                    {
+                        Instantiate(GetRandomPrefab(highLandObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
                 }
                 z += TileSize;
             }
             z = position.z;
             x += TileSize;
         }
+    }
+
+    private GameObject GetRandomPrefab(GameObject[] prefabs)
+    {
+        if (prefabs == null)
+        {
+            return null;
+        }
+        int index = Random.Range(0, prefabs.Length);
+        return prefabs[index];
     }
 
     #region Help Funcs
