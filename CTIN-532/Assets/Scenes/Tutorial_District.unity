@@ -8591,7 +8591,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f03d785b64298644b916da573e23276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 1220746453}
 --- !u!1 &1254196831
 GameObject:
   m_ObjectHideFlags: 0
@@ -8646,7 +8645,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 50
   orthographic: 0
   orthographic size: 25
   m_Depth: -1
@@ -8671,14 +8670,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1254196831}
-  m_LocalRotation: {x: 0.2292004, y: -0, z: -0, w: 0.9733793}
+  m_LocalRotation: {x: 0.1564345, y: 0, z: 0, w: 0.98768836}
   m_LocalPosition: {x: 8, y: 20, z: -32}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 320168510}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 26.5, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 18, y: 0, z: 0}
 --- !u!114 &1254196835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8759,6 +8758,8 @@ MonoBehaviour:
   zoomRate: 10
   min_Zoom_heigh: 20
   max_Zoom_heigh: 350
+  y_offset: 1
+  z_offset: 3.5
 --- !u!224 &1254228943 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 572918177893786255, guid: 4024f77ce835d154a91cab7bb12654af, type: 3}
@@ -12132,7 +12133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HeadquartersPrefab: {fileID: 6212767972623595804, guid: 6fd09ab83f3fdb94aae833042be93dfc, type: 3}
-  LevelmapWorldSpaceYPosition: 1
+  LevelmapWorldSpaceYPosition: 0
   MinimumSearchPositionTolerance: 8
   MaximumSearchPositionTolerance: 64
   SearchPositionToleranceChance: 0.05
@@ -12291,12 +12292,12 @@ MonoBehaviour:
   iteration_num_round_1: 4
   Obs_num: 0
   Obs_prefabs:
-  - {fileID: 6212767972623595804, guid: 413c4fe347999a44ca1171452e307058, type: 3}
-  - {fileID: 6212767972623595804, guid: 9eeaa39f4a5b65e4dac56a399b779ec7, type: 3}
-  - {fileID: 6212767972623595804, guid: 563e4259bc09a4f4e9dda198f968ff21, type: 3}
+  - {fileID: 614311985601254999, guid: 9dcb7075697398b49aae2119fc647b55, type: 3}
+  - {fileID: 1511849110396519083, guid: 42a2c914785635c41a50336233379571, type: 3}
+  - {fileID: 4774697816123492136, guid: 6721787b55f4cda4d9a1a9a95624e930, type: 3}
   elements:
-  - {fileID: 3287579429938044022, guid: 793b974eab802a34e899d6cef83d7a7e, type: 3}
-  - {fileID: 3287579429938044022, guid: ff31aa941e49b684e983a0e76b1731cf, type: 3}
+  - {fileID: 3287579429938044022, guid: 9a7533b79a42d6b41b18195ca44f4ed2, type: 3}
+  - {fileID: 3287579429938044022, guid: fc676ae449f6e3f4ba3312266696614c, type: 3}
   - {fileID: 3287579429938044022, guid: 26707cfe91bdece4295dae8078969894, type: 3}
   - {fileID: 3287579429938044022, guid: ed86b73ca6833f64e9f7bfc3d75e77b1, type: 3}
 --- !u!4 &1892080704

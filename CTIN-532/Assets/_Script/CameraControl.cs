@@ -16,6 +16,9 @@ public class CameraControl : MonoBehaviour
     public float min_Zoom_heigh = 20f;
     public float max_Zoom_heigh = 350f;
 
+    public float y_offset;
+    public float z_offset;
+
     private void Awake()
     {
         cameraAction = new CameraAction();
@@ -81,7 +84,7 @@ public class CameraControl : MonoBehaviour
 
     public void SetFocus(Vector3 focusedPos)
     {
-        targetPosition = new Vector3(focusedPos.x, focusedPos.y + 3, focusedPos.z - 6);
-        transform.position = new Vector3(focusedPos.x, focusedPos.y + 3, focusedPos.z - 6);
+        targetPosition = new Vector3(focusedPos.x, focusedPos.y + y_offset, focusedPos.z - z_offset);
+        transform.position = new Vector3(focusedPos.x, focusedPos.y + y_offset, focusedPos.z - z_offset);
     }
 }

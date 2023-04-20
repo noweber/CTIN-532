@@ -11,6 +11,8 @@ public class MapNodeController : MonoBehaviour
 
     public Material[] OwnerMaterialsMap;
 
+    public MeshRenderer OwnerRenderer;
+
     public GameObject Select_Sphere;
 
     [HideInInspector]
@@ -50,7 +52,7 @@ public class MapNodeController : MonoBehaviour
         //Debug.Log("Node converted to: " + Owner.ToString());
         if (OwnerMaterialsMap != null)
         {
-            GetComponent<MeshRenderer>().material = OwnerMaterialsMap[(int)Owner];
+            OwnerRenderer.material = OwnerMaterialsMap[(int)Owner];
             minimap_icon.setOwner(player);
         }
         else
