@@ -10,7 +10,6 @@ namespace Assets._Script.Game
         }
         public void OnExit()
         {
-            // TODO: Make this transition to a DistrictStopState
         }
     }
 }

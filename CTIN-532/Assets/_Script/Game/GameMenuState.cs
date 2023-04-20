@@ -8,6 +8,7 @@ namespace Assets._Script.Game
 
         public void OnEnter()
         {
+            AudioManager.Instance.DistrictMusic.Play();
             Menu.SetActive(true);
             //AudioManager.Instance.MainMenuMusic.Play();
         }

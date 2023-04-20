@@ -8,7 +8,6 @@ namespace Assets._Script.Districts
     {
         public GameObject StartOfLevelUi;
 
-
         public void OnEnter()
         {
             StartOfLevelUi.SetActive(true);

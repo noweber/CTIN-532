@@ -10,7 +10,6 @@ namespace Assets._Script.Districts
 
         public void OnEnter()
         {
-            AudioManager.Instance.DistrictMusic.Play();
             SetDistrictGameObjectsActiveState(true);
             CurrencyController.Instance.ResetData();
         }
