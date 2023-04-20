@@ -216,7 +216,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HurtSound: {fileID: 8300000, guid: d9adc20587baeee4196149508503bc0b, type: 3}
   Owner: 2
-  Damage: 4
+  Damage: 40
   rateOfFire: 2
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 0
@@ -235,8 +235,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Owner: 2
   IsBeingHit: 0
-  MaxHitPoints: 6
-  currentHitPoints: 6
+  MaxHitPoints: 60
+  currentHitPoints: 60
   damageTextPrefab: {fileID: 2617646000106490837, guid: ca5697d8e493e57408f0e77665f6ff49, type: 3}
   maxSecondsToPausePerHit: 1
 --- !u!114 &5073345097548947155

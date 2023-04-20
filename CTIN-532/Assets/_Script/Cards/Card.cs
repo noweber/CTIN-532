@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
-    // TODO: handle mouseover event
-
     public Sprite sprite;
 
     public string unitName;
