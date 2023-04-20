@@ -3,18 +3,18 @@ using UnityEngine;
 
 namespace Assets._Script.Districts
 {
-    public class DistrictVictoryState : MonoBehaviour, IGameState
+    public class DistrictVictoryState : DistrictBaseState, IGameState
     {
-        public void OnEnter()
+
+        public override void OnEnter()
         {
-            //DependencyService.Instance.Game().resetGame();
-            AudioManager.Instance.PlaySFX(AudioManager.Instance.Victory.clip);
-            DependencyService.Instance.DistrictController().NextDistrict();
-            DependencyService.Instance.DistrictFsm().ChangeState(DistrictState.Start);
+            base.OnEnter();
         }
 
-        public void OnExit()
+        public override void OnExit()
         {
+            base.OnExit();
+            DependencyService.Instance.DistrictController().NextDistrict();
         }
     }
 }
