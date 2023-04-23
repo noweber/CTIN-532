@@ -15,6 +15,7 @@ namespace Assets._Script.Districts
             DependencyService.Instance.DistrictController().CreateDistrict();
             Analytics.Instance.SendDistrictAnalytics(DependencyService.Instance.DistrictController().DistrictNumber);
             DependencyService.Instance.DistrictFsm().ChangeState(DistrictState.Play);
+            AudioManager.Instance.DistrictMusic.Play();
         }
 
         public void OnExit()
