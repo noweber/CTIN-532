@@ -125,7 +125,7 @@ MonoBehaviour:
   Target: {fileID: 0}
   hitBox: {fileID: 0}
   hurtBox: {fileID: 0}
-  SpeedPoints: 2
+  SpeedPoints: 1
   timeBetweenMovesInSeconds: 0
   timeUntilNextTargetSelection: 0
   TimeUntilNextChaseTargetSelection: 0

@@ -222,7 +222,7 @@ MonoBehaviour:
   Target: {fileID: 0}
   hitBox: {fileID: 0}
   hurtBox: {fileID: 0}
-  SpeedPoints: 3
+  SpeedPoints: 2
   timeBetweenMovesInSeconds: 0
   timeUntilNextTargetSelection: 0
   TimeUntilNextChaseTargetSelection: 0
