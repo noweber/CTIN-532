@@ -5076,7 +5076,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HurtSound: {fileID: 0}
   Owner: 0
-  Damage: 20
+  Damage: 10
   rateOfFire: 0
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 1

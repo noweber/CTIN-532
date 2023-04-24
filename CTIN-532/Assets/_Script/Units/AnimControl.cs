@@ -12,21 +12,28 @@ public class AnimControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _animator= GetComponent<Animator>();
-        renderer= GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
+        renderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        _animator.SetBool("isInCombat",unitController.IsInCombat());
-        if(unitController.IsFacingLeft())
+
+        if (unitController != null)
         {
-            renderer.flipX= false;
-        }
-        else
-        {
-            renderer.flipX= true;
+            if (_animator != null)
+            {
+                _animator.SetBool("isInCombat", unitController.IsInCombat());
+            }
+            if (unitController.IsFacingLeft())
+            {
+                renderer.flipX = false;
+            }
+            else
+            {
+                renderer.flipX = true;
+            }
         }
     }
 }
