@@ -85,7 +85,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HurtSound: {fileID: 8300000, guid: d9adc20587baeee4196149508503bc0b, type: 3}
   Owner: 2
-  Damage: 20
+  Damage: 10
   rateOfFire: 1
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 0

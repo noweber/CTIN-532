@@ -5,9 +5,9 @@ using UnityEngine.Networking;
 
 public class Analytics : MonoBehaviour
 {
-    [SerializeField] private string DistrictAnalyticsFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf87TbtUGgXFu_xCDdBgColsfrZbFf2BAsZXFl-QQaws7NlpA/formResponse";
+    private string districtAnalyticsFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSebIN4Ar6_UmES-rdJAYE1zjNuoApQSxyFkZczH1mVYTIczcg/formResponse";
 
-    [SerializeField] private string UnitAnalyticsFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeeWml880g5GFBPQkPahLM7-g0FCtqdnpy09iSb0nN3NhMWWg/formResponse";
+    private string unitAnalyticsFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdAJTULFPQTS3NR21Kyu6x8lpCSwlaakdoBjMqZztTlkwIacA/formResponse";
 
     public static Analytics Instance;
 
@@ -42,14 +42,14 @@ public class Analytics : MonoBehaviour
         WWWForm form = new WWWForm();
         form.AddField("entry.1379325124", sessionID);
         form.AddField("entry.589367142", districtNumber);
-        return PostAnalyticsForm(form, DistrictAnalyticsFormUrl);
+        return PostAnalyticsForm(form, districtAnalyticsFormUrl);
     }
     private IEnumerator PostUnitAnalyticsData(string sessionID, string unitSpawned)
     {
         WWWForm form = new WWWForm();
         form.AddField("entry.1379325124", sessionID);
         form.AddField("entry.589367142", unitSpawned);
-        return PostAnalyticsForm(form, UnitAnalyticsFormUrl);
+        return PostAnalyticsForm(form, unitAnalyticsFormUrl);
     }
 
 
