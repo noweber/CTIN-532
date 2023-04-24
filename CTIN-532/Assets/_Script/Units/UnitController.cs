@@ -57,30 +57,23 @@ public class UnitController : MonoBehaviour
 
     private float defenseRadius = 8f;
 
+    private ProjectileShooter projectileShooter;
+
     [SerializeField]
     public UnitLogic CurrentLogic { get; private set; }
 
-    private Vector2Int GetMapCoordinatesOfVector3(Vector3 position)
-    {
-        return new Vector2Int((int)Math.Round((decimal)position.x), (int)Math.Round((decimal)position.z));
-    }
-
-    private Vector2Int GetVectorFromCoordinatesTuple(Tuple<int, int> tuple)
-    {
-        return new Vector2Int(tuple.Item1, tuple.Item2);
-    }
-    private Tuple<int, int> GetTupleFromVector3(Vector3 position)
-    {
-        return new Tuple<int, int>((int)Math.Round((decimal)position.x), (int)Math.Round((decimal)position.z));
-    }
-
-    void Awake()
+    protected virtual void Awake()
     {
         timeUntilNextTargetSelection = 0;
         TimeUntilNextChaseTargetSelection = 0;
         hitBox = GetComponent<HitBox>();
         hurtBox = GetComponent<HurtBox>();
         CurrentPath = new Stack<Vector2Int>();
+    }
+
+    protected virtual void Start()
+    {
+        projectileShooter = GetComponent<ProjectileShooter>();
     }
 
     public UnitController Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float damagePoints, float speedPoints, UnitLogic logic)
@@ -161,13 +154,7 @@ public class UnitController : MonoBehaviour
 
         }
 
-        // If unit reached target, select next map tile
-        if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)Target.position.x)
-            && Math.Round((decimal)transform.position.z) == Math.Round((decimal)Target.position.y))
-        {
-            SelectTarget();
-        }
-        else if (CurrentPath.Count == 0)
+        if (CurrentPath.Count == 0)
         {
             SelectPathTiles();
         }
@@ -175,17 +162,23 @@ public class UnitController : MonoBehaviour
             && Math.Round((decimal)transform.position.z) == Math.Round((decimal)CurrentPath.Peek().y))
         {
             CurrentPath.Pop();
-            //SelectNextPathTile();
+        }
+        // If unit reached target, select next map tile
+        else if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)Target.position.x)
+            && Math.Round((decimal)transform.position.z) == Math.Round((decimal)Target.position.y))
+        {
+            SelectTarget();
         }
         else
         {
             // The unit does not move while it is engaged in combat or being hit:
-            if (!hitBox.IsBeingHit)
+            if (!IsInCombat())
             {
                 // If the nearest enemy is within the chase distance, chase it before continuing on the path to the target:
                 float magnitude = UnityEngine.Random.Range(0.8f * Time.fixedDeltaTime / timeBetweenMovesInSeconds, Time.fixedDeltaTime / timeBetweenMovesInSeconds);
                 if (ChaseTarget != null)
                 {
+                    CurrentPath.Clear();
                     transform.position = Vector3.MoveTowards(transform.position, new Vector3(ChaseTarget.transform.position.x, transform.position.y, ChaseTarget.transform.position.z), magnitude);
                 }
                 else
@@ -198,6 +191,14 @@ public class UnitController : MonoBehaviour
 
     public bool IsInCombat()
     {
+        if (projectileShooter != null && projectileShooter.Target != null)
+        {
+            if (Vector3.Distance(transform.position, projectileShooter.Target.position) < projectileShooter.MaxDistanceAllowedToTarget)
+            {
+                return true;
+            }
+        }
+
         return hitBox.IsBeingHit;
     }
 
@@ -257,7 +258,7 @@ public class UnitController : MonoBehaviour
         var pathTileTuples = ShortestPathFinder.FindShortestPath(levelMono.ObstacleBinaryMap, GetTupleFromVector3(transform.position), GetTupleFromVector3(Target.position));
         if (pathTileTuples == null || pathTileTuples.Count == 0)
         {
-            // Rest the target and have the unit run in a random direction in case it gets stuck:
+            // Reset the target and have the unit run in a random direction in case it gets stuck:
             SelectTarget();
             var currentCoordinates = GetMapCoordinatesOfVector3(transform.position);
             List<Vector2Int> frontier = new();
@@ -279,6 +280,7 @@ public class UnitController : MonoBehaviour
             if (nextMapPosition == Vector2Int.zero)
             {
                 CurrentPath.Push(frontier[UnityEngine.Random.Range(0, frontier.Count)]);
+                return;
             }
             CurrentPath.Push(nextMapPosition);
             return;
@@ -348,9 +350,27 @@ public class UnitController : MonoBehaviour
                 {
                     Target = UnitHelpers.GetRandomNodeByPlayerOrNeutral(Player.Human).transform;
                 }
-                TargetCoordinates = new Vector2Int((int)Target.transform.position.x, (int)Target.transform.position.z);
+                if (Target != null)
+                {
+                    TargetCoordinates = new Vector2Int((int)Target.transform.position.x, (int)Target.transform.position.z);
+                }
                 break;
 
         }
+    }
+
+    protected Vector2Int GetMapCoordinatesOfVector3(Vector3 position)
+    {
+        return new Vector2Int((int)Math.Round((decimal)position.x), (int)Math.Round((decimal)position.z));
+    }
+
+    protected Vector2Int GetVectorFromCoordinatesTuple(Tuple<int, int> tuple)
+    {
+        return new Vector2Int(tuple.Item1, tuple.Item2);
+    }
+
+    protected Tuple<int, int> GetTupleFromVector3(Vector3 position)
+    {
+        return new Tuple<int, int>((int)Math.Round((decimal)position.x), (int)Math.Round((decimal)position.z));
     }
 }

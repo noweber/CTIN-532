@@ -6,30 +6,31 @@ using static MapNodeController;
 public class ProjectileShooter : PrefabSpawnAbility
 {
     [SerializeField]
-    private float maxDistanceAllowedToTarget = 2.0f;
+    public float MaxDistanceAllowedToTarget = 2.0f;
 
     [SerializeField]
-    private Transform target;
+    public Transform Target { get; private set; }
 
     [SerializeField]
     protected Player Owner;
 
     [SerializeField]
     protected bool CreateProjectilesWithoutTarget = false;
+
     protected override void SpawnGameObject(GameObject prefab)
     {
-        if (target == null || Vector3.Distance(transform.position, target.position) > maxDistanceAllowedToTarget)
+        if (Target == null || Vector3.Distance(transform.position, Target.position) > MaxDistanceAllowedToTarget)
         {
             var nearestEnemy = UnitHelpers.GetNearestHostileUnit(transform, Owner).transform;
-            if (nearestEnemy != null && Vector3.Distance(transform.position, nearestEnemy.transform.position) < maxDistanceAllowedToTarget)
+            if (nearestEnemy != null && Vector3.Distance(transform.position, nearestEnemy.transform.position) < MaxDistanceAllowedToTarget)
             {
-                target = nearestEnemy.transform;
+                Target = nearestEnemy.transform;
             }
         }
 
-        if (target != null)
+        if (Target != null)
         {
-            Instantiate(prefab, transform.position, Quaternion.identity).GetComponent<Projectile>().Initialize(target.position, Owner);
+            Instantiate(prefab, transform.position, Quaternion.identity).GetComponent<Projectile>().Initialize(Target.position, Owner);
         }
     }
 }

@@ -120,11 +120,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 714a28e0cf73de64dacfecd95319d918, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AbilityCooldown: 1
+  AbilityCooldown: 2
   CooldownRemainingInSeconds: 0
   prefabToSpawnWhenAbilityIsUsed: {fileID: 8944371612916874545, guid: 6e94e0eed70c5144889fe0d53b9bbe61, type: 3}
-  maxDistanceAllowedToTarget: 8
-  target: {fileID: 0}
+  MaxDistanceAllowedToTarget: 6.4
   Owner: 2
   CreateProjectilesWithoutTarget: 0
 --- !u!114 &1094432663472140735
@@ -141,7 +140,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FightSound: {fileID: 8300000, guid: d9adc20587baeee4196149508503bc0b, type: 3}
   LogicChangeParticlesPrefab: {fileID: 2617646000106490837, guid: a7500d8414f8f8042bed459a341baad4, type: 3}
-  CurrentCoordinates: {x: 0, y: 0}
   TargetCoordinates: {x: 0, y: 0}
   Target: {fileID: 0}
   hitBox: {fileID: 0}
