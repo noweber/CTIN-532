@@ -4,8 +4,8 @@ public class AudioManager : Singleton<AudioManager>
 {
     public AudioSource SFXPlayer;
 
-    private float min_pitch = -0.9f;
-    private float max_pitch = 1.1f;
+    [SerializeField] private float min_pitch = 0.8f;
+    [SerializeField] private float max_pitch = 1.2f;
 
     // TODO: Remove these. These were added to get prototype 4 working ASAP.
     public AudioSource SpawnSound;
@@ -27,6 +27,12 @@ public class AudioManager : Singleton<AudioManager>
     public AudioSource Victory;
 
     public AudioSource Defeat;
+
+    public void PlayWithRandomizedPitch(AudioSource audioSource)
+    {
+        audioSource.pitch = Random.Range(min_pitch, max_pitch);
+        audioSource.Play();
+    }
 
     // Used for UI
     public void PlaySFX(AudioClip audioClip, float volume = 1.0f)

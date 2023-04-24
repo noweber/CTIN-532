@@ -3,10 +3,6 @@ using UnityEngine;
 
 public class MapNodeController : MonoBehaviour
 {
-    public AudioClip GainNodeSound;
-    public AudioClip LoseNodeSound;
-    public AudioClip SelectSound;
-
     public Player Owner;
 
     public Material[] OwnerMaterialsMap;
@@ -32,6 +28,8 @@ public class MapNodeController : MonoBehaviour
         Human = 1,
         AI = 2
     };
+
+    private float secondsUntilNextNodeSound;
 
     public void Start()
     {
@@ -91,7 +89,10 @@ public class MapNodeController : MonoBehaviour
         {
             timeUntilNextCollisionCheck -= Time.deltaTime;
         }
-
+        if (!CanPlayNodeSound())
+        {
+            UpdateNodeSoundTimer(Time.deltaTime);
+        }
     }
     public void OnTriggerStay(Collider other)
     {
@@ -125,14 +126,22 @@ public class MapNodeController : MonoBehaviour
         {
             if (unitController.Owner == Player.Human && Owner != Player.Human)
             {
-                AudioManager.Instance.PlaySFX(GainNodeSound, 1.0f);
+                if (CanPlayNodeSound())
+                {
+                    ResetNodeSoundTimer();
+                    AudioManager.Instance.PlayWithRandomizedPitch(AudioManager.Instance.GainNodeSound);
+                }
                 SetOwner(Player.Human);
                 PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).AddNode();
                 PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).RemoveNode();
             }
             else if (unitController.Owner == Player.AI && Owner != Player.AI)
             {
-                AudioManager.Instance.PlaySFX(LoseNodeSound, 1.0f);
+                if (CanPlayNodeSound())
+                {
+                    ResetNodeSoundTimer();
+                    AudioManager.Instance.PlayWithRandomizedPitch(AudioManager.Instance.LoseNodeSound);
+                }
                 SetOwner(Player.AI);
                 PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).RemoveNode();
                 PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).AddNode();
@@ -161,11 +170,30 @@ public class MapNodeController : MonoBehaviour
             }
             else
             {
-                AudioManager.Instance.PlaySFX(SelectSound, 1.0f);
+                if (CanPlayNodeSound())
+                {
+                    ResetNodeSoundTimer();
+                    AudioManager.Instance.PlayWithRandomizedPitch(AudioManager.Instance.SelectSound);
+                }
                 playerSelection.SetSelectedMapNode(this);
                 Select_Sphere.SetActive(true);
                 isSelected = true;
             }
         }
+    }
+
+    private void ResetNodeSoundTimer()
+    {
+        secondsUntilNextNodeSound = timeBetweenCollisionChecks;
+    }
+
+    private void UpdateNodeSoundTimer(float seconds)
+    {
+        secondsUntilNextNodeSound -= seconds;
+    }
+
+    private bool CanPlayNodeSound()
+    {
+        return secondsUntilNextNodeSound <= 0;
     }
 }

@@ -41,7 +41,7 @@ public class HitBox : MonoBehaviour
     {
         currentHitPoints -= rawDamage;
         ShowDamageText(rawDamage);
-
+        AudioManager.Instance.PlayWithRandomizedPitch(AudioManager.Instance.FightSound);
         if (hitPointsBar != null)
         {
             hitPointsBar.updateHpBar(MaxHitPoints, currentHitPoints);
