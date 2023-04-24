@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2573299682793438060, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8311514824536425532, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -118,7 +122,7 @@ PrefabInstance:
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: sprite
       value: 
-      objectReference: {fileID: -1196532911, guid: 915d4630149db9f49a98d81664a3568d, type: 3}
+      objectReference: {fileID: 21300000, guid: 131720e51b5b3d6479e1e3f79122f273, type: 3}
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: UnitType
       value: 1
