@@ -27,7 +27,7 @@ public class MinimapManager : Singleton<MinimapManager>
         findMapNode();
         if (Input.GetMouseButtonDown(0))
         {
-            if(cur_Node != null)
+            if (cur_Node != null)
             {
                 main_camera_control.SetFocus(cur_Node.transform.position);
             }
@@ -51,7 +51,10 @@ public class MinimapManager : Singleton<MinimapManager>
 
                 if (cur_Node != null) { cur_Node.minimap_icon.highlighted(false); }
                 cur_Node = UnitHelpers.GetClosestNode(mouse_worldPosition);
-                cur_Node.minimap_icon.highlighted(true);
+                if (cur_Node != null)
+                {
+                    cur_Node.minimap_icon.highlighted(true);
+                }
             }
             else
             {

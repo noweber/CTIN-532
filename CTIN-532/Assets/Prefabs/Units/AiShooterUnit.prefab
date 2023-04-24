@@ -85,7 +85,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HurtSound: {fileID: 8300000, guid: d9adc20587baeee4196149508503bc0b, type: 3}
   Owner: 2
-  Damage: 10
+  Damage: 5
   rateOfFire: 1
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 0
@@ -140,7 +140,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FightSound: {fileID: 8300000, guid: d9adc20587baeee4196149508503bc0b, type: 3}
   LogicChangeParticlesPrefab: {fileID: 2617646000106490837, guid: a7500d8414f8f8042bed459a341baad4, type: 3}
-  TargetCoordinates: {x: 0, y: 0}
   Target: {fileID: 0}
   hitBox: {fileID: 0}
   hurtBox: {fileID: 0}

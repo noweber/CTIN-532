@@ -10,8 +10,8 @@ namespace Assets._Script.Districts
 
         public void OnEnter()
         {
-            SetDistrictGameObjectsActiveState(true);
-            CurrencyController.Instance.ResetData();
+                SetDistrictGameObjectsActiveState(true);
+                CurrencyController.Instance.ResetData();
         }
 
         public void OnExit()

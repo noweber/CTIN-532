@@ -150,6 +150,7 @@ public class MapNodeController : MonoBehaviour
                     playerSelection.SetSelectedMapNode(null);
                 }
             }
+            unitController.SelectNewPathAndTarget();
         }
     }
 

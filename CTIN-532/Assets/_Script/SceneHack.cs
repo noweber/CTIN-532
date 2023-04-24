@@ -1,17 +1,22 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneHack : Singleton<SceneHack>
+public sealed class SceneHack : Singleton<SceneHack>
 {
     private static bool startSceneLoaded = false;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (!startSceneLoaded)
         {
-            startSceneLoaded = true;
             SceneManager.LoadScene("MainMenuTest");
+            startSceneLoaded = true;
         }
+    }
+
+    public static bool WasStartSceneLoaded()
+    {
+        return startSceneLoaded;
     }
 }

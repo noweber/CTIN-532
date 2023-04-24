@@ -10,7 +10,7 @@ public class SortOrder : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(gameObject + ": " +(transform.position.z * 1000));
+        //Debug.Log(gameObject + ": " +(transform.position.z * 1000));
         //Debug.Log(gameObject + ": " + (int)(transform.position.z * 1000));
         renderer = GetComponent<SpriteRenderer>();
         renderer.sortingOrder = -(int)(transform.position.z * 1000);

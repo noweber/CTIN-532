@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 public class MapGenerator : Singleton<MapGenerator>
 {
-    enum TileType
+    public enum TileType
     {
         empty = 0,
         floor = 1,
@@ -53,8 +53,8 @@ public class MapGenerator : Singleton<MapGenerator>
     {
         MapWidth = mapSize.x;
         MapHeight = mapSize.y;
-        _map = new TileType[MapWidth, MapHeight];
-        _mainIsland = new bool[MapWidth, MapHeight];
+        Map = new TileType[MapWidth, MapHeight];
+        MainIsland = new bool[MapWidth, MapHeight];
         Obs_map = new int[MapWidth, MapHeight];
         RegenerateCaveMap();
     }
@@ -71,9 +71,9 @@ public class MapGenerator : Singleton<MapGenerator>
     [Tooltip("The size of tiles created for the map.")]
     public int TileSize { get; private set; } = 1;
 
-    private TileType[,] _map;
+    public TileType[,] Map { get; private set; }
     private GameObject grid;
-    private bool[,] _mainIsland;
+    public bool[,] MainIsland { get; private set; }
     private bool[,] _obsIsland;
     private bool islandFilled = false;
 
@@ -95,16 +95,17 @@ public class MapGenerator : Singleton<MapGenerator>
     public bool[,] GetBinaryTilemap()
     {
         bool[,] tilemap = new bool[MapWidth, MapHeight];
-        if (_map == null)
+        if (Map == null)
         {
             return tilemap;
         }
 
-        for (int i = 0; i < _map.GetLength(0); i++)
+        for (int i = 0; i < Map.GetLength(0); i++)
         {
-            for (int j = 0; j < _map.GetLength(1); j++)
+            for (int j = 0; j < Map.GetLength(1); j++)
             {
-                if ((_map[i, j] == TileType.floor || _map[i, j] == TileType.door || _map[i, j] == TileType.empty) && Obs_map[i, j] == 0)
+                // TODO: Remove wall from this when there is always a non-water pathway.
+                if ((Map[i, j] == TileType.floor || Map[i, j] == TileType.door || Map[i, j] == TileType.empty || Map[i, j] == TileType.wall) && Obs_map[i, j] == 0)
                 {
                     tilemap[i, j] = true;
                 }
@@ -127,7 +128,7 @@ public class MapGenerator : Singleton<MapGenerator>
             islandFilled = true;
         }
 
-        return _mainIsland[x, y];// && _obsIsland[x, y];
+        return MainIsland[x, y];// && _obsIsland[x, y];
     }
 
     private void generateCaveMap()
@@ -139,11 +140,11 @@ public class MapGenerator : Singleton<MapGenerator>
             {
                 if (Random.Range(0, 100) < cave_wall_chance)
                 {
-                    _map[i, j] = TileType.wall;
+                    Map[i, j] = TileType.wall;
                 }
                 else
                 {
-                    _map[i, j] = TileType.floor;
+                    Map[i, j] = TileType.floor;
                 }
             }
         }
@@ -169,7 +170,7 @@ public class MapGenerator : Singleton<MapGenerator>
             for (int j = 0; j < MapHeight; j++)
             {
 
-                switch (_map[i, j])
+                switch (Map[i, j])
                 {
                     case TileType.floor:
                         Instantiate(elements[0], new Vector3(x, y, z), Quaternion.identity, grid.transform);
@@ -234,7 +235,7 @@ public class MapGenerator : Singleton<MapGenerator>
             {
                 if (Obs_map[i, j] == 1)
                 {
-                    if (_map[i, j] == TileType.wall)
+                    if (Map[i, j] == TileType.wall)
                     {
                         Instantiate(GetRandomPrefab(lowWaterObstacles), new Vector3(x, y, z),
                             Quaternion.identity, grid.transform);
@@ -247,7 +248,7 @@ public class MapGenerator : Singleton<MapGenerator>
                 }
                 else if (Obs_map[i, j] == 2)
                 {
-                    if (_map[i, j] == TileType.wall)
+                    if (Map[i, j] == TileType.wall)
                     {
                         Instantiate(GetRandomPrefab(midWaterObstacles), new Vector3(x, y, z),
                             Quaternion.identity, grid.transform);
@@ -260,7 +261,7 @@ public class MapGenerator : Singleton<MapGenerator>
                 }
                 else if (Obs_map[i, j] == 3)
                 {
-                    if (_map[i, j] == TileType.wall)
+                    if (Map[i, j] == TileType.wall)
                     {
                         Instantiate(GetRandomPrefab(highWaterObstacles), new Vector3(x, y, z),
                             Quaternion.identity, grid.transform);
@@ -296,7 +297,7 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             for (int j = 0; j < MapHeight; j++)
             {
-                _map[i, j] = 0;
+                Map[i, j] = 0;
             }
         }
         Destroy(grid);
@@ -314,7 +315,7 @@ public class MapGenerator : Singleton<MapGenerator>
                 {
                     if (j > 0 && j < MapHeight)
                     {
-                        if (_map[i, j] == TileType.floor) { res++; }
+                        if (Map[i, j] == TileType.floor) { res++; }
                     }
                 }
             }
@@ -334,11 +335,11 @@ public class MapGenerator : Singleton<MapGenerator>
                     int count_2 = checkNeighborFloor(i, j, 2);
                     if (count_1 >= 5 || count_2 <= 2)
                     {
-                        _map[i, j] = TileType.floor;
+                        Map[i, j] = TileType.floor;
                     }
                     else
                     {
-                        _map[i, j] = TileType.wall;
+                        Map[i, j] = TileType.wall;
                     }
                 }
                 else
@@ -346,11 +347,11 @@ public class MapGenerator : Singleton<MapGenerator>
                     int count = checkNeighborFloor(i, j, 1);
                     if (count >= 5)
                     {
-                        _map[i, j] = TileType.floor;
+                        Map[i, j] = TileType.floor;
                     }
                     else
                     {
-                        _map[i, j] = TileType.wall;
+                        Map[i, j] = TileType.wall;
                     }
                 }
             }
@@ -366,7 +367,7 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             for (int j = 0; j < MapHeight; j++)
             {
-                if (isOpen(i, j) && _mainIsland[i, j] == false)
+                if (isOpen(i, j) && MainIsland[i, j] == false)
                 {
                     int size = 0;
                     dfs(i, j, ref size);
@@ -385,7 +386,7 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             for (int j = 0; j < MapHeight; j++)
             {
-                _mainIsland[i, j] = false;
+                MainIsland[i, j] = false;
             }
         }
 
@@ -432,15 +433,15 @@ public class MapGenerator : Singleton<MapGenerator>
     private void dfs(int i, int j, ref int size)
     {
         size++;
-        _mainIsland[i, j] = true;
+        MainIsland[i, j] = true;
 
-        if (i - 1 >= 0 && isOpen(i - 1, j) && _mainIsland[i - 1, j] == false) dfs(i - 1, j, ref size);
+        if (i - 1 >= 0 && isOpen(i - 1, j) && MainIsland[i - 1, j] == false) dfs(i - 1, j, ref size);
 
-        if (i + 1 < MapWidth && isOpen(i + 1, j) && _mainIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
+        if (i + 1 < MapWidth && isOpen(i + 1, j) && MainIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
 
-        if (j - 1 >= 0 && isOpen(i, j - 1) && _mainIsland[i, j - 1] == false) dfs(i, j - 1, ref size);
+        if (j - 1 >= 0 && isOpen(i, j - 1) && MainIsland[i, j - 1] == false) dfs(i, j - 1, ref size);
 
-        if (j + 1 < MapHeight && isOpen(i, j + 1) && _mainIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
+        if (j + 1 < MapHeight && isOpen(i, j + 1) && MainIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
     }
 
     private void dfs_obs(int i, int j, ref int size)
@@ -458,7 +459,7 @@ public class MapGenerator : Singleton<MapGenerator>
 
     private bool isOpen(int i, int j)
     {
-        return _map[i, j] == TileType.floor || _map[i, j] == TileType.door || _map[i, j] == TileType.empty;
+        return Map[i, j] == TileType.floor || Map[i, j] == TileType.door || Map[i, j] == TileType.empty;
     }
     #endregion
 

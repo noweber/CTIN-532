@@ -14,87 +14,115 @@ namespace Assets._Script.Units
         public static UnitController GetNearestHostileUnit(Transform sourceTransform, Player sourcePlayer)
         {
             var allUnits = FindObjectsOfType<UnitController>();
-            List<UnitController> unitsOfPlayer = new();
-            foreach (var unit in allUnits)
+            if (allUnits != null)
             {
-                if (unit.Owner != sourcePlayer)
+                List<UnitController> unitsOfPlayer = new();
+                foreach (var unit in allUnits)
                 {
-                    if (unit.transform != sourceTransform)
+                    if (unit.Owner != sourcePlayer)
                     {
-                        unitsOfPlayer.Add(unit);
+                        if (unit.transform != sourceTransform)
+                        {
+                            unitsOfPlayer.Add(unit);
+                        }
                     }
                 }
-            }
-            UnitController result = null;
-            float distance = float.MaxValue;
-            foreach (var unit in unitsOfPlayer)
-            {
-                float tempDistance = Vector3.Distance(sourceTransform.position, unit.transform.position);
-                if (tempDistance <= distance)
+                UnitController result = null;
+                float distance = float.MaxValue;
+                foreach (var unit in unitsOfPlayer)
                 {
-                    result = unit;
-                    distance = tempDistance;
+                    float tempDistance = Vector3.Distance(sourceTransform.position, unit.transform.position);
+                    if (tempDistance <= distance)
+                    {
+                        result = unit;
+                        distance = tempDistance;
+                    }
                 }
+                return result;
             }
-            return result;
+            else
+            {
+                return null;
+            }
         }
 
 
         public static MapNodeController GetRandomNodeByPlayerOrNeutral(Player owner)
         {
             var mapNodes = FindObjectsOfType<MapNodeController>();
-            List<MapNodeController> possibleNodes = new();
-            foreach (var node in mapNodes)
+            if (mapNodes != null)
             {
-                if (node.Owner == owner || node.Owner == Player.Neutral)
+                List<MapNodeController> possibleNodes = new();
+                foreach (var node in mapNodes)
                 {
-                    possibleNodes.Add(node);
+                    if (node.Owner == owner || node.Owner == Player.Neutral)
+                    {
+                        possibleNodes.Add(node);
+                    }
                 }
+                if (possibleNodes.Count == 0)
+                {
+                    return null;
+                }
+
+                return possibleNodes[Random.Range(0, possibleNodes.Count)];
             }
-            if (possibleNodes.Count == 0)
+            else
             {
                 return null;
             }
-
-            return possibleNodes[UnityEngine.Random.Range(0, possibleNodes.Count)];
         }
 
         public static MapNodeController GetClosestNodeByPlayerOrNeutral(Vector3 fromPosition, Player owner)
         {
             var mapNodes = FindObjectsOfType<MapNodeController>();
-            MapNodeController result = null;
-            float distance = float.MaxValue;
-            for (int i = 0; i < mapNodes.Length; i++)
+            if (mapNodes != null)
             {
-                if (mapNodes[i].Owner == owner || mapNodes[i].Owner == Player.Neutral)
+                MapNodeController result = null;
+                float distance = float.MaxValue;
+                for (int i = 0; i < mapNodes.Length; i++)
                 {
-                    float tempDistance = Vector3.Distance(mapNodes[i].transform.position, fromPosition);
-                    if (tempDistance < distance)
+                    if (mapNodes[i].Owner == owner || mapNodes[i].Owner == Player.Neutral)
                     {
-                        distance = tempDistance;
-                        result = mapNodes[i];
+                        float tempDistance = Vector3.Distance(mapNodes[i].transform.position, fromPosition);
+                        if (tempDistance < distance)
+                        {
+                            distance = tempDistance;
+                            result = mapNodes[i];
+                        }
                     }
                 }
+                return result;
             }
-            return result;
+            else
+            {
+                return null;
+            }
         }
 
         public static MapNodeController GetClosestNode(Vector3 pos)
         {
             var mapNodes = FindObjectsOfType<MapNodeController>();
-            if (mapNodes.Length == 0) return null;
-            MapNodeController res = null;
-            float dist = float.MaxValue;
-            for (int i = 0; i < mapNodes.Length; i++)
+            if (mapNodes != null)
             {
-                float cur = Vector3.Distance(mapNodes[i].transform.position, pos);
-                if (cur < dist)
+                if (mapNodes.Length == 0) return null;
+                MapNodeController result = null;
+                float dist = float.MaxValue;
+                for (int i = 0; i < mapNodes.Length; i++)
                 {
-                    dist = cur;
-                    res = mapNodes[i];
+                    float cur = Vector3.Distance(mapNodes[i].transform.position, pos);
+                    if (cur < dist)
+                    {
+                        dist = cur;
+                        result = mapNodes[i];
+                    }
                 }
+                return result;
             }
-            return res;
+            else
+            {
+                return null;
+            }
         }
     }
 }

@@ -8074,6 +8074,7 @@ GameObject:
   - component: {fileID: 604097352}
   - component: {fileID: 604097351}
   - component: {fileID: 604097350}
+  - component: {fileID: 604097353}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -8131,6 +8132,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &604097353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 604097349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e6bb47575a9b90499b69546d5b6205b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HeadquartersPrefab: {fileID: 0}
+  LevelmapWorldSpaceYPosition: 1
+  MinimumSearchPositionTolerance: 8
+  MaximumSearchPositionTolerance: 64
+  SearchPositionToleranceChance: 0.05
 --- !u!1 &612261850
 GameObject:
   m_ObjectHideFlags: 0
@@ -12720,7 +12738,7 @@ MonoBehaviour:
 
     Jackie Mengxuan Li
 
-    Nowen Weber
+    Nicholas Owen Weber
 
     <u>Music:</u>
 
@@ -16263,7 +16281,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1903590358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16917,6 +16935,55 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1986727890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1986727892}
+  - component: {fileID: 1986727891}
+  m_Layer: 0
+  m_Name: Level
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1986727891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1986727890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e6bb47575a9b90499b69546d5b6205b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HeadquartersPrefab: {fileID: 6212767972623595804, guid: 6fd09ab83f3fdb94aae833042be93dfc, type: 3}
+  LevelmapWorldSpaceYPosition: 1
+  MinimumSearchPositionTolerance: 8
+  MaximumSearchPositionTolerance: 64
+  SearchPositionToleranceChance: 0.05
+--- !u!4 &1986727892
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1986727890}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 735.98694, y: 170.32382, z: 1.5630999}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2019311820
 GameObject:
   m_ObjectHideFlags: 0

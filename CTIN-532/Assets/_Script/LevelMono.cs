@@ -71,7 +71,15 @@ public class LevelMono : MonoBehaviour
     /// <returns></returns>
     public bool IsTilePassable(int x, int y)
     {
-        return ObstacleBinaryMap[x, y];
+        if (!ObstacleBinaryMap[x, y])
+        {
+            return false;
+        }
+        if(mapGenerator.Map[x, y] == MapGenerator.TileType.wall)
+        {
+            return false;
+        }
+        return true;
     }
 
 
@@ -127,7 +135,10 @@ public class LevelMono : MonoBehaviour
         Debug.Log("Number of Nodes: " + (nodePositions.Count + 2));
         foreach (var position in nodePositions)
         {
-            PlaceFortressNode(new Tuple<int, int>(position.x, position.y), false, false);
+            if (IsTilePassable(position.x, position.y))
+            {
+                PlaceFortressNode(new Tuple<int, int>(position.x, position.y), false, false);
+            }
         }
     }
 
