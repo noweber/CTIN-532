@@ -178,7 +178,6 @@ public class UnitController : MonoBehaviour
                 float magnitude = UnityEngine.Random.Range(0.8f * Time.fixedDeltaTime / timeBetweenMovesInSeconds, Time.fixedDeltaTime / timeBetweenMovesInSeconds);
                 if (ChaseTarget != null)
                 {
-                    CurrentPath.Clear();
                     transform.position = Vector3.MoveTowards(transform.position, new Vector3(ChaseTarget.transform.position.x, transform.position.y, ChaseTarget.transform.position.z), magnitude);
                 }
                 else
@@ -293,6 +292,7 @@ public class UnitController : MonoBehaviour
 
     protected void SelectTarget()
     {
+        CurrentPath.Clear();
         switch (CurrentLogic)
         {
             case UnitLogic.Attack:

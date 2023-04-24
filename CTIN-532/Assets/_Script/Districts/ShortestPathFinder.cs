@@ -5,6 +5,14 @@ public static class ShortestPathFinder
 {
     public static List<Tuple<int, int>> FindShortestPath(bool[,] graph, Tuple<int, int> start, Tuple<int, int> end)
     {
+        if (graph == null ||
+            start.Item1 < 0 || start.Item1 >= graph.GetLength(0) || end.Item1 < 0 || end.Item1 >= graph.GetLength(0) ||
+            start.Item2 < 0 || start.Item2 >= graph.GetLength(1) || end.Item2 < 0 || end.Item2 >= graph.GetLength(1)
+            )
+        {
+            return null;
+        }
+
         int width = graph.GetLength(0);
         int height = graph.GetLength(1);
 

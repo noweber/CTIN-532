@@ -86,7 +86,7 @@ MonoBehaviour:
   HurtSound: {fileID: 8300000, guid: d9adc20587baeee4196149508503bc0b, type: 3}
   Owner: 2
   Damage: 5
-  rateOfFire: 0.25
+  rateOfFire: 1
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 0
   particlesPrefab: {fileID: 0}
@@ -104,8 +104,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Owner: 2
   IsBeingHit: 0
-  MaxHitPoints: 40
-  currentHitPoints: 40
+  MaxHitPoints: 60
+  currentHitPoints: 60
   damageTextPrefab: {fileID: 2617646000106490837, guid: ca5697d8e493e57408f0e77665f6ff49, type: 3}
   maxSecondsToPausePerHit: 1
 --- !u!114 &991432717092866744
@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 714a28e0cf73de64dacfecd95319d918, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AbilityCooldown: 4
+  AbilityCooldown: 1.5
   CooldownRemainingInSeconds: 0
   prefabToSpawnWhenAbilityIsUsed: {fileID: 8944371612916874545, guid: 8db8d8a16e2a3d74c88be591733d36a5, type: 3}
   MaxDistanceAllowedToTarget: 6.4
@@ -149,7 +149,7 @@ MonoBehaviour:
   timeUntilNextTargetSelection: 0
   TimeUntilNextChaseTargetSelection: 0
   ChaseTarget: {fileID: 0}
-  MaxChaseDistance: 10
+  MaxChaseDistance: 5
 --- !u!82 &4590887120583853495
 AudioSource:
   m_ObjectHideFlags: 0
