@@ -8,6 +8,7 @@ public abstract class PrefabSpawnAbility : UnitAbility
     protected override void UseAbility()
     {
         SpawnGameObject(prefabToSpawnWhenAbilityIsUsed);
+
     }
 
     protected abstract void SpawnGameObject(GameObject prefab);

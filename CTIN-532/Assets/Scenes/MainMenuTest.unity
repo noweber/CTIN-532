@@ -12716,17 +12716,18 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Developers:
+  m_text: '<u>Development:</u>
 
     Jackie Mengxuan Li
 
     N. Owen Weber
 
-
-    Music:
+    <u>Music:</u>
 
     Louis
-    Slein'
+    Slein
+
+    Andrew Riley'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -17573,9 +17574,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 04d238915d434374a97fad8c5435a4a8, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 68b4099ee905eef4a9d307c6976b1ca8, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.8
+  m_Volume: 1
   m_Pitch: 1
   Loop: 1
   Mute: 0
