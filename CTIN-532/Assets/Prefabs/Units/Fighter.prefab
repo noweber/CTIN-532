@@ -84,7 +84,7 @@ MonoBehaviour:
   HurtSound: {fileID: 8300000, guid: d9adc20587baeee4196149508503bc0b, type: 3}
   Owner: 1
   Damage: 1
-  rateOfFire: 1
+  rateOfFire: 4
   secondRemainingUntilNextHurt: 0
   destroyOnContact: 0
   particlesPrefab: {fileID: 0}
