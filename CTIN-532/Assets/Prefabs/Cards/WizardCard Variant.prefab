@@ -129,7 +129,7 @@ PrefabInstance:
       objectReference: {fileID: 599009571, guid: c05b044666732a644b440151cea9056a, type: 3}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: unitName
-      value: Wizard
+      value: Druid
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: hitPoints
