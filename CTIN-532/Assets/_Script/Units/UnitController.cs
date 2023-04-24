@@ -3,6 +3,7 @@ using Assets._Script.SFX;
 using Assets._Script.Units;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using static MapNodeController;
 using static PlayerSelection;
@@ -18,7 +19,7 @@ public class UnitController : MonoBehaviour
     public Player Owner { get; protected set; }
 
     [SerializeField]
-    protected Vector2Int CurrentCoordinates;
+    protected Stack<Vector2Int> CurrentPath;
 
     [SerializeField]
     protected Vector2Int TargetCoordinates;
@@ -54,25 +55,38 @@ public class UnitController : MonoBehaviour
     [SerializeField]
     protected float MaxChaseDistance = 10.0f;
 
-
     private float defenseRadius = 8f;
 
     [SerializeField]
     public UnitLogic CurrentLogic { get; private set; }
 
+    private Vector2Int GetMapCoordinatesOfVector3(Vector3 position)
+    {
+        return new Vector2Int((int)Math.Round((decimal)position.x), (int)Math.Round((decimal)position.z));
+    }
+
+    private Vector2Int GetVectorFromCoordinatesTuple(Tuple<int, int> tuple)
+    {
+        return new Vector2Int(tuple.Item1, tuple.Item2);
+    }
+    private Tuple<int, int> GetTupleFromVector3(Vector3 position)
+    {
+        return new Tuple<int, int>((int)Math.Round((decimal)position.x), (int)Math.Round((decimal)position.z));
+    }
+
     void Awake()
     {
-        CurrentCoordinates = new Vector2Int();
         timeUntilNextTargetSelection = 0;
         TimeUntilNextChaseTargetSelection = 0;
         hitBox = GetComponent<HitBox>();
         hurtBox = GetComponent<HurtBox>();
+        CurrentPath = new Stack<Vector2Int>();
     }
 
     public UnitController Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float damagePoints, float speedPoints, UnitLogic logic)
     {
         Owner = owner;
-        CurrentCoordinates = new Vector2Int(xCoordinate, yCoordinate);
+        CurrentPath.Push(new Vector2Int(xCoordinate, yCoordinate));
         SetUnitStats(hitPoints, damagePoints, speedPoints);
         ChangeLogic(logic);
         return this;
@@ -148,15 +162,20 @@ public class UnitController : MonoBehaviour
         }
 
         // If unit reached target, select next map tile
-        if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)CurrentCoordinates.x)
-            && Math.Round((decimal)transform.position.z) == Math.Round((decimal)CurrentCoordinates.y))
-        {
-            SelectNextMapTile();
-        }
-        else if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)Target.position.x)
+        if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)Target.position.x)
             && Math.Round((decimal)transform.position.z) == Math.Round((decimal)Target.position.y))
         {
             SelectTarget();
+        }
+        else if (CurrentPath.Count == 0)
+        {
+            SelectPathTiles();
+        }
+        else if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)CurrentPath.Peek().x)
+            && Math.Round((decimal)transform.position.z) == Math.Round((decimal)CurrentPath.Peek().y))
+        {
+            CurrentPath.Pop();
+            //SelectNextPathTile();
         }
         else
         {
@@ -171,7 +190,7 @@ public class UnitController : MonoBehaviour
                 }
                 else
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(CurrentCoordinates.x, transform.position.y, CurrentCoordinates.y), magnitude);
+                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(CurrentPath.Peek().x, transform.position.y, CurrentPath.Peek().y), magnitude);
                 }
             }
         }
@@ -215,49 +234,58 @@ public class UnitController : MonoBehaviour
         }
     }
 
-    protected void SelectNextMapTile()
+    protected void SelectPathTiles()
     {
-        List<Vector2Int> frontier = new();
-        frontier.Add(new Vector2Int(CurrentCoordinates.x + 1, CurrentCoordinates.y));
-        frontier.Add(new Vector2Int(CurrentCoordinates.x - 1, CurrentCoordinates.y));
-        frontier.Add(new Vector2Int(CurrentCoordinates.x, CurrentCoordinates.y + 1));
-        frontier.Add(new Vector2Int(CurrentCoordinates.x, CurrentCoordinates.y - 1));
+        var errorMessage = MethodBase.GetCurrentMethod().DeclaringType.Name + "::" + MethodBase.GetCurrentMethod();
 
-        // TODO: Check the tile is passable.
+        // Assumes Target is not null:
 
-        Vector2Int nextMapPosition = new();
-        float nextDistance = float.MaxValue;
-        foreach (var position in frontier)
+        if (Target == null)
         {
-            float tempDistance = Vector2.Distance(position, new Vector2Int((int)Target.position.x, (int)Target.position.z));
-            if (tempDistance < nextDistance || (tempDistance == nextDistance && UnityEngine.Random.Range(0, 1.0f) > 0.5f)) // Flip a coin for a tie.
-            {
-                nextMapPosition = position;
-                nextDistance = tempDistance;
-            }
+            Debug.LogError(errorMessage + ": Target");
+            return;
+        }
+        var levelMono = FindObjectOfType<LevelMono>();
+        if (levelMono == null)
+        {
+            Debug.LogError(errorMessage + ": LevelMono");
+            return;
         }
 
-        // TODO: Handle the map scaling (this currently works because it is set to 1).
-        // TODO: Use update to interpolate this movement 
-        CurrentCoordinates = nextMapPosition;
-        //this.transform.position = new Vector3(nextMapPosition.x, this.transform.position.y, nextMapPosition.y);
-    }
-
-    public virtual void OnTriggerEnter(Collider other)
-    {
-        //HandleCollisionWithUnit(other);
-        HandleCollisionWithGoal(other);
-    }
-
-    protected virtual void HandleCollisionWithGoal(Collider possibleGoal)
-    {
-        // On collision with its goal, set the goal to null (so that it will find a new goal during next update):
-        if (possibleGoal != null && Target != null)
+        // Clear the current path:
+        CurrentPath.Clear();
+        var pathTileTuples = ShortestPathFinder.FindShortestPath(levelMono.ObstacleBinaryMap, GetTupleFromVector3(transform.position), GetTupleFromVector3(Target.position));
+        if (pathTileTuples == null || pathTileTuples.Count == 0)
         {
-            if (possibleGoal != null && (int)possibleGoal.transform.position.x == TargetCoordinates.x && (int)possibleGoal.transform.position.z == TargetCoordinates.y)
+            // Rest the target and have the unit run in a random direction in case it gets stuck:
+            SelectTarget();
+            var currentCoordinates = GetMapCoordinatesOfVector3(transform.position);
+            List<Vector2Int> frontier = new();
+            frontier.Add(new Vector2Int(currentCoordinates.x + 1, currentCoordinates.y));
+            frontier.Add(new Vector2Int(currentCoordinates.x - 1, currentCoordinates.y));
+            frontier.Add(new Vector2Int(currentCoordinates.x, currentCoordinates.y + 1));
+            frontier.Add(new Vector2Int(currentCoordinates.x, currentCoordinates.y - 1));
+            Vector2Int nextMapPosition = Vector2Int.zero;
+            float nextDistance = float.MaxValue;
+            foreach (var position in frontier)
             {
-                Target = null;
+                float tempDistance = Vector2.Distance(transform.position, new Vector2Int((int)Target.position.x, (int)Target.position.z));
+                if (tempDistance < nextDistance || (tempDistance == nextDistance && UnityEngine.Random.Range(0, 1.0f) > 0.5f)) // Flip a coin for a tie.
+                {
+                    nextMapPosition = position;
+                    nextDistance = tempDistance;
+                }
             }
+            if (nextMapPosition == Vector2Int.zero)
+            {
+                CurrentPath.Push(frontier[UnityEngine.Random.Range(0, frontier.Count)]);
+            }
+            CurrentPath.Push(nextMapPosition);
+            return;
+        }
+        for (int i = pathTileTuples.Count - 1; i > 0; i--)
+        {
+            CurrentPath.Push(GetVectorFromCoordinatesTuple(pathTileTuples[i]));
         }
     }
 

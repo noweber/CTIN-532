@@ -59,7 +59,7 @@ public class LevelMono : MonoBehaviour
     /// <summary>
     /// This 2D array is the set of map data valuesfrom the map generator for placing other level objects such as units and cities.
     /// </summary>
-    private bool[,] obstacleBinaryMap;
+    public bool[,] ObstacleBinaryMap { get; private set; }
 
     private SelectedObjects humanPlayerController;
 
@@ -71,7 +71,7 @@ public class LevelMono : MonoBehaviour
     /// <returns></returns>
     public bool IsTilePassable(int x, int y)
     {
-        return obstacleBinaryMap[x, y];
+        return ObstacleBinaryMap[x, y];
     }
 
 
@@ -80,7 +80,7 @@ public class LevelMono : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        obstacleBinaryMap = null;
+        ObstacleBinaryMap = null;
         levelGameObject = new GameObject("The Level");
         if (MinimumSearchPositionTolerance > MaximumSearchPositionTolerance)
         {
@@ -110,14 +110,14 @@ public class LevelMono : MonoBehaviour
     public void CreateCaveMap(Vector2Int mapSize)
     {
         mapGenerator.CreateMap(mapSize);
-        obstacleBinaryMap = mapGenerator.GetBinaryTilemap();
+        ObstacleBinaryMap = mapGenerator.GetBinaryTilemap();
         //DebugUtils.PrintBoolArray(obstacleBinaryMap);
         //PlaceFortressNodes();
         int radius = (int)Math.Sqrt(((mapSize.x + mapSize.y) / 4) + 1);
         //int radius = DependencyService.Instance.DistrictController().DistrictNumber + 4;
         //Debug.Log("radius: " + radius);
         //var nodePositions = PoissonDiscSampling.GeneratePoints(obstacleBinaryMap, radius);
-        var nodePositions = RandomSampling.GetRandomPointsFromGrid(obstacleBinaryMap, 1, 1 + (int)Math.Sqrt(DependencyService.Instance.DistrictController().DistrictNumber));
+        var nodePositions = RandomSampling.GetRandomPointsFromGrid(ObstacleBinaryMap, 1, 1 + (int)Math.Sqrt(DependencyService.Instance.DistrictController().DistrictNumber));
         if (nodePositions == null || !placePlayerHeadquarters())
         {
             Debug.LogError("Failed to generate node positions on the map.");
@@ -225,7 +225,7 @@ public class LevelMono : MonoBehaviour
 
     private Vector3 getLevelmapPositionInWorldSpace(Tuple<int, int> tilemapPosition)
     {
-        if (obstacleBinaryMap == null)
+        if (ObstacleBinaryMap == null)
         {
             Debug.LogError("Tilemap data is null.");
             return new Vector3(tilemapPosition.Item1, 0, tilemapPosition.Item2);
@@ -247,7 +247,7 @@ public class LevelMono : MonoBehaviour
     /// <returns>An (x,y) pair for the corresponding corner.</returns>
     private Tuple<int, int> convertCornerIndexToXYTuple(int cornerIndex)
     {
-        if (obstacleBinaryMap == null)
+        if (ObstacleBinaryMap == null)
         {
             Debug.LogError("Tilemap data is null.");
             return null;
@@ -256,9 +256,9 @@ public class LevelMono : MonoBehaviour
         return cornerIndex switch
         {
             0 => new Tuple<int, int>(0, 0),
-            1 => new Tuple<int, int>(obstacleBinaryMap.GetLength(0) - 1, 0),
-            2 => new Tuple<int, int>(obstacleBinaryMap.GetLength(0) - 1, obstacleBinaryMap.GetLength(1) - 1),
-            _ => new Tuple<int, int>(0, obstacleBinaryMap.GetLength(1) - 1),
+            1 => new Tuple<int, int>(ObstacleBinaryMap.GetLength(0) - 1, 0),
+            2 => new Tuple<int, int>(ObstacleBinaryMap.GetLength(0) - 1, ObstacleBinaryMap.GetLength(1) - 1),
+            _ => new Tuple<int, int>(0, ObstacleBinaryMap.GetLength(1) - 1),
         };
     }
 
@@ -269,7 +269,7 @@ public class LevelMono : MonoBehaviour
     /// <returns>Returns a tilemap position (x,y) of the nearest passable tile to the search start position.</returns>
     private Tuple<int, int> findNearestPassableTileBfs(Tuple<int, int> tilemapSearchStartPostiion)
     {
-        if (obstacleBinaryMap == null)
+        if (ObstacleBinaryMap == null)
         {
             Debug.LogError("Tilemap data is null.");
             return null;
@@ -282,7 +282,7 @@ public class LevelMono : MonoBehaviour
         Queue<Tuple<int, int>> searchFrontier = new();
 
         // Create a data structure to store which tiles of the map have already been visited:
-        bool[,] cellsVisited = new bool[obstacleBinaryMap.GetLength(0), obstacleBinaryMap.GetLength(1)];
+        bool[,] cellsVisited = new bool[ObstacleBinaryMap.GetLength(0), ObstacleBinaryMap.GetLength(1)];
 
         // Initialize the BFS by setting the start tile as 'visited' and queueing it on the search frontier:
         cellsVisited[tilemapSearchStartPostiion.Item1, tilemapSearchStartPostiion.Item2] = true;
@@ -364,7 +364,7 @@ public class LevelMono : MonoBehaviour
         }
 
         // To be valid, the cell to check must be within the map boundaries.
-        if (x < 0 || x >= obstacleBinaryMap.GetLength(0) || y < 0 || y >= obstacleBinaryMap.GetLength(1))
+        if (x < 0 || x >= ObstacleBinaryMap.GetLength(0) || y < 0 || y >= ObstacleBinaryMap.GetLength(1))
         {
             return false;
         }
@@ -380,7 +380,7 @@ public class LevelMono : MonoBehaviour
 
     private void PlaceFortressNodes()
     {
-        if (obstacleBinaryMap == null)
+        if (ObstacleBinaryMap == null)
         {
             Debug.LogError("Tilemap data is null.");
             return;
@@ -404,8 +404,8 @@ public class LevelMono : MonoBehaviour
         Tuple<int, int> nodeTilemapPosition_3 = findNearestPassableTileBfs(CornerNodePosition_3);
         Tuple<int, int> nodeTilemapPosition_4 = findNearestPassableTileBfs(CornerNodePosition_4);
         int middleOffset = 5;
-        int middlePosx = Random.Range((obstacleBinaryMap.GetLength(0) - 1) / 2 - middleOffset, (obstacleBinaryMap.GetLength(0) - 1) / 2 + middleOffset);
-        int middlePosy = Random.Range((obstacleBinaryMap.GetLength(1) - 1) / 2 - middleOffset, (obstacleBinaryMap.GetLength(1) - 1) / 2 + middleOffset);
+        int middlePosx = Random.Range((ObstacleBinaryMap.GetLength(0) - 1) / 2 - middleOffset, (ObstacleBinaryMap.GetLength(0) - 1) / 2 + middleOffset);
+        int middlePosy = Random.Range((ObstacleBinaryMap.GetLength(1) - 1) / 2 - middleOffset, (ObstacleBinaryMap.GetLength(1) - 1) / 2 + middleOffset);
         Tuple<int, int> nodeTilemapPosition_5 = findNearestPassableTileBfs(
             new Tuple<int, int>(middlePosx, middlePosy)); // Middle Nodes
 
