@@ -25,6 +25,8 @@ namespace Assets._Script
 
         private Dictionary<DistrictState, IGameState> states;
 
+        private Dictionary<DistrictState, GameObject> gameObjects;
+
         public DistrictState CurrentState { get; private set; }
 
         private void Awake()
@@ -34,6 +36,11 @@ namespace Assets._Script
             states.Add(DistrictState.Play, PlayState);
             states.Add(DistrictState.Victory, VictoryState);
             states.Add(DistrictState.Defeat, DefeatState);
+            gameObjects = new();
+            gameObjects.Add(DistrictState.Start, StartState.gameObject);
+            gameObjects.Add(DistrictState.Play, PlayState.gameObject);
+            gameObjects.Add(DistrictState.Victory, VictoryState.gameObject);
+            gameObjects.Add(DistrictState.Defeat, DefeatState.gameObject);
         }
 
         public void ChangeState(DistrictState nextState, bool exitCurrentState = true)
@@ -47,10 +54,12 @@ namespace Assets._Script
             if (exitCurrentState && states.ContainsKey(CurrentState))
             {
                 states[CurrentState].OnExit();
+                gameObjects[CurrentState].SetActive(false);
             }
 
             CurrentState = nextState;
             states[CurrentState].OnEnter();
+            gameObjects[CurrentState].SetActive(true);
         }
     }
 }

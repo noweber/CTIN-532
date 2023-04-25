@@ -113,12 +113,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: damage
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: sprite
       value: 
-      objectReference: {fileID: 439083993, guid: 915d4630149db9f49a98d81664a3568d, type: 3}
+      objectReference: {fileID: 21300000, guid: e27ffdc7bdbf5804a843563de896e17e, type: 3}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: UnitType
       value: 4
@@ -129,11 +129,11 @@ PrefabInstance:
       objectReference: {fileID: 599009571, guid: c05b044666732a644b440151cea9056a, type: 3}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: unitName
-      value: Wizard
+      value: Druid
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: hitPoints
-      value: 4
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 1886421610800277247, guid: f00cc55dadc8f424390ce9a8e3fd88e4, type: 3}
       propertyPath: description

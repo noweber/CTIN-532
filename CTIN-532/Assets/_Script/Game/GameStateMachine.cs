@@ -20,7 +20,10 @@ namespace Assets._Script.Game
 
         private Dictionary<GameState, IGameState> gameStates;
 
-        private GameState currentState;
+        private Dictionary<GameState, GameObject> gameObjects;
+
+        [SerializeField]
+        public GameState CurrentState { get; private set; }
 
         void Awake()
         {
@@ -28,6 +31,10 @@ namespace Assets._Script.Game
             gameStates.Add(GameState.Menu, MenuState);
             gameStates.Add(GameState.Credits, CreditsState);
             gameStates.Add(GameState.District, DistrictState);
+            gameObjects = new();
+            gameObjects.Add(GameState.Menu, MenuState.gameObject);
+            gameObjects.Add(GameState.Credits, CreditsState.gameObject);
+            gameObjects.Add(GameState.District, DistrictState.gameObject);
         }
 
         private void Start()
@@ -43,13 +50,15 @@ namespace Assets._Script.Game
                 return;
             }
 
-            if (exitCurrentState && gameStates.ContainsKey(currentState))
+            if (exitCurrentState && gameStates.ContainsKey(CurrentState))
             {
-                gameStates[currentState].OnExit();
+                gameStates[CurrentState].OnExit();
+                gameObjects[CurrentState].SetActive(false);
             }
 
-            currentState = nextState;
-            gameStates[currentState].OnEnter();
+            CurrentState = nextState;
+            gameStates[CurrentState].OnEnter();
+            gameObjects[CurrentState].SetActive(true);
         }
     }
 }

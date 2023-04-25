@@ -10,7 +10,7 @@ public abstract class UnitAbility : MonoBehaviour
 
     private void Awake()
     {
-        ResetCooldownTimer();
+        CooldownRemainingInSeconds = 0;
     }
 
     void FixedUpdate()

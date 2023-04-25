@@ -6,13 +6,19 @@ using Random = UnityEngine.Random;
 
 public class MapGenerator : Singleton<MapGenerator>
 {
-    enum TileType
+    public enum TileType
     {
         empty = 0,
         floor = 1,
         wall,
         door
     }
+
+    [SerializeField]
+    public int MapWidth { get; private set; } = 50;
+
+    [SerializeField]
+    public int MapHeight { get; private set; } = 50;
 
     struct index
     {
@@ -24,24 +30,8 @@ public class MapGenerator : Singleton<MapGenerator>
         }
     }
 
-    #region Fields
-    // height width of the map
-    [Header("General")]
-    public Vector3 position = Vector3.zero;
-    public int MapHeight = 50, MapWidth = 50;
-
-    [Header("Pathos Map")]
-    public int room_height_min = 5;
-    public int room_height_max = 10;
-    public int room_width_min = 5, room_width_max = 10;
-    public int corridor_length = 10;
-    public int corridor_width = 3;
-    public int num_of_elements = 10;
-    public int chance_of_room = 40;
-
-    private int numTries = 3000;
-    private List<index> indexOfWall;
-
+    [SerializeField]
+    public Vector3 position { get; private set; } = Vector3.zero;
 
     [Header("Cave Map")]
     public int cave_wall_chance = 45;
@@ -50,9 +40,24 @@ public class MapGenerator : Singleton<MapGenerator>
 
     [Header("Obstacles")]
     public int Obs_num;
-    public GameObject[] Obs_prefabs;
     private int[,] Obs_map;
     private float noiseOffset;
+    [SerializeField] private GameObject[] lowLandObstacles;
+    [SerializeField] private GameObject[] midLandObstacles;
+    [SerializeField] private GameObject[] highLandObstacles;
+    [SerializeField] private GameObject[] lowWaterObstacles;
+    [SerializeField] private GameObject[] midWaterObstacles;
+    [SerializeField] private GameObject[] highWaterObstacles;
+
+    public void CreateMap(Vector2Int mapSize)
+    {
+        MapWidth = mapSize.x;
+        MapHeight = mapSize.y;
+        Map = new TileType[MapWidth, MapHeight];
+        MainIsland = new bool[MapWidth, MapHeight];
+        Obs_map = new int[MapWidth, MapHeight];
+        RegenerateCaveMap();
+    }
 
 
     /* a list of prafabs used in map
@@ -66,104 +71,45 @@ public class MapGenerator : Singleton<MapGenerator>
     [Tooltip("The size of tiles created for the map.")]
     public int TileSize { get; private set; } = 1;
 
-    private TileType[,] _map;
+    public TileType[,] Map { get; private set; }
     private GameObject grid;
-    private bool[,] _mainIsland;
+    public bool[,] MainIsland { get; private set; }
     private bool[,] _obsIsland;
     private bool islandFilled = false;
-
-    [Header("Map Generation Input Response")]
-    [Tooltip("Whether or not this map generator will responsd to keyboard input for generating maps.")]
-    public bool RespondsToInputSystem;
-
-    // main island debug
-    private GameObject highlightGrid;
-
-    #endregion
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
-    private void Awake()
+    protected override void Awake()
     {
-        RespondsToInputSystem = true;
-        _map = new TileType[MapWidth, MapHeight];
-        _mainIsland = new bool[MapWidth,MapHeight];
-        Obs_map = new int[MapWidth,MapHeight];
-        indexOfWall = new List<index>();
+        base.Awake();
     }
 
-
-    private void Update()
+    private void RegenerateCaveMap()
     {
-        if (RespondsToInputSystem)
-        {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                RegenerateRoomMap();
-            }
-
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                RegenerateCaveMap();
-            }
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                clearMap();
-            }
-
-            // mainIsland Debug
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                isOnMainIsland(0, 0);
-                MainislandLoad();
-            }
-
-
-            if (Input.GetKeyDown(KeyCode.J))
-            {
-                MainIslandDestory();
-            }
-
-        }
-    }
-
-    public void RegenerateRoomMap()
-    {
-        clearMap();
-        generateRoomMap();
-        mapLoad();
-    }
-
-    public void RegenerateCaveMap()
-    {
-
         clearMap();
         generateCaveMap();
         mapLoad();
     }
 
-    /// <summary>
-    /// This function exposed the underlying map data as a 2D array of integers.
-    /// </summary>
-    /// <returns>Returns a 2D array of bools representing the map data where true means the tile is blocked by an obstacle, wall, or not part of the map.</returns>
     public bool[,] GetBinaryTilemap()
     {
         bool[,] tilemap = new bool[MapWidth, MapHeight];
-        if (_map == null)
+        if (Map == null)
         {
             return tilemap;
         }
 
-        for (int i = 0; i < _map.GetLength(0); i++)
+        for (int i = 0; i < Map.GetLength(0); i++)
         {
-            for (int j = 0; j < _map.GetLength(1); j++)
+            for (int j = 0; j < Map.GetLength(1); j++)
             {
-                if((_map[i, j] == TileType.floor || _map[i, j] == TileType.door) && Obs_map[i,j]==0)
+                // TODO: Remove wall from this when there is always a non-water pathway.
+                if ((Map[i, j] == TileType.floor || Map[i, j] == TileType.door || Map[i, j] == TileType.empty || Map[i, j] == TileType.wall) && Obs_map[i, j] == 0)
                 {
                     tilemap[i, j] = true;
-                } else
+                }
+                else
                 {
                     tilemap[i, j] = false;
                 }
@@ -182,109 +128,10 @@ public class MapGenerator : Singleton<MapGenerator>
             islandFilled = true;
         }
 
-        return _mainIsland[x, y] && _obsIsland[x,y];
+        return MainIsland[x, y];// && _obsIsland[x, y];
     }
 
-    private void generateRoomMap()
-    {
-        // For Debug
-        int room = 0, cor = 0;
-
-        // add first Room
-        int roomH = Random.Range(room_height_min, room_height_max);
-        int roomW = Random.Range(room_width_min, room_width_max);
-
-        // size after add walls
-        roomH += 2;
-        roomW += 2;
-
-        int x = (MapWidth - roomW) / 2;
-        int y = (MapHeight - roomH) / 2;
-
-        for (int i = x; i < x + roomW; i++)
-        {
-            for (int j = y; j < y + roomH; j++)
-            {
-                if (i == x || j == y || i == x + roomW - 1 || j == y + roomH - 1)
-                {
-                    _map[i, j] = TileType.wall;
-                    indexOfWall.Add(new index(i, j));
-                }
-                else
-                {
-                    _map[i, j] = TileType.floor;
-                }
-            }
-        }
-
-        int numE = 0;
-
-        for (int i = 1; i < numTries; i++)
-        {
-            int chances = Random.Range(0, 100);
-            // Find Open Direction
-            index p = indexOfWall[Random.Range(0, indexOfWall.Count)];
-            // 0 - left, 1 - up, 2 - right, 3 - down
-            int direction = 5;
-
-            int tryCounts = 0;
-            while (tryCounts < 100)
-            {
-                if (p.x - 1 > 0 && _map[p.x - 1, p.y] == TileType.empty)
-                {
-                    direction = 0;
-                    break;
-                }
-                else if (p.y + 1 < MapHeight && _map[p.x, p.y + 1] == TileType.empty)
-                {
-                    direction = 1;
-                    break;
-                }
-                else if (p.x + 1 < MapWidth && _map[p.x + 1, p.y] == TileType.empty)
-                {
-                    direction = 2;
-                    break;
-                }
-                else if (p.y - 1 < 0 && _map[p.x, p.y - 1] == TileType.empty)
-                {
-                    direction = 3;
-                    break;
-                }
-                p = indexOfWall[Random.Range(0, indexOfWall.Count)];
-                tryCounts++;
-            }
-
-            // No enough space
-            if (direction == 5)
-            {
-                Debug.Log("No open wall");
-                return;
-            }
-
-            if (chances <= chance_of_room)
-            {
-                room++;
-                if (addRoom(p, direction))
-                {
-                    numE++;
-                }
-            }
-            else
-            {
-                cor++;
-                if (addCorridor(p, direction))
-                {
-                    numE++;
-                }
-            }
-
-            if (numE == num_of_elements) { break; }
-
-        }
-        Debug.Log("Room: " + room + " //Cor: " + cor);
-    }
-
-    public void generateCaveMap()
+    private void generateCaveMap()
     {
         // init the map
         for (int i = 0; i < MapWidth; i++)
@@ -293,11 +140,11 @@ public class MapGenerator : Singleton<MapGenerator>
             {
                 if (Random.Range(0, 100) < cave_wall_chance)
                 {
-                    _map[i, j] = TileType.wall;
+                    Map[i, j] = TileType.wall;
                 }
                 else
                 {
-                    _map[i, j] = TileType.floor;
+                    Map[i, j] = TileType.floor;
                 }
             }
         }
@@ -310,7 +157,7 @@ public class MapGenerator : Singleton<MapGenerator>
         generateObs();
     }
 
-    public void mapLoad()
+    private void mapLoad()
     {
         grid = new GameObject();
         grid.name = "grid";
@@ -323,7 +170,7 @@ public class MapGenerator : Singleton<MapGenerator>
             for (int j = 0; j < MapHeight; j++)
             {
 
-                switch (_map[i, j])
+                switch (Map[i, j])
                 {
                     case TileType.floor:
                         Instantiate(elements[0], new Vector3(x, y, z), Quaternion.identity, grid.transform);
@@ -346,10 +193,10 @@ public class MapGenerator : Singleton<MapGenerator>
         obsLoad();
     }
 
-    public void generateObs()
+    private void generateObs()
     {
         noiseOffset = Random.Range(0, 1);
-        
+
         for (int i = 0; i < MapWidth; i++)
         {
             for (int j = 0; j < MapHeight; j++)
@@ -358,15 +205,15 @@ public class MapGenerator : Singleton<MapGenerator>
                 float y = noiseOffset + (float)j / MapHeight * 10;
                 float v = Mathf.PerlinNoise(x, y);
 
-                if (v > 0.7)
+                if (v > 0.88)
                 {
                     Obs_map[i, j] = 3;
                 }
-                else if (v > 0.6)
+                else if (v > 0.76)
                 {
                     Obs_map[i, j] = 2;
                 }
-                else if (v > 0.5)
+                else if (v > 0.64)
                 {
                     Obs_map[i, j] = 1;
                 }
@@ -378,7 +225,7 @@ public class MapGenerator : Singleton<MapGenerator>
         }
     }
 
-    public void obsLoad()
+    private void obsLoad()
     {
         float x = position.x, y = position.y, z = position.z;
 
@@ -388,18 +235,42 @@ public class MapGenerator : Singleton<MapGenerator>
             {
                 if (Obs_map[i, j] == 1)
                 {
-                    Instantiate(Obs_prefabs[0], new Vector3(x, y, z),
-                        Quaternion.identity, grid.transform);
+                    if (Map[i, j] == TileType.wall)
+                    {
+                        Instantiate(GetRandomPrefab(lowWaterObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
+                    else
+                    {
+                        Instantiate(GetRandomPrefab(lowLandObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
                 }
                 else if (Obs_map[i, j] == 2)
                 {
-                    Instantiate(Obs_prefabs[1], new Vector3(x, y, z),
-                        Quaternion.identity, grid.transform);
+                    if (Map[i, j] == TileType.wall)
+                    {
+                        Instantiate(GetRandomPrefab(midWaterObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
+                    else
+                    {
+                        Instantiate(GetRandomPrefab(midLandObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
                 }
                 else if (Obs_map[i, j] == 3)
                 {
-                    Instantiate(Obs_prefabs[2], new Vector3(x, y, z),
-                        Quaternion.identity, grid.transform);
+                    if (Map[i, j] == TileType.wall)
+                    {
+                        Instantiate(GetRandomPrefab(highWaterObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
+                    else
+                    {
+                        Instantiate(GetRandomPrefab(highLandObstacles), new Vector3(x, y, z),
+                            Quaternion.identity, grid.transform);
+                    }
                 }
                 z += TileSize;
             }
@@ -408,171 +279,17 @@ public class MapGenerator : Singleton<MapGenerator>
         }
     }
 
+    private GameObject GetRandomPrefab(GameObject[] prefabs)
+    {
+        if (prefabs == null)
+        {
+            return null;
+        }
+        int index = Random.Range(0, prefabs.Length);
+        return prefabs[index];
+    }
+
     #region Help Funcs
-    
-    private bool addRoom(index pos, int direction)
-    {
-        int roomH = Random.Range(room_height_min, room_height_max);
-        int roomW = Random.Range(room_width_min, room_width_max);
-
-        // check empty space
-        int xStart = 0, xEnd = 0, yStart = 0, yEnd = 0, temp;
-        // 0 - left, 1 - up, 2 - right, 3 - down
-        switch (direction)
-        {
-            case 0:
-                xStart = pos.x - roomW - 1;
-                xEnd = pos.x;
-                temp = Random.Range(0, roomH);
-                yStart = pos.y - temp - 1;
-                yEnd = pos.y + (roomH - temp);
-                break;
-            case 1:
-                temp = Random.Range(0, roomW);
-                xStart = pos.x - temp - 1;
-                xEnd = pos.x + (roomW - temp);
-                yStart = pos.y;
-                yEnd = pos.y + roomH + 1;
-                break;
-            case 2:
-                xStart = pos.x;
-                xEnd = pos.x + roomW + 1;
-                temp = Random.Range(0, roomH);
-                yStart = pos.y - temp - 1;
-                yEnd = pos.y + (roomH - temp);
-                break;
-            case 4:
-                temp = Random.Range(0, roomW);
-                xStart = pos.x - temp - 1;
-                xEnd = pos.x + (roomW - temp);
-                yStart = pos.y - roomH - 1;
-                yEnd = pos.y;
-                break;
-        }
-        // check out of bound error
-        if (xStart < 0 || xEnd >= MapWidth || yStart < 0 || yEnd >= MapHeight)
-            return false;
-
-        for (int i = xStart; i <= xEnd; i++)
-        {
-            for (int j = yStart; j <= yEnd; j++)
-            {
-                if (i == xStart || j == yStart || i == xEnd || j == yEnd)
-                {
-                    if (_map[i, j] != TileType.empty &&
-                        _map[i, j] != TileType.wall &&
-                        _map[i, j] != TileType.door)
-                        return false;
-                }
-                else
-                {
-                    if (_map[i, j] != TileType.empty)
-                        return false;
-                }
-            }
-        }
-
-        // fill the room 
-        for (int i = xStart; i <= xEnd; i++)
-        {
-            for (int j = yStart; j <= yEnd; j++)
-            {
-                if (i == xStart || j == yStart || i == xEnd || j == yEnd)
-                {
-                    _map[i, j] = TileType.wall;
-                    indexOfWall.Add(new index(i, j));
-                }
-                else
-                {
-                    _map[i, j] = TileType.floor;
-                }
-            }
-        }
-
-        _map[pos.x, pos.y] = TileType.door;
-
-        return true;
-    }
-
-    private bool addCorridor(index pos, int direction)
-    {
-        int length = Random.Range(3, corridor_length);
-
-        // check empty space
-        int xStart = 0, xEnd = 0, yStart = 0, yEnd = 0;
-        // 0 - left, 1 - up, 2 - right, 3 - down
-        switch (direction)
-        {
-            case 0:
-                xStart = pos.x - length - 1;
-                xEnd = pos.x;
-                yStart = pos.y - corridor_width / 2 - 1;
-                yEnd = pos.y + (corridor_width - corridor_width / 2);
-                break;
-            case 1:
-                xStart = pos.x - corridor_width / 2 - 1;
-                xEnd = pos.x + (corridor_width - corridor_width / 2);
-                yStart = pos.y;
-                yEnd = pos.y + length + 1;
-                break;
-            case 2:
-                xStart = pos.x;
-                xEnd = pos.x + length + 1;
-                yStart = pos.y - corridor_width / 2 - 1;
-                yEnd = pos.y + (corridor_width - corridor_width / 2);
-                break;
-            case 4:
-                xStart = pos.x - corridor_width / 2 - 1;
-                xEnd = pos.x + (corridor_width - corridor_width / 2);
-                yStart = pos.y - length - 1;
-                yEnd = pos.y;
-                break;
-        }
-
-        if (xStart < 0 || xEnd >= MapWidth || yStart < 0 || yEnd >= MapHeight)
-            return false;
-
-        for (int i = xStart; i <= xEnd; i++)
-        {
-            for (int j = yStart; j <= yEnd; j++)
-            {
-                if (i == xStart || j == yStart || i == xEnd || j == yEnd)
-                {
-                    if (_map[i, j] != TileType.empty &&
-                        _map[i, j] != TileType.wall &&
-                        _map[i, j] != TileType.door)
-                        return false;
-                }
-                else
-                {
-                    if (_map[i, j] != TileType.empty)
-                        return false;
-                }
-            }
-        }
-
-        // fill the room 
-        for (int i = xStart; i <= xEnd; i++)
-        {
-            for (int j = yStart; j <= yEnd; j++)
-            {
-                if (i == xStart || j == yStart || i == xEnd || j == yEnd)
-                {
-                    _map[i, j] = TileType.wall;
-                    indexOfWall.Add(new index(i, j));
-                }
-                else
-                {
-                    _map[i, j] = TileType.floor;
-                }
-            }
-        }
-
-        _map[pos.x, pos.y] = TileType.door;
-
-        return true;
-
-    }
 
     private void clearMap()
     {
@@ -580,11 +297,10 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             for (int j = 0; j < MapHeight; j++)
             {
-                _map[i, j] = 0;
+                Map[i, j] = 0;
             }
         }
         Destroy(grid);
-        indexOfWall.Clear();
         islandFilled = false;
     }
 
@@ -599,7 +315,7 @@ public class MapGenerator : Singleton<MapGenerator>
                 {
                     if (j > 0 && j < MapHeight)
                     {
-                        if (_map[i, j] == TileType.floor) { res++; }
+                        if (Map[i, j] == TileType.floor) { res++; }
                     }
                 }
             }
@@ -619,11 +335,11 @@ public class MapGenerator : Singleton<MapGenerator>
                     int count_2 = checkNeighborFloor(i, j, 2);
                     if (count_1 >= 5 || count_2 <= 2)
                     {
-                        _map[i, j] = TileType.floor;
+                        Map[i, j] = TileType.floor;
                     }
                     else
                     {
-                        _map[i, j] = TileType.wall;
+                        Map[i, j] = TileType.wall;
                     }
                 }
                 else
@@ -631,11 +347,11 @@ public class MapGenerator : Singleton<MapGenerator>
                     int count = checkNeighborFloor(i, j, 1);
                     if (count >= 5)
                     {
-                        _map[i, j] = TileType.floor;
+                        Map[i, j] = TileType.floor;
                     }
                     else
                     {
-                        _map[i, j] = TileType.wall;
+                        Map[i, j] = TileType.wall;
                     }
                 }
             }
@@ -647,14 +363,14 @@ public class MapGenerator : Singleton<MapGenerator>
         int maxSize = 0;
         int maxX = 0, maxY = 0;
 
-        for(int i = 0; i<MapWidth; i++)
+        for (int i = 0; i < MapWidth; i++)
         {
-            for(int j = 0; j<MapHeight; j++)
+            for (int j = 0; j < MapHeight; j++)
             {
-                if (isOpen(i,j) && _mainIsland[i,j] == false)
+                if (isOpen(i, j) && MainIsland[i, j] == false)
                 {
                     int size = 0;
-                    dfs(i, j,ref size);
+                    dfs(i, j, ref size);
                     if (size >= maxSize)
                     {
                         maxSize = size;
@@ -670,7 +386,7 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             for (int j = 0; j < MapHeight; j++)
             {
-                _mainIsland[i, j] = false;
+                MainIsland[i, j] = false;
             }
         }
 
@@ -687,7 +403,7 @@ public class MapGenerator : Singleton<MapGenerator>
         {
             for (int j = 0; j < MapHeight; j++)
             {
-                if (Obs_map[i,j] == 0 && _obsIsland[i, j] == false)
+                if (Obs_map[i, j] == 0 && _obsIsland[i, j] == false)
                 {
                     int size = 0;
                     dfs_obs(i, j, ref size);
@@ -717,22 +433,22 @@ public class MapGenerator : Singleton<MapGenerator>
     private void dfs(int i, int j, ref int size)
     {
         size++;
-        _mainIsland[i, j] = true;
+        MainIsland[i, j] = true;
 
-        if (i - 1 >= 0 && isOpen(i - 1, j) && _mainIsland[i - 1, j] == false) dfs(i - 1, j,ref size);
-        
-        if (i + 1 < MapWidth && isOpen(i+1,j) && _mainIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
+        if (i - 1 >= 0 && isOpen(i - 1, j) && MainIsland[i - 1, j] == false) dfs(i - 1, j, ref size);
 
-        if (j - 1 >= 0 && isOpen(i, j-1) && _mainIsland[i , j - 1] == false) dfs(i, j - 1, ref size);
-        
-        if (j + 1 < MapHeight && isOpen(i, j+1) && _mainIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
+        if (i + 1 < MapWidth && isOpen(i + 1, j) && MainIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
+
+        if (j - 1 >= 0 && isOpen(i, j - 1) && MainIsland[i, j - 1] == false) dfs(i, j - 1, ref size);
+
+        if (j + 1 < MapHeight && isOpen(i, j + 1) && MainIsland[i, j + 1] == false) dfs(i, j + 1, ref size);
     }
 
     private void dfs_obs(int i, int j, ref int size)
     {
         size++;
         _obsIsland[i, j] = true;
-        if (i - 1 >= 0 && Obs_map[i-1,j] == 0 && _obsIsland[i - 1, j] == false) dfs(i - 1, j, ref size);
+        if (i - 1 >= 0 && Obs_map[i - 1, j] == 0 && _obsIsland[i - 1, j] == false) dfs(i - 1, j, ref size);
 
         if (i + 1 < MapWidth && Obs_map[i + 1, j] == 0 && _obsIsland[i + 1, j] == false) dfs(i + 1, j, ref size);
 
@@ -743,73 +459,8 @@ public class MapGenerator : Singleton<MapGenerator>
 
     private bool isOpen(int i, int j)
     {
-        return _map[i, j] == TileType.floor || _map[i, j] == TileType.door;
+        return Map[i, j] == TileType.floor || Map[i, j] == TileType.door || Map[i, j] == TileType.empty;
     }
     #endregion
 
-    #region Debug Tools
-    private void MainislandLoad()
-    {
-        if (highlightGrid != null) return;
-        highlightGrid = new GameObject();
-        float x = position.x, y = position.y+1, z = position.z;
-
-        for (int i = 0; i < MapWidth; i++)
-        {
-            for (int j = 0; j < MapHeight; j++)
-            {
-
-                switch (_mainIsland[i, j])
-                {
-                    case true:
-                        Instantiate(elements[4], new Vector3(x, y, z), Quaternion.identity, highlightGrid.transform);
-                        break;
-                    case false:
-                        Instantiate(elements[5], new Vector3(x, y, z), Quaternion.identity, highlightGrid.transform);
-                        break;
-                }
-                z += TileSize;
-            }
-            z = position.z;
-            x += TileSize;
-        }
-    }
-
-    private void MainIslandDestory() { Destroy(highlightGrid); }
-
-    public void PrintMapLocation(int x, int y)
-    {
-        Debug.Log("Generated map location (" + x + ", " + y + "): " + _map[x, y]);
-    }
-
-    private void printMap()
-    {
-
-        for (int i = 0; i < MapWidth; i++)
-        {
-            string res = "";
-            for (int j = 0; j < MapHeight; j++)
-            {
-                switch (_map[i, j])
-                {
-                    case TileType.empty:
-                        res += " ";
-                        break;
-                    case TileType.floor:
-                        res += "F";
-                        break;
-                    case TileType.wall:
-                        res += "#";
-                        break;
-                    case TileType.door:
-                        res += "D";
-                        break;
-                }
-            }
-            res += "\n";
-            Debug.Log(res);
-        }
-    }
-
-    #endregion
 }

@@ -3,34 +3,59 @@ using static PlayerSelection;
 
 public class UnitLogicSelectionButton : MonoBehaviour
 {
+    [SerializeField] private AudioSource selectionSoundEffect;
+
     public UnitLogic UnitLogicForButton;
 
     public GameObject Highlight;
 
+    public KeyCode Keybind = KeyCode.None;
+
     PlayerSelection playerSelection;
 
-    GameManager gameManager;
+    public void SetUnitLogicOnClick()
+    {
+        PlaySoundEffect();
+        playerSelection.SelectUnitLogic(UnitLogicForButton);
+        TurnAllButtonHighlightsOff();
+        SetThisButtonsHighlightActiveState(true);
+    }
 
     private void Start()
     {
         playerSelection = FindObjectOfType<PlayerSelection>();
-        gameManager = FindObjectOfType<GameManager>();
     }
 
-    public void SetUnitLogicOnClick()
+    private void PlaySoundEffect()
     {
-        if(!gameManager.logicSelect_enabled) { return; }
-        playerSelection.SelectUnitLogic(UnitLogicForButton);
-        UnitLogicSelectionButton[] buttons = Object.FindObjectsOfType<UnitLogicSelectionButton>();
+        if (selectionSoundEffect != null)
+        {
+            selectionSoundEffect.Play();
+        }
+    }
+
+    private void TurnAllButtonHighlightsOff()
+    {
+        UnitLogicSelectionButton[] buttons = FindObjectsOfType<UnitLogicSelectionButton>();
         foreach (var button in buttons)
         {
-            button.FlagSelectionHighlight(false);
+            button.SetThisButtonsHighlightActiveState(false);
         }
-        this.FlagSelectionHighlight(true);
     }
 
-    public void FlagSelectionHighlight(bool highlightOn)
+    private void SetThisButtonsHighlightActiveState(bool highlightOn)
     {
         Highlight.SetActive(highlightOn);
+    }
+
+    private void Update()
+    {
+        if (Keybind != KeyCode.None)
+        {
+            if (Input.GetKeyDown(Keybind))
+            {
+                SetUnitLogicOnClick();
+            }
+        }
     }
 }

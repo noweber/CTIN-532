@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : Singleton<AudioManager>
 {
     public AudioSource SFXPlayer;
 
-    private float min_pitch = -0.9f;
-    private float max_pitch = 1.1f;
+    [SerializeField] private float min_pitch = 0.8f;
+    [SerializeField] private float max_pitch = 1.2f;
 
     // TODO: Remove these. These were added to get prototype 4 working ASAP.
     public AudioSource SpawnSound;
@@ -26,6 +24,16 @@ public class AudioManager : Singleton<AudioManager>
 
     public AudioSource DistrictStartZinger;
 
+    public AudioSource Victory;
+
+    public AudioSource Defeat;
+
+    public void PlayWithRandomizedPitch(AudioSource audioSource)
+    {
+        audioSource.pitch = Random.Range(min_pitch, max_pitch);
+        audioSource.Play();
+    }
+
     // Used for UI
     public void PlaySFX(AudioClip audioClip, float volume = 1.0f)
     {
@@ -34,7 +42,7 @@ public class AudioManager : Singleton<AudioManager>
     }
 
     // Used for repeat-play SFX
-    public void PlayRandomSFX(AudioClip audioClip, float volume)
+    public void PlayRandomSFX(AudioClip audioClip, float volume = 1.0f)
     {
         if (IsAudioClipNull(audioClip)) return;
         SFXPlayer.pitch = Random.Range(min_pitch, max_pitch);

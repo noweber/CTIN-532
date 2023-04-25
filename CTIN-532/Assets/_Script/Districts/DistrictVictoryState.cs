@@ -1,22 +1,20 @@
 ﻿using Assets._Script.Game;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets._Script.Districts
 {
-    public class DistrictVictoryState : MonoBehaviour, IGameState
+    public class DistrictVictoryState : DistrictBaseState, IGameState
     {
-        public void OnEnter()
+
+        public override void OnEnter()
         {
+            base.OnEnter();
         }
 
-        public void OnExit()
+        public override void OnExit()
         {
+            base.OnExit();
+            DependencyService.Instance.DistrictController().NextDistrict();
         }
     }
 }

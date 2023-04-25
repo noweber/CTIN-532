@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
+using static MapNodeController;
 
 namespace Assets._Script.Districts
 {
     public class DistrictController : MonoBehaviour
     {
-        [SerializeField]
-        public int DistrictNumber { get; private set; }
+        public int DistrictNumber = 0;
 
         [SerializeField]
         public Vector2Int DistrictSize { get; private set; }
@@ -17,16 +16,6 @@ namespace Assets._Script.Districts
 
         [SerializeField]
         private GameObject tilePrefab;
-
-        // TODO: Store all of the tiles.
-
-        // TODO: Store the map nodes
-
-        private HashSet<UnitController> humanUnits;
-
-        private HashSet<UnitController> aiUnits;
-
-        private HashSet<MapNodeController> mapNodes;
 
         private Dictionary<Vector2Int, TileController> mapTiles;
 
@@ -40,8 +29,23 @@ namespace Assets._Script.Districts
             {
                 Debug.LogError("The tile prefab does not contain a tile controller.");
             }
-            DistrictNumber = 0;
             DistrictSize = new Vector2Int();
+        }
+
+        public void NextDistrict()
+        {
+            if (DistrictNumber < int.MaxValue)
+            {
+                DistrictNumber++;
+            }
+        }
+
+        public void PreviousDistrict()
+        {
+            if (DistrictNumber > 0)
+            {
+                DistrictNumber /= 2;
+            }
         }
 
         public bool IsTilePassable(int x, int y)
@@ -54,98 +58,81 @@ namespace Assets._Script.Districts
             return mapTiles[tileKey].IsPassable;
         }
 
-        private void ResetLevelData()
+        public int NumberOfNodes()
         {
-            if (humanUnits != null)
+            return FindObjectsOfType<MapNodeController>().Length;
+        }
+
+        private void ResetDistrictData()
+        {
+            var units = GameObject.FindObjectsOfType<UnitController>();
+            foreach (var unit in units)
             {
-                foreach (var unit in humanUnits)
-                {
-                    Destroy(unit.gameObject);
-                }
+                Destroy(unit.gameObject);
             }
-            humanUnits = new();
-            if (aiUnits != null)
+            var nodes = GameObject.FindObjectsOfType<MapNodeController>();
+            foreach (var node in nodes)
             {
-                foreach (var unit in aiUnits)
-                {
-                    Destroy(unit.gameObject);
-                }
+                Destroy(node.gameObject);
             }
-            aiUnits = new();
-            if (mapNodes != null)
+            foreach (var controller in FindObjectsOfType<SelectedObjects>())
             {
-                foreach (var node in mapNodes)
-                {
-                    Destroy(node.gameObject);
-                }
+                controller.ResetData();
             }
-            mapNodes = new();
+            foreach (var controller in FindObjectsOfType<PlayerResourcesController>())
+            {
+                controller.ResetData();
+            }
         }
 
         public List<UnitController> GetUnitsByPlayer(bool getHumanUnits)
         {
-            if (getHumanUnits)
+            var units = GameObject.FindObjectsOfType<UnitController>();
+            List<UnitController> result = new();
+            foreach (var unit in units)
             {
-                return humanUnits.ToList();
+                if ((getHumanUnits && unit.Owner == Player.Human) ||
+                    (!getHumanUnits && unit.Owner == Player.AI)
+                    )
+                {
+                    result.Add(unit);
+                }
             }
-            return aiUnits.ToList();
+            return result;
         }
 
-        public void AddUnit(UnitController unitToAdd, bool isHumanUnit)
+        public List<MapNodeController> GetNodesByPlayer(bool getHumanNodes)
         {
-            if (isHumanUnit)
+            var nodes = GameObject.FindObjectsOfType<MapNodeController>();
+            List<MapNodeController> result = new();
+            foreach (var node in nodes)
             {
-                if (humanUnits.Contains(unitToAdd))
+                if ((getHumanNodes && node.Owner == Player.Human) ||
+                    (!getHumanNodes && node.Owner == Player.AI)
+                    )
                 {
-                    Debug.LogError(nameof(unitToAdd));
+                    result.Add(node);
                 }
-                else
-                {
-                    humanUnits.Add(unitToAdd);
-                }
-                return;
             }
-            if (aiUnits.Contains(unitToAdd))
-            {
-                Debug.LogError(nameof(unitToAdd));
-            }
-            else
-            {
-                aiUnits.Add(unitToAdd);
-            }
+            return result;
         }
 
-        public void RemoveUnit(UnitController unitToRemove, bool isHumanUnit)
+        public void CreateDistrict(int? districtNumber = null)
         {
-            if (isHumanUnit)
+            if (districtNumber != null && districtNumber.HasValue)
             {
-                if (!humanUnits.Contains(unitToRemove))
-                {
-                    Debug.LogError(nameof(unitToRemove));
-                }
-                else
-                {
-                    humanUnits.Remove(unitToRemove);
-                }
-                return;
+                DistrictNumber = districtNumber.Value;
             }
-            if (!aiUnits.Contains(unitToRemove))
-            {
-                Debug.LogError(nameof(unitToRemove));
-            }
-            else
-            {
-                aiUnits.Remove(unitToRemove);
-            }
-        }
-
-        public void CreateDistrict(int districtNumber)
-        {
-            ResetLevelData();
-            DistrictSize = GetDistrictSize(districtNumber);
-            CreateTiles(DistrictSize);
+            ResetDistrictData();
+            //// TODO: ResetLevelData();
+            DistrictSize = GetDistrictSize(DistrictNumber);
+            // TODO: CreateTiles(DistrictSize);
             // TODO: place hqs
             // TODO: place additional nodes based on level size
+
+            // TEMP:
+            var level = GameObject.FindObjectOfType<LevelMono>();
+            level.CreateCaveMap(DistrictSize);
         }
 
         private void CreateTiles(Vector2Int mapSize)
@@ -158,6 +145,8 @@ namespace Assets._Script.Districts
                 }
             }
             mapTiles = new();
+
+
             // TODO: make new water tiles
             // TODO: make new grass tiles
             // TODO: make new obstacle tiles
@@ -173,7 +162,9 @@ namespace Assets._Script.Districts
 
         private Vector2Int GetDistrictSize(int districtNumber)
         {
-            int size = DefaultDistrictSize + Mathf.FloorToInt(Mathf.Pow((float)districtNumber, 0.8f));
+            int size = DefaultDistrictSize + 2 * districtNumber;// Mathf.FloorToInt(Mathf.Pow((float)districtNumber + 1, 0.75F));
+            Debug.Log("District Number: " + districtNumber);
+            Debug.Log("District Size: " + size);
             return new Vector2Int(size, size);
         }
     }

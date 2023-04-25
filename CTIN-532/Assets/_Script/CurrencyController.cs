@@ -1,3 +1,4 @@
+using Assets._Script;
 using UnityEngine;
 
 public class CurrencyController : Singleton<CurrencyController>
@@ -6,9 +7,10 @@ public class CurrencyController : Singleton<CurrencyController>
 
     public PlayerResourcesController playerResources;
 
-    public const int CurrencyIncrement = 100;
+    public const int CurrencyIncrement = 200;
 
     public int TotalCurrency { get; private set; }
+
     public int MaxCurrency { get; private set; }
 
     private float secondsBetweenIncrements;
@@ -17,8 +19,13 @@ public class CurrencyController : Singleton<CurrencyController>
 
     void Start()
     {
-        this.TotalCurrency = 0;
-        this.secondsBetweenIncrements = 0.5f;
+        ResetData();
+    }
+
+    public void ResetData()
+    {
+        this.TotalCurrency = CostToDeployAUnit();
+        this.secondsBetweenIncrements = 1.0f;
         this.secondsElapsedSinceLastMoneyIncrement = 0;
     }
 
@@ -34,12 +41,17 @@ public class CurrencyController : Singleton<CurrencyController>
 
     private int CostToDeployAUnit()
     {
-        return 1000; // TODO: Instead of 10, use a cost of units.
+        return 1000;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            return;
+        }
+
         this.secondsElapsedSinceLastMoneyIncrement += Time.deltaTime;
 
         while (this.secondsElapsedSinceLastMoneyIncrement > this.secondsBetweenIncrements)
@@ -47,8 +59,12 @@ public class CurrencyController : Singleton<CurrencyController>
             this.secondsElapsedSinceLastMoneyIncrement -= this.secondsBetweenIncrements;
             if (this.TotalCurrency < MaxCurrency)
             {
-                this.TotalCurrency += CurrencyIncrement;
+                this.TotalCurrency += (int)(CurrencyIncrement * Mathf.Pow(playerResources.NodeCount, 0.25F));
                 this.UpdateMoneyText();
+            }
+            if (this.TotalCurrency > MaxCurrency)
+            {
+                TotalCurrency = MaxCurrency;
             }
         }
     }

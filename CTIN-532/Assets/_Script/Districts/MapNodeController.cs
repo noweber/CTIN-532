@@ -1,16 +1,13 @@
-using Unity.VisualScripting;
+using Assets._Script;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MapNodeController : MonoBehaviour
 {
-    public AudioClip GainNodeSound;
-    public AudioClip LoseNodeSound;
-    public AudioClip SelectSound;
-
     public Player Owner;
 
     public Material[] OwnerMaterialsMap;
+
+    public MeshRenderer OwnerRenderer;
 
     public GameObject Select_Sphere;
 
@@ -21,13 +18,9 @@ public class MapNodeController : MonoBehaviour
 
     private SelectedObjects playerSelection;
 
-    private bool isCurrentlyCollidingWithTrigger;
-
-    private float timeBetweenCollisionChecks = 0.5f;
+    private float timeBetweenCollisionChecks = 1.0f;
 
     private float timeUntilNextCollisionCheck;
-
-    private GameManager gameManager;
 
     public enum Player
     {
@@ -36,9 +29,10 @@ public class MapNodeController : MonoBehaviour
         AI = 2
     };
 
+    private float secondsUntilNextNodeSound;
+
     public void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
         playerSelection = FindObjectOfType<SelectedObjects>();
         SelectedObjects[] controllers = FindObjectsOfType<SelectedObjects>();
         foreach (var controller in controllers)
@@ -56,7 +50,7 @@ public class MapNodeController : MonoBehaviour
         //Debug.Log("Node converted to: " + Owner.ToString());
         if (OwnerMaterialsMap != null)
         {
-            GetComponent<MeshRenderer>().material = OwnerMaterialsMap[(int)Owner];
+            OwnerRenderer.material = OwnerMaterialsMap[(int)Owner];
             minimap_icon.setOwner(player);
         }
         else
@@ -67,7 +61,7 @@ public class MapNodeController : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetMouseButtonDown(0) && gameManager.nodeSelect_enabled)
+        if (Input.GetMouseButtonDown(0))
         {
             RaycastHit raycastHit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -81,47 +75,47 @@ public class MapNodeController : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        if (DependencyService.Instance.GameFsm().CurrentState != Assets._Script.Game.GameState.District || DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void FixedUpdate()
     {
-        if (isCurrentlyCollidingWithTrigger)
+        if (timeUntilNextCollisionCheck > 0)
         {
             timeUntilNextCollisionCheck -= Time.deltaTime;
         }
-    }
-
-    bool initialOwnerSet = false;
-
-    void LateUpdate()
-    {
-        if (!initialOwnerSet)
+        if (!CanPlayNodeSound())
         {
-            // If this is not a neutral node, ensure its ownership is captured the first time the level starts.
-            if (Owner == Player.Human || Owner == Player.AI)
-            {
-                PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner).AddNode(this);
-            }
+            UpdateNodeSoundTimer(Time.deltaTime);
         }
-        initialOwnerSet = true;
     }
-
-    public virtual void OnTriggerStay(Collider other)
+    public void OnTriggerStay(Collider other)
     {
-        isCurrentlyCollidingWithTrigger = true;
-        if (timeUntilNextCollisionCheck <= 0)
-        {
-            ConvertToTeamColor(other);
-        }
+        CheckIfShouldConvertColor(other);
     }
 
     public void OnTriggerEnter(Collider other)
     {
-        ConvertToTeamColor(other);
+        CheckIfShouldConvertColor(other);
     }
 
     public void OnTriggerExit(Collider other)
     {
-        isCurrentlyCollidingWithTrigger = false;
-        timeUntilNextCollisionCheck = timeBetweenCollisionChecks;
+        CheckIfShouldConvertColor(other);
+    }
+
+    private void CheckIfShouldConvertColor(Collider other)
+    {
+        if (timeUntilNextCollisionCheck <= 0)
+        {
+            timeUntilNextCollisionCheck = timeBetweenCollisionChecks;
+            ConvertToTeamColor(other);
+        }
     }
 
     private void ConvertToTeamColor(Collider other)
@@ -132,18 +126,31 @@ public class MapNodeController : MonoBehaviour
         {
             if (unitController.Owner == Player.Human && Owner != Player.Human)
             {
+                if (CanPlayNodeSound())
+                {
+                    ResetNodeSoundTimer();
+                    AudioManager.Instance.PlayWithRandomizedPitch(AudioManager.Instance.GainNodeSound);
+                }
                 SetOwner(Player.Human);
-                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).AddNode(this);
-                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).RemoveNode(this);
-                AudioManager.Instance.PlaySFX(GainNodeSound, 1.0f);
+                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).AddNode();
+                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).RemoveNode();
             }
             else if (unitController.Owner == Player.AI && Owner != Player.AI)
             {
-                AudioManager.Instance.PlaySFX(LoseNodeSound, 1.0f);
+                if (CanPlayNodeSound())
+                {
+                    ResetNodeSoundTimer();
+                    AudioManager.Instance.PlayWithRandomizedPitch(AudioManager.Instance.LoseNodeSound);
+                }
                 SetOwner(Player.AI);
-                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).AddNode(this);
-                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).RemoveNode(this);
+                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.Human).RemoveNode();
+                PlayerResourcesManager.Instance.GetPlayerResourcesController(Player.AI).AddNode();
+                if (playerSelection.SelectedMapNode == this)
+                {
+                    playerSelection.SetSelectedMapNode(null);
+                }
             }
+            unitController.SelectNewPathAndTarget();
         }
     }
 
@@ -157,7 +164,6 @@ public class MapNodeController : MonoBehaviour
     {
         if (Owner == Player.Human)
         {
-            AudioManager.Instance.PlaySFX(SelectSound, 1.0f);
             if (isSelected)
             {
                 playerSelection.SetSelectedMapNode(null);
@@ -165,10 +171,30 @@ public class MapNodeController : MonoBehaviour
             }
             else
             {
+                if (CanPlayNodeSound())
+                {
+                    ResetNodeSoundTimer();
+                    AudioManager.Instance.PlayWithRandomizedPitch(AudioManager.Instance.SelectSound);
+                }
                 playerSelection.SetSelectedMapNode(this);
                 Select_Sphere.SetActive(true);
                 isSelected = true;
             }
         }
+    }
+
+    private void ResetNodeSoundTimer()
+    {
+        secondsUntilNextNodeSound = timeBetweenCollisionChecks;
+    }
+
+    private void UpdateNodeSoundTimer(float seconds)
+    {
+        secondsUntilNextNodeSound -= seconds;
+    }
+
+    private bool CanPlayNodeSound()
+    {
+        return secondsUntilNextNodeSound <= 0;
     }
 }

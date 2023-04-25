@@ -1,21 +1,25 @@
 using Assets._Script;
+using Assets._Script.SFX;
+using Assets._Script.Units;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using static MapNodeController;
+using static PlayerSelection;
 
 public class UnitController : MonoBehaviour
 {
     public AudioClip FightSound;
 
     [SerializeField]
+    private GameObject LogicChangeParticlesPrefab;
+
+    [SerializeField]
     public Player Owner { get; protected set; }
 
     [SerializeField]
-    protected Vector2Int CurrentCoordinates;
-
-    [SerializeField]
-    protected Vector2Int TargetCoordinates;
+    protected Stack<Vector2Int> CurrentPath;
 
     [SerializeField]
     protected Transform Target;
@@ -48,22 +52,47 @@ public class UnitController : MonoBehaviour
     [SerializeField]
     protected float MaxChaseDistance = 10.0f;
 
+    private float defenseRadius = 8f;
 
-    void Awake()
+    private ProjectileShooter projectileShooter;
+
+    [SerializeField]
+    public UnitLogic CurrentLogic { get; private set; }
+
+    protected virtual void Awake()
     {
-        CurrentCoordinates = new Vector2Int();
         timeUntilNextTargetSelection = 0;
         TimeUntilNextChaseTargetSelection = 0;
         hitBox = GetComponent<HitBox>();
         hurtBox = GetComponent<HurtBox>();
+        CurrentPath = new Stack<Vector2Int>();
     }
 
-    public UnitController Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float damagePoints, float speedPoints)
+    protected virtual void Start()
+    {
+        projectileShooter = GetComponent<ProjectileShooter>();
+    }
+
+    public UnitController Initialize(Player owner, int xCoordinate, int yCoordinate, float hitPoints, float damagePoints, float speedPoints, UnitLogic logic)
     {
         Owner = owner;
-        CurrentCoordinates = new Vector2Int(xCoordinate, yCoordinate);
+        CurrentPath.Push(new Vector2Int(xCoordinate, yCoordinate));
         SetUnitStats(hitPoints, damagePoints, speedPoints);
+        ChangeLogic(logic);
         return this;
+    }
+    void OnDestroy()
+    {
+        PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner).RemoveUnit();
+    }
+
+    public void ChangeLogic(UnitLogic logic)
+    {
+        CurrentLogic = logic;
+        var gameObject = Instantiate(LogicChangeParticlesPrefab, transform.position, Quaternion.identity, transform);
+        var text = gameObject.GetComponent<FloatingTextController>();
+        text.SetText(CurrentLogic.ToString());
+        SelectTarget();
     }
 
     private void SetUnitStats(float hitPoints, float damagePoints, float speedPoints)
@@ -85,7 +114,11 @@ public class UnitController : MonoBehaviour
 
     void FixedUpdate()
     {
-        IsFacingLeft();
+        if (DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            Destroy(gameObject);
+        }
+
         if (Target == null)
         {
             if (timeUntilNextTargetSelection <= 0)
@@ -114,34 +147,49 @@ public class UnitController : MonoBehaviour
             {
                 ChaseTarget = null;
             }
-
         }
 
         // If unit reached target, select next map tile
-        if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)CurrentCoordinates.x)
-            && Math.Round((decimal)transform.position.z) == Math.Round((decimal)CurrentCoordinates.y))
-        {
-            SelectNextMapTile();
-        }
-        else if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)Target.position.x)
+        if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)Target.position.x)
             && Math.Round((decimal)transform.position.z) == Math.Round((decimal)Target.position.y))
         {
             SelectTarget();
         }
-        else
+        else if (ChaseTarget != null && Math.Round((decimal)transform.position.x) == Math.Round((decimal)ChaseTarget.position.x)
+            && Math.Round((decimal)transform.position.z) == Math.Round((decimal)ChaseTarget.position.y))
         {
-            // The unit does not move while it is engaged in combat or being hit:
-            if (!hitBox.IsBeingHit)
+            CurrentPath.Clear();
+        }
+        else if (Math.Round((decimal)transform.position.x) == Math.Round((decimal)CurrentPath.Peek().x)
+            && Math.Round((decimal)transform.position.z) == Math.Round((decimal)CurrentPath.Peek().y))
+        {
+            CurrentPath.Pop();
+        }
+
+        if (CurrentPath.Count == 0)
+        {
+            SelectPathTiles();
+        }
+
+        // The unit does not move while it is engaged in combat or being hit:
+        if (!IsInCombat())
+        {
+            // If the nearest enemy is within the chase distance, chase it before continuing on the path to the target:
+            float movementMagnitude = UnityEngine.Random.Range(0.8f * Time.fixedDeltaTime / timeBetweenMovesInSeconds, Time.fixedDeltaTime / timeBetweenMovesInSeconds);
+            if (ChaseTarget != null)
             {
-                // If the nearest enemy is within the chase distance, chase it before continuing on the path to the target:
-                float magnitude = Time.fixedDeltaTime / timeBetweenMovesInSeconds;
-                if (ChaseTarget != null)
+                transform.position = Vector3.MoveTowards(transform.position, new Vector3(ChaseTarget.transform.position.x, transform.position.y, ChaseTarget.transform.position.z), movementMagnitude);
+            }
+            else if (CurrentPath.Count != 0)
+            {
+                var pathPosition = new Vector3(CurrentPath.Peek().x, transform.position.y, CurrentPath.Peek().y);
+                if (Vector3.Distance(transform.position, pathPosition) < movementMagnitude)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(ChaseTarget.transform.position.x, transform.position.y, ChaseTarget.transform.position.z), magnitude);
+                    transform.position = pathPosition;
                 }
                 else
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, new Vector3(CurrentCoordinates.x, transform.position.y, CurrentCoordinates.y), magnitude);
+                    transform.position = Vector3.MoveTowards(transform.position, pathPosition, movementMagnitude);
                 }
             }
         }
@@ -149,6 +197,14 @@ public class UnitController : MonoBehaviour
 
     public bool IsInCombat()
     {
+        if (projectileShooter != null && projectileShooter.Target != null)
+        {
+            if (Vector3.Distance(transform.position, projectileShooter.Target.position) < projectileShooter.MaxDistanceAllowedToTarget)
+            {
+                return true;
+            }
+        }
+
         return hitBox.IsBeingHit;
     }
 
@@ -165,7 +221,7 @@ public class UnitController : MonoBehaviour
         {
             return ChaseTarget.position.x < transform.position.x;
         }
-        else if(Target != null)
+        else if (Target != null)
         {
             return Target.position.x < transform.position.x;
         }
@@ -174,76 +230,145 @@ public class UnitController : MonoBehaviour
 
     protected virtual void SelectChaseTarget()
     {
-        var targetPlayer = Player.AI;
-        if (Owner == Player.AI)
+        if (CurrentLogic == UnitLogic.Defend)
         {
-            targetPlayer = Player.Human;
+            return;
         }
-        var nearestEnemy = DependencyService.Instance.Game().GetClosestUnitByPlayer(transform.position, targetPlayer);
+        var nearestEnemy = UnitHelpers.GetNearestHostileUnit(this);
         if (nearestEnemy != null)
         {
             ChaseTarget = nearestEnemy.transform;
         }
     }
 
-    protected virtual void SelectTarget()
+    protected void SelectPathTiles()
     {
-        var gameManager = FindObjectOfType<GameManager>();
+        var errorMessage = MethodBase.GetCurrentMethod().DeclaringType.Name + "::" + MethodBase.GetCurrentMethod();
 
-        if (this.Owner == Player.Human)
+        if (Target == null)
         {
-            Target = gameManager.GetRandomNodeByPlayerOrNeutral(Player.AI).transform;
+            Debug.LogError(errorMessage + ": Target");
+            return;
         }
-        else
+        var levelMono = FindObjectOfType<LevelMono>();
+        if (levelMono == null)
         {
-            Target = gameManager.GetRandomNodeByPlayerOrNeutral(Player.Human).transform;
+            Debug.LogError(errorMessage + ": LevelMono");
+            return;
         }
-        TargetCoordinates = new Vector2Int((int)Target.transform.position.x, (int)Target.transform.position.z);
-    }
 
-    protected void SelectNextMapTile()
-    {
-        List<Vector2Int> frontier = new();
-        frontier.Add(new Vector2Int(CurrentCoordinates.x + 1, CurrentCoordinates.y));
-        frontier.Add(new Vector2Int(CurrentCoordinates.x - 1, CurrentCoordinates.y));
-        frontier.Add(new Vector2Int(CurrentCoordinates.x, CurrentCoordinates.y + 1));
-        frontier.Add(new Vector2Int(CurrentCoordinates.x, CurrentCoordinates.y - 1));
-
-        // TODO: Check the tile is passable.
-
-        Vector2Int nextMapPosition = new();
-        float nextDistance = float.MaxValue;
-        foreach (var position in frontier)
+        // Clear the current path:
+        CurrentPath.Clear();
+        var pathTileTuples = ShortestPathFinder.FindShortestPath(levelMono.ObstacleBinaryMap, GetTupleFromVector3(transform.position), GetTupleFromVector3(Target.position));
+        if (pathTileTuples == null || pathTileTuples.Count == 0)
         {
-            float tempDistance = Vector2.Distance(position, new Vector2Int((int)Target.position.x, (int)Target.position.z));
-            if (tempDistance < nextDistance || (tempDistance == nextDistance && UnityEngine.Random.Range(0, 1.0f) > 0.5f)) // Flip a coin for a tie.
+            // Reset the target and have the unit run in a random direction in case it gets stuck:
+            var currentCoordinates = GetMapCoordinatesOfVector3(transform.position);
+            List<Vector2Int> frontier = new();
+            frontier.Add(new Vector2Int(currentCoordinates.x + 1, currentCoordinates.y));
+            frontier.Add(new Vector2Int(currentCoordinates.x - 1, currentCoordinates.y));
+            frontier.Add(new Vector2Int(currentCoordinates.x, currentCoordinates.y + 1));
+            frontier.Add(new Vector2Int(currentCoordinates.x, currentCoordinates.y - 1));
+            Vector2Int nextMapPosition = Vector2Int.zero;
+            float nextDistance = float.MaxValue;
+            foreach (var position in frontier)
             {
-                nextMapPosition = position;
-                nextDistance = tempDistance;
+                float tempDistance = Vector2.Distance(transform.position, new Vector2Int((int)Target.position.x, (int)Target.position.z));
+                if (tempDistance < nextDistance || (tempDistance == nextDistance && UnityEngine.Random.Range(0, 1.0f) > 0.5f)) // Flip a coin for a tie.
+                {
+                    nextMapPosition = position;
+                    nextDistance = tempDistance;
+                }
             }
+            CurrentPath.Push(nextMapPosition);
+            return;
         }
-
-        // TODO: Handle the map scaling (this currently works because it is set to 1).
-        // TODO: Use update to interpolate this movement 
-        CurrentCoordinates = nextMapPosition;
-        //this.transform.position = new Vector3(nextMapPosition.x, this.transform.position.y, nextMapPosition.y);
-    }
-
-    public virtual void OnTriggerEnter(Collider other)
-    {
-        //HandleCollisionWithUnit(other);
-        HandleCollisionWithGoal(other);
-    }
-
-    protected virtual void HandleCollisionWithGoal(Collider possibleGoal)
-    {
-        // On collision with its goal, set the goal to null (so that it will find a new goal during next update):
-        if (possibleGoal != null && Target != null)
+        for (int i = pathTileTuples.Count - 1; i > 0; i--)
         {
-            if (possibleGoal != null && (int)possibleGoal.transform.position.x == TargetCoordinates.x && (int)possibleGoal.transform.position.z == TargetCoordinates.y)
-            {
-                Target = null;
-            }
+            CurrentPath.Push(GetVectorFromCoordinatesTuple(pathTileTuples[i]));
         }
+    }
+
+    protected void SelectTarget()
+    {
+        switch (CurrentLogic)
+        {
+            case UnitLogic.Attack:
+                MapNodeController attackTargetNode;
+                if (Owner == Player.Human)
+                {
+                    attackTargetNode = UnitHelpers.GetClosestNodeByPlayerOrNeutral(this.transform.position, Player.AI);
+                }
+                else
+                {
+                    attackTargetNode = UnitHelpers.GetClosestNodeByPlayerOrNeutral(this.transform.position, Player.Human);
+                }
+                if (attackTargetNode != null)
+                {
+                    Target = attackTargetNode.transform;
+                }
+                break;
+            case UnitLogic.Defend:
+
+                var targetController = UnitHelpers.GetNearestHostileUnit(this);
+                if (targetController != null)
+                {
+                    if (Vector3.Distance(this.transform.position, targetController.transform.position) <= defenseRadius)
+                    {
+                        Target = targetController.transform;
+                    }
+                }
+
+                MapNodeController defenseTargetNode;
+                if (Target != null)
+                {
+                    break;
+                }
+                defenseTargetNode = UnitHelpers.GetClosestNodeByPlayerOrNeutral(transform.position, Owner);
+                if (defenseTargetNode != null)
+                {
+                    Target = defenseTargetNode.transform;
+                }
+                break;
+
+            case UnitLogic.Split:
+            default:
+                MapNodeController splitTargetNode;
+                if (this.Owner == Player.Human)
+                {
+                    splitTargetNode = UnitHelpers.GetRandomNodeByPlayerOrNeutral(Player.AI);
+                }
+                else
+                {
+                    splitTargetNode = UnitHelpers.GetRandomNodeByPlayerOrNeutral(Player.Human);
+                }
+                if (splitTargetNode != null)
+                {
+                    Target = splitTargetNode.transform;
+                }
+                break;
+
+        }
+    }
+
+    public void SelectNewPathAndTarget()
+    {
+        SelectTarget();
+        SelectPathTiles();
+    }
+
+    protected Vector2Int GetMapCoordinatesOfVector3(Vector3 position)
+    {
+        return new Vector2Int((int)Math.Round((decimal)position.x), (int)Math.Round((decimal)position.z));
+    }
+
+    protected Vector2Int GetVectorFromCoordinatesTuple(Tuple<int, int> tuple)
+    {
+        return new Vector2Int(tuple.Item1, tuple.Item2);
+    }
+
+    protected Tuple<int, int> GetTupleFromVector3(Vector3 position)
+    {
+        return new Tuple<int, int>((int)Math.Round((decimal)position.x), (int)Math.Round((decimal)position.z));
     }
 }

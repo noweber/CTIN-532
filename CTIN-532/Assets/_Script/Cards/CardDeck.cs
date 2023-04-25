@@ -12,7 +12,6 @@ public class CardDeck : MonoBehaviour
 
     private float remainingCardSlotCooldownInSeconds;
 
-    GameManager gameManager;
     public GameObject EnenemyStat;
 
     private void Awake()
@@ -22,7 +21,6 @@ public class CardDeck : MonoBehaviour
         {
             Debug.LogError("There are not enough card prefabs to fill each slot.");
         }
-        gameManager = FindObjectOfType<GameManager>();
     }
 
     void Start()
@@ -32,12 +30,6 @@ public class CardDeck : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (gameManager.card_reset) {
-            remainingCardSlotCooldownInSeconds = 0;
-            gameManager.card_reset = false;
-        }
-
-        if(!gameManager.cardSelect_enabled) { return; }
         if (IsACardSlotEmpty())
         {
             remainingCardSlotCooldownInSeconds -= Time.fixedDeltaTime;
@@ -47,7 +39,6 @@ public class CardDeck : MonoBehaviour
             {
                 remainingCardSlotCooldownInSeconds = ReplacementCooldownInSeconds;
                 DrawCardForEachEmptySlot();
-                //Time.timeScale = 0;
             }
         }
     }
@@ -110,13 +101,5 @@ public class CardDeck : MonoBehaviour
         }
 
         return Instantiate(CardPrefabs[slotIndex], postion, rotation, parent);
-    }
-
-    public void checkEnermy()
-    {
-        if(gameManager.cardSelect_enabled)
-        {
-            EnenemyStat.SetActive(!EnenemyStat.activeSelf);
-        }
     }
 }

@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
-    // TODO: handle mouseover event
-
     public Sprite sprite;
 
     public string unitName;
@@ -36,14 +34,9 @@ public class Card : MonoBehaviour
 
     public GameObject UnitWorldSpacePrefab;
 
-    // TODO: remove this when refactoring SelectCard() below!
-    public int UnitType;
-
     private SelectedObjects playerSelection;
 
     private bool isCardSelectable;
-
-    private GameManager gameManager;
 
     private void Awake()
     {
@@ -94,19 +87,15 @@ public class Card : MonoBehaviour
         }
 
         isCardSelectable = true;
-
-        gameManager = FindObjectOfType<GameManager>();
     }
 
     public void SelectCard()
     {
-        if (!gameManager.cardSelect_enabled) { return; }
-        // game state
-
         if (!isCardSelectable)
         {
             return;
         }
+
 
         Time.timeScale = 1;
 
@@ -115,7 +104,7 @@ public class Card : MonoBehaviour
             if (UnitWorldSpacePrefab != null)
             {
                 // TODO: remove this hard-coding of unity type values and just push it to the unit prefabs instead of the player selection
-                playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, UnitType, hitPoints, damage, speed);
+                playerSelection.SelectUnitToSpawn(UnitWorldSpacePrefab, unitName, hitPoints, damage, speed);
                 playerSelection.SpawnUnit(UnitWorldSpacePrefab);
             }
             else
@@ -130,7 +119,6 @@ public class Card : MonoBehaviour
 
         // TODO: Refactor the way this interacts with audio manager to store the spawn clip on the base prefab instead.
         AudioManager.Instance.PlaySFX(AudioManager.Instance.SpawnSound.clip, 1.0f);
-        //Destroy(this.gameObject);
     }
 
     public void AllowUse(bool state)
