@@ -2,7 +2,7 @@
 District N is a 2.5D, casual, real-time strategy game.
 
 ## Trailer
-https://www.youtube.com/watch?v=dbeYb-A7olg
+[YouTube](https://www.youtube.com/watch?v=dbeYb-A7olg)
  
 ## Playable
-[Itch.io(https://noweber.itch.io/district-n)]
+[Itch.io](https://noweber.itch.io/district-n)
