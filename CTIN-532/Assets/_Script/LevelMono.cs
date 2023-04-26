@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using TMPro.Examples;
 using Unity.Mathematics;
 using UnityEngine;
 using static MapNodeController;
 using Random = UnityEngine.Random;
+using System.Linq;
+using Assets._Script;
 
 /// <summary>
 /// This class creates the game's entities procedurally which sets up a playable level within the game.
@@ -58,14 +59,9 @@ public class LevelMono : MonoBehaviour
     /// <summary>
     /// This 2D array is the set of map data valuesfrom the map generator for placing other level objects such as units and cities.
     /// </summary>
-    private bool[,] tilemap;
+    public bool[,] ObstacleBinaryMap { get; private set; }
 
     private SelectedObjects humanPlayerController;
-
-    /// <summary>
-    /// Stores which tiles on the map are impassable obstacles.
-    /// </summary>
-    private HashSet<Tuple<int, int>> obstacleMap;
 
     /// <summary>
     /// TODO
@@ -75,7 +71,15 @@ public class LevelMono : MonoBehaviour
     /// <returns></returns>
     public bool IsTilePassable(int x, int y)
     {
-        return obstacleMap.Contains(new Tuple<int, int>(x, y));
+        if (!ObstacleBinaryMap[x, y])
+        {
+            return false;
+        }
+        if(mapGenerator.Map[x, y] == MapGenerator.TileType.wall)
+        {
+            return false;
+        }
+        return true;
     }
 
 
@@ -84,8 +88,7 @@ public class LevelMono : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        tilemap = null;
-        obstacleMap = null;
+        ObstacleBinaryMap = null;
         levelGameObject = new GameObject("The Level");
         if (MinimumSearchPositionTolerance > MaximumSearchPositionTolerance)
         {
@@ -110,94 +113,33 @@ public class LevelMono : MonoBehaviour
 
         // Search the scene for a reference to the map generator:
         mapGenerator = FindObjectOfType<MapGenerator>();
-
-        // Turn off the map generator's response to input so that the level generator can clear its entities before a new map is generated and add them back in afterwards.
-        if (mapGenerator != null)
-        {
-            mapGenerator.RespondsToInputSystem = false;
-        }
-        else
-        {
-            Debug.LogWarning("The level generator was unable to find a reference to the map generator.");
-        }
     }
 
-    /// <summary>
-    /// Update is called once per frame
-    /// </summary>
-    void Update()
+    public void CreateCaveMap(Vector2Int mapSize)
     {
-        if (mapGenerator != null)
+        mapGenerator.CreateMap(mapSize);
+        ObstacleBinaryMap = mapGenerator.GetBinaryTilemap();
+        //DebugUtils.PrintBoolArray(obstacleBinaryMap);
+        //PlaceFortressNodes();
+        int radius = (int)Math.Sqrt(((mapSize.x + mapSize.y) / 4) + 1);
+        //int radius = DependencyService.Instance.DistrictController().DistrictNumber + 4;
+        //Debug.Log("radius: " + radius);
+        //var nodePositions = PoissonDiscSampling.GeneratePoints(obstacleBinaryMap, radius);
+        var nodePositions = RandomSampling.GetRandomPointsFromGrid(ObstacleBinaryMap, 1, 1 + (int)Math.Sqrt(DependencyService.Instance.DistrictController().DistrictNumber));
+        if (nodePositions == null || !placePlayerHeadquarters())
         {
-            if (Input.GetKeyDown(KeyCode.O))
-            {
-                mapGenerator.RegenerateRoomMap();
-                tilemap = mapGenerator.GetBinaryTilemap();
-                RegenerateLevel();
-            }
-
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                regenerateCaveMap();
-            }
-        }
-
-        if (tilemap != null)
-        {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                RegenerateLevel();
-            }
-        }
-        else
-        {
-            // Generate a cave map by default:
-            regenerateCaveMap();
-        }
-    }
-
-    private void regenerateCaveMap()
-    {
-        mapGenerator.RegenerateCaveMap();
-        tilemap = mapGenerator.GetBinaryTilemap();
-        RegenerateLevel();
-    }
-
-    /// <summary>
-    /// Clears all of the current level's entities and generates a new one based on the underlying map data.
-    /// </summary>
-    private void RegenerateLevel()
-    {
-        if (tilemap == null)
-        {
-            Debug.LogError("Tilemap data is null.");
+            Debug.LogError("Failed to generate node positions on the map.");
+            CreateCaveMap(mapSize);
             return;
         }
-        else
+        Debug.Log("Number of Nodes: " + (nodePositions.Count + 2));
+        foreach (var position in nodePositions)
         {
-            // Recreate the levelmap and destroy any current gameobjects:
-            obstacleMap = new();
-            foreach (Transform child in levelGameObject.transform)
+            if (IsTilePassable(position.x, position.y))
             {
-                GameObject.Destroy(child.gameObject);
-            }
-
-            // Block any cells in the level map which are inpassable in the tilemap:
-            for (int i = 0; i < tilemap.GetLength(0); i++)
-            {
-                for (int j = 0; j < tilemap.GetLength(1); j++)
-                {
-                    if (!tilemap[i, j])
-                    {
-                        obstacleMap.Add(new Tuple<int, int>(i, j));
-                    }
-                }
+                PlaceFortressNode(new Tuple<int, int>(position.x, position.y), false, false);
             }
         }
-
-        Debug.Log("Regenerating the level.");
-        //placePlayerHeadquarters();
-        PlaceFortressNodes();
     }
 
     /// <summary>
@@ -205,15 +147,8 @@ public class LevelMono : MonoBehaviour
     /// The HQs are always placed on passable tiles of the map (assuming these exist).
     /// Corners without passable tiles are searched for the nearest passable tile to place an HQ on.
     /// </summary>
-    private void placePlayerHeadquarters()
+    private bool placePlayerHeadquarters()
     {
-        if (tilemap == null)
-        {
-            Debug.LogError("Tilemap data is null.");
-            return;
-        }
-
-        Debug.Log("Placing two player headquarters within the level.");
 
         // Each player needs to be in a different corner of the map:
         int playerOneCornerIndex = (int)math.floor(Random.Range(0, 4));
@@ -234,14 +169,14 @@ public class LevelMono : MonoBehaviour
                 playerTwoCornerIndex = 1;
                 break;
         }
-        Debug.Log("Placing player one's HQ in corner: " + playerOneCornerIndex);
-        Debug.Log("Placing player two's HQ in corner: " + playerTwoCornerIndex);
+        //.Log("Placing player one's HQ in corner: " + playerOneCornerIndex);
+        //Debug.Log("Placing player two's HQ in corner: " + playerTwoCornerIndex);
         Tuple<int, int> playerOneCornerPosition = convertCornerIndexToXYTuple(playerOneCornerIndex);
         Tuple<int, int> playerTwoCornerPosition = convertCornerIndexToXYTuple(playerTwoCornerIndex);
         if (playerOneCornerPosition == null || playerTwoCornerPosition == null)
         {
             Debug.LogError("Failed to select corners for player positions.");
-            return;
+            return false;
         }
 
         // The corner tiles might not be passable, so a search must execute to find the nearest passable tile.
@@ -250,17 +185,7 @@ public class LevelMono : MonoBehaviour
         if (playerOneHqTilemapPosition == null || playerTwoHqTilemapPosition == null)
         {
             Debug.LogError("Failed to select headquarter positions for the player positions.");
-            return;
-        }
-
-        Debug.Log("Nearest passable tile for player one's HQ is: " + playerOneHqTilemapPosition);
-        Debug.Log("Tilemap (" + playerOneHqTilemapPosition.Item1 + ", " + playerOneHqTilemapPosition.Item2 + ") is: " + tilemap[playerOneHqTilemapPosition.Item1, playerOneHqTilemapPosition.Item2]);
-        Debug.Log("Nearest passable tile for player two's HQ is: " + playerTwoHqTilemapPosition);
-        Debug.Log("Tilemap (" + playerTwoHqTilemapPosition.Item1 + ", " + playerTwoHqTilemapPosition.Item2 + ") is: " + tilemap[playerTwoHqTilemapPosition.Item1, playerTwoHqTilemapPosition.Item2]);
-        if (mapGenerator != null)
-        {
-            mapGenerator.PrintMapLocation(playerOneHqTilemapPosition.Item1, playerOneHqTilemapPosition.Item2);
-            mapGenerator.PrintMapLocation(playerTwoHqTilemapPosition.Item1, playerTwoHqTilemapPosition.Item2);
+            return false;
         }
 
         if (HeadquartersPrefab != null)
@@ -269,12 +194,15 @@ public class LevelMono : MonoBehaviour
             PlaceFortressNode(playerOneHqTilemapPosition, true);
 
             // Place Player Two's HQ:
-            PlaceFortressNode(playerTwoHqTilemapPosition);
+            PlaceFortressNode(playerTwoHqTilemapPosition, false, true);
         }
         else
         {
             Debug.LogWarning("Headquarters prefab is null.");
         }
+        CameraControl c = FindObjectOfType<CameraControl>();
+        c.SetFocus(getLevelmapPositionInWorldSpace(playerOneHqTilemapPosition));
+        return true;
     }
 
     private void PlaceFortressNode(Tuple<int, int> tilemapPosition, bool isHumanPlayerHq = false, bool isAiPlayerHq = false)
@@ -308,7 +236,7 @@ public class LevelMono : MonoBehaviour
 
     private Vector3 getLevelmapPositionInWorldSpace(Tuple<int, int> tilemapPosition)
     {
-        if (tilemap == null)
+        if (ObstacleBinaryMap == null)
         {
             Debug.LogError("Tilemap data is null.");
             return new Vector3(tilemapPosition.Item1, 0, tilemapPosition.Item2);
@@ -330,7 +258,7 @@ public class LevelMono : MonoBehaviour
     /// <returns>An (x,y) pair for the corresponding corner.</returns>
     private Tuple<int, int> convertCornerIndexToXYTuple(int cornerIndex)
     {
-        if (tilemap == null)
+        if (ObstacleBinaryMap == null)
         {
             Debug.LogError("Tilemap data is null.");
             return null;
@@ -339,9 +267,9 @@ public class LevelMono : MonoBehaviour
         return cornerIndex switch
         {
             0 => new Tuple<int, int>(0, 0),
-            1 => new Tuple<int, int>(tilemap.GetLength(0) - 1, 0),
-            2 => new Tuple<int, int>(tilemap.GetLength(0) - 1, tilemap.GetLength(1) - 1),
-            _ => new Tuple<int, int>(0, tilemap.GetLength(1) - 1),
+            1 => new Tuple<int, int>(ObstacleBinaryMap.GetLength(0) - 1, 0),
+            2 => new Tuple<int, int>(ObstacleBinaryMap.GetLength(0) - 1, ObstacleBinaryMap.GetLength(1) - 1),
+            _ => new Tuple<int, int>(0, ObstacleBinaryMap.GetLength(1) - 1),
         };
     }
 
@@ -352,15 +280,9 @@ public class LevelMono : MonoBehaviour
     /// <returns>Returns a tilemap position (x,y) of the nearest passable tile to the search start position.</returns>
     private Tuple<int, int> findNearestPassableTileBfs(Tuple<int, int> tilemapSearchStartPostiion)
     {
-        if (tilemap == null)
+        if (ObstacleBinaryMap == null)
         {
             Debug.LogError("Tilemap data is null.");
-            return null;
-        }
-
-        if (obstacleMap == null)
-        {
-            Debug.LogError("Obstacle data is null.");
             return null;
         }
 
@@ -371,7 +293,7 @@ public class LevelMono : MonoBehaviour
         Queue<Tuple<int, int>> searchFrontier = new();
 
         // Create a data structure to store which tiles of the map have already been visited:
-        bool[,] cellsVisited = new bool[tilemap.GetLength(0), tilemap.GetLength(1)];
+        bool[,] cellsVisited = new bool[ObstacleBinaryMap.GetLength(0), ObstacleBinaryMap.GetLength(1)];
 
         // Initialize the BFS by setting the start tile as 'visited' and queueing it on the search frontier:
         cellsVisited[tilemapSearchStartPostiion.Item1, tilemapSearchStartPostiion.Item2] = true;
@@ -393,7 +315,7 @@ public class LevelMono : MonoBehaviour
                 {
                     if (searchPositionsPassedOn >= MaximumSearchPositionTolerance || Random.Range(0.0f, 1.0f) < SearchPositionToleranceChance)
                     {
-                        Debug.Log("Tiles skipped in search: " + searchPositionsPassedOn);
+                        //Debug.Log("Tiles skipped in search: " + searchPositionsPassedOn);
                         return new Tuple<int, int>(x, y);
                     }
                 }
@@ -446,10 +368,6 @@ public class LevelMono : MonoBehaviour
     /// <returns>Returns true if the cell is valid to be searched, else returns false.</returns>
     private bool isCellValidForContinuingSearch(bool[,] cellsSearched, int x, int y)
     {
-        if (obstacleMap == null)
-        {
-            Debug.LogError("Obstacle data is null.");
-        }
 
         if (cellsSearched == null)
         {
@@ -457,7 +375,7 @@ public class LevelMono : MonoBehaviour
         }
 
         // To be valid, the cell to check must be within the map boundaries.
-        if (x < 0 || x >= tilemap.GetLength(0) || y < 0 || y >= tilemap.GetLength(1))
+        if (x < 0 || x >= ObstacleBinaryMap.GetLength(0) || y < 0 || y >= ObstacleBinaryMap.GetLength(1))
         {
             return false;
         }
@@ -471,16 +389,15 @@ public class LevelMono : MonoBehaviour
         return true;
     }
 
-
     private void PlaceFortressNodes()
     {
-        if (tilemap == null)
+        if (ObstacleBinaryMap == null)
         {
             Debug.LogError("Tilemap data is null.");
             return;
         }
 
-        Debug.Log("Placing 5 nodes within the level.");
+        //Debug.Log("Placing 5 nodes within the level.");
 
         Tuple<int, int> CornerNodePosition_1 = convertCornerIndexToXYTuple(0);
         Tuple<int, int> CornerNodePosition_2 = convertCornerIndexToXYTuple(1);
@@ -498,8 +415,8 @@ public class LevelMono : MonoBehaviour
         Tuple<int, int> nodeTilemapPosition_3 = findNearestPassableTileBfs(CornerNodePosition_3);
         Tuple<int, int> nodeTilemapPosition_4 = findNearestPassableTileBfs(CornerNodePosition_4);
         int middleOffset = 5;
-        int middlePosx = Random.Range((tilemap.GetLength(0) - 1) / 2 - middleOffset, (tilemap.GetLength(0) - 1) / 2 + middleOffset);
-        int middlePosy = Random.Range((tilemap.GetLength(1) - 1) / 2 - middleOffset, (tilemap.GetLength(1) - 1) / 2 + middleOffset);
+        int middlePosx = Random.Range((ObstacleBinaryMap.GetLength(0) - 1) / 2 - middleOffset, (ObstacleBinaryMap.GetLength(0) - 1) / 2 + middleOffset);
+        int middlePosy = Random.Range((ObstacleBinaryMap.GetLength(1) - 1) / 2 - middleOffset, (ObstacleBinaryMap.GetLength(1) - 1) / 2 + middleOffset);
         Tuple<int, int> nodeTilemapPosition_5 = findNearestPassableTileBfs(
             new Tuple<int, int>(middlePosx, middlePosy)); // Middle Nodes
 
@@ -524,6 +441,7 @@ public class LevelMono : MonoBehaviour
         }
 
         CameraControl c = FindObjectOfType<CameraControl>();
-        c.setFocus(getLevelmapPositionInWorldSpace(nodeTilemapPosition_1));
+        c.SetFocus(getLevelmapPositionInWorldSpace(nodeTilemapPosition_1));
     }
+
 }

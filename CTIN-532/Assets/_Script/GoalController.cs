@@ -28,7 +28,7 @@ public class GoalController : MonoBehaviour
         }
         else
         {
-            Debug.Log("Failed to set goal text.");
+            //Debug.Log("Failed to set goal text.");
         }
     }
 

@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
+using Assets._Script;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +15,9 @@ public class CameraControl : MonoBehaviour
     public float zoomRate = 10f;
     public float min_Zoom_heigh = 20f;
     public float max_Zoom_heigh = 350f;
+
+    public float y_offset;
+    public float z_offset;
 
     private void Awake()
     {
@@ -40,8 +40,12 @@ public class CameraControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            return;
+        }
+
         GetKeyboardMovement();
-        
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
     }
 
@@ -51,13 +55,13 @@ public class CameraControl : MonoBehaviour
 
         inputValue = inputValue.normalized;
 
-        if(inputValue.sqrMagnitude > 0.1f)
+        if (inputValue.sqrMagnitude > 0.1f)
         {
-            targetPosition += new Vector3(inputValue.x,0,inputValue.y) * move_speed;
+            targetPosition += new Vector3(inputValue.x, 0, inputValue.y) * move_speed;
         }
     }
 
-    private void zoomCamera(InputAction.CallbackContext inputeValue)
+    private void ZoomCamera(InputAction.CallbackContext inputeValue)
     {
         float value = -inputeValue.ReadValue<Vector2>().y;
 
@@ -78,9 +82,9 @@ public class CameraControl : MonoBehaviour
         }
     }
 
-    public void setFocus(Vector3 focusedPos)
+    public void SetFocus(Vector3 focusedPos)
     {
-        targetPosition = new Vector3(focusedPos.x, focusedPos.y + 3, focusedPos.z - 6);
-        transform.position = new Vector3(focusedPos.x, focusedPos.y + 3, focusedPos.z - 6);
+        targetPosition = new Vector3(focusedPos.x, focusedPos.y + y_offset, focusedPos.z - z_offset);
+        transform.position = new Vector3(focusedPos.x, focusedPos.y + y_offset, focusedPos.z - z_offset);
     }
 }

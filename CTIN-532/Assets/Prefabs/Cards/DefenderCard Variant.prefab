@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 407705853898730218, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: name
       value: Defender
@@ -24,13 +28,17 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
+      propertyPath: damage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: resist
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: sprite
       value: 
-      objectReference: {fileID: 1134917048, guid: 915d4630149db9f49a98d81664a3568d, type: 3}
+      objectReference: {fileID: 21300000, guid: 5051006c970aa164e8fa5e6faa19f1f7, type: 3}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: UnitType
       value: 2
@@ -41,15 +49,19 @@ PrefabInstance:
       objectReference: {fileID: -2021247738, guid: c05b044666732a644b440151cea9056a, type: 3}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: unitName
-      value: Tank
+      value: Barbarian
       objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: hitPoints
-      value: 12
+      value: 320
       objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: description
-      value: Defender
+      value: High HP
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
+      propertyPath: abilityDescription
+      value: Damage Sponge
       objectReference: {fileID: 0}
     - target: {fileID: 8656583593391599592, guid: e83a74afb6047aa40b1fc2f05a076ee3, type: 3}
       propertyPath: UnitImageBackground

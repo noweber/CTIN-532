@@ -1,3 +1,4 @@
+using Assets._Script;
 using UnityEngine;
 
 public class PauseController : MonoBehaviour
@@ -8,8 +9,13 @@ public class PauseController : MonoBehaviour
     public GameObject PauseMenu;
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        if(DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             isPaused = !isPaused;

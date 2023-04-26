@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2573299682793438060, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8311514824536425532, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -112,9 +116,13 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+      propertyPath: damage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: sprite
       value: 
-      objectReference: {fileID: -1196532911, guid: c05b044666732a644b440151cea9056a, type: 3}
+      objectReference: {fileID: 21300000, guid: 131720e51b5b3d6479e1e3f79122f273, type: 3}
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: UnitType
       value: 1
@@ -129,26 +137,57 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: hitPoints
-      value: 6
+      value: 160
       objectReference: {fileID: 0}
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: description
-      value: Attacker
+      value: Balanced
       objectReference: {fileID: 0}
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: CardBackground
       value: 
       objectReference: {fileID: 8656583593457277231}
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+      propertyPath: abilityDescription
+      value: Melee Attack
+      objectReference: {fileID: 0}
+    - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: UnitImageBackground
       value: 
       objectReference: {fileID: 8656583592450841457}
     - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+      propertyPath: AbilityTextComponent
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
       propertyPath: UnitWorldSpacePrefab
       value: 
       objectReference: {fileID: 1303486019930469317, guid: a91ee99354da161438dc6fa859c31f34, type: 3}
+    - target: {fileID: 8311514824536425535, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+      propertyPath: DescriptionTextComponent
+      value: 
+      objectReference: {fileID: 6321233691727367598}
+    - target: {fileID: 8336071571326018453, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8638702850645426212, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+      propertyPath: m_RootOrder
+      value: 9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+--- !u!114 &6321233691727367598 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6684391702663505529, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}
+  m_PrefabInstance: {fileID: 827028850976730071}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8656583592450841457 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8311514823598174374, guid: 58a6882a1c1fa7c4f82b9430fb741bc8, type: 3}

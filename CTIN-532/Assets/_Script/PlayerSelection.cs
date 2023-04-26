@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using Assets._Script;
 using UnityEngine;
 
-public class PlayerSelection : Singleton<PlayerSelection>
+public class PlayerSelection : MonoBehaviour
 {
     public enum UnitLogic
     {
@@ -10,13 +9,23 @@ public class PlayerSelection : Singleton<PlayerSelection>
         Defend,
         Intercept,
         Hunt,
-        Random
+        Split
     }
 
     public UnitLogic SelectedLogic;
 
+    private void Start()
+    {
+        SelectUnitLogic(UnitLogic.Split);
+    }
+
     public void SelectUnitLogic(UnitLogic selection)
     {
         SelectedLogic = selection;
+        var units = DependencyService.Instance.DistrictController().GetUnitsByPlayer(true);
+        foreach (var unit in units)
+        {
+            unit.ChangeLogic(selection);
+        }
     }
 }

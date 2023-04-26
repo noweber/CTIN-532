@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-public class CardDeck : Singleton<CardDeck>
+public class CardDeck : MonoBehaviour
 {
     public List<GameObject> CardPrefabs;
 
@@ -13,6 +11,8 @@ public class CardDeck : Singleton<CardDeck>
     public float ReplacementCooldownInSeconds = 10.0f;
 
     private float remainingCardSlotCooldownInSeconds;
+
+    public GameObject EnenemyStat;
 
     private void Awake()
     {
@@ -39,7 +39,6 @@ public class CardDeck : Singleton<CardDeck>
             {
                 remainingCardSlotCooldownInSeconds = ReplacementCooldownInSeconds;
                 DrawCardForEachEmptySlot();
-                Time.timeScale = 0;
             }
         }
     }
@@ -103,5 +102,4 @@ public class CardDeck : Singleton<CardDeck>
 
         return Instantiate(CardPrefabs[slotIndex], postion, rotation, parent);
     }
-
 }

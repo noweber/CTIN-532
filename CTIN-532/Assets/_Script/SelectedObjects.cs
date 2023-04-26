@@ -1,3 +1,5 @@
+using Assets._Script;
+using System.Collections.Generic;
 using UnityEngine;
 using static MapNodeController;
 using static PlayerSelection;
@@ -8,13 +10,9 @@ public class SelectedObjects : MonoBehaviour
 
     public GameObject SelectedUnitPrefab;
 
-
     // TODO: refactor these stats when SpawnUnit() is refactored.
     public float hitPoints;
-    public float attackPoints;
-    public float magicPoints;
-    public float armorPoints;
-    public float resistPoints;
+    public float damagePoints;
     public float speedPoints;
 
     public MapNodeController SelectedMapNode { get; private set; }
@@ -23,18 +21,18 @@ public class SelectedObjects : MonoBehaviour
 
     public Player Owner;
 
-    public float SecondsBetweenSpawns = 0.5f;
+    [Range(1f, float.MaxValue)]
+    public float DefaultSecondsBetweenSpawns = 5f;
 
     private float secondsSinceLastSpawn;
 
-    public float BurstSpawnDuration = 1.0f;
+    private string unitName;
 
-    [Min(1)]
-    public int BurstSpawnRate = 4;
+    private PlayerSelection playerSelection;
 
-    private float secondsLeftInSpawningBurst;
+    //private GameManager gameManager;
 
-    private int type;
+    public GameObject unitParent;
 
     public void SetSelectedMapNode(MapNodeController nodeController)
     {
@@ -59,49 +57,52 @@ public class SelectedObjects : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        secondsSinceLastSpawn = 0;
-        secondsLeftInSpawningBurst = 0;
+        playerSelection = GetComponent<PlayerSelection>();
+        ResetData();
     }
 
-    public void SelectUnitToSpawn(GameObject prefab, int type, float hp, float attack, float magic, float armor, float resist, float speed)
+    public void ResetData()
+    {
+        secondsSinceLastSpawn = 0;
+        if (unitParent != null)
+        {
+            Destroy(unitParent);
+        }
+        unitParent = new GameObject("UnitParent");
+    }
+
+    public void SelectUnitToSpawn(GameObject prefab, string unitName, float hp, float damage, float speed)
     {
         SelectedUnitPrefab = prefab;
-        this.type = type;
-        secondsLeftInSpawningBurst = BurstSpawnDuration;
+        this.unitName = unitName;
         hitPoints = hp;
-        attackPoints = attack;
-        magicPoints = magic;
-        armorPoints = armor;
-        resistPoints = resist;
+        damagePoints = damage;
         speedPoints = speed;
+    }
+
+    private float GetSecondsBetweenSpawns()
+    {
+        return Mathf.Max(1, DefaultSecondsBetweenSpawns - Mathf.Sqrt(DependencyService.Instance.DistrictController().DistrictNumber + 1));
     }
 
     // Update is called once per frame
     void Update()
     {
-        secondsSinceLastSpawn += Time.deltaTime;
-        while (secondsSinceLastSpawn >= SecondsBetweenSpawns)
+        if (DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
         {
-            secondsSinceLastSpawn -= SecondsBetweenSpawns;
-            if (Owner == Player.Human)
-            {
-                if (SelectedUnitPrefab != null && SelectedMapNode != null)
-                {
-                    if (SelectedMapNode.Owner == Owner)
-                    {
-                        int spawnCount = 1;
-                        if (secondsLeftInSpawningBurst > 0)
-                        {
-                            spawnCount = BurstSpawnRate;
-                        }
-                        for (int i = 0; i < spawnCount; i++)
-                        {
-                            SpawnUnit(list_Of_UnitPrefab[type], SelectedMapNode.transform);
-                        }
-                    }
-                }
-            }
-            else if (Owner == Player.AI)
+            return;
+        }
+
+        if (Owner == Player.Human)
+        {
+            return;
+        }
+
+        secondsSinceLastSpawn += Time.deltaTime;
+        while (secondsSinceLastSpawn >= GetSecondsBetweenSpawns())
+        {
+            secondsSinceLastSpawn -= GetSecondsBetweenSpawns();
+            if (Owner == Player.AI)
             {
                 // Select a random unit prefab:
                 SelectedUnitPrefab = list_Of_UnitPrefab[Random.Range(0, list_Of_UnitPrefab.Length)];
@@ -132,93 +133,62 @@ public class SelectedObjects : MonoBehaviour
                 }
             }
         }
-
-        if (secondsLeftInSpawningBurst > 0)
-        {
-            secondsLeftInSpawningBurst -= Time.deltaTime;
-        }
     }
 
-    private void SpawnUnit(GameObject unitPrefab, Transform parent)
+    public void SpawnUnit(GameObject unitPrefab, Transform parent = null)
     {
-        var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, transform);
-        // TODO: handle map scale factor on the unit's starting postion
-        BaseUnitLogic logicComponent = null;
+        // TODO: Refactor this so that the game object does not exist outside of this state and does not need this dependency 
+        if (DependencyService.Instance.DistrictFsm().CurrentState != DistrictState.Play)
+        {
+            return;
+        }
 
-        // TODO: Refactor this so that the prefab contains the stat data and the UI card reads that instead of the UI card passing it to the prefab.
-        // BaseUnitController controller;// = unit.GetComponent<BaseUnitController>();
+        PlayerResourcesController playerResources = PlayerResourcesManager.Instance.GetPlayerResourcesController(Owner);
+        // This block of code checks whether or not the player can support an additional unit being spawned based on their resources.
+        if (!playerResources.CanSupportAnAdditionalUnit())
+        {
+            return;
+        }
 
         if (Owner == Player.Human)
         {
-            switch (PlayerSelection.Instance.SelectedLogic)
+            if (!CurrencyController.Instance.CanAffordAnotherUnit())
             {
-                case UnitLogic.Attack:
-                    logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
-                    break;
-                case UnitLogic.Defend:
-                    unit.AddComponent<RandomMeander>();
-                    logicComponent = unit.AddComponent<UnitDefendLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
-                    break;
-                case UnitLogic.Hunt:
-                    break;
-                case UnitLogic.Intercept:
-                    break;
-                case UnitLogic.Random:
-                default:
-                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
-                    break;
+                return;
             }
-        } else
+            CurrencyController.Instance.PurchaseUnit();
+            Analytics.Instance.SendUnitAnalytics(this.unitName);
+        }
+
+        if (parent == null)
         {
-            int randomLogic = Random.Range(0, 5);
+            parent = SelectedMapNode.transform;
+        }
+
+        if (unitParent == null) unitParent = new GameObject("UnitParent");
+        var unit = Instantiate(unitPrefab, parent.position, Quaternion.identity, unitParent.transform);
+        if (Owner == Player.Human)
+        {
+            unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, playerSelection.SelectedLogic);
+        }
+        else
+        {
+            damagePoints = unitPrefab.GetComponent<HurtBox>().Damage;
+            hitPoints = unitPrefab.GetComponent<HitBox>().MaxHitPoints;
+
+            int randomLogic = Random.Range(0, 2);
             switch (randomLogic)
             {
                 case 0:
-                    logicComponent = unit.AddComponent<UnitAttackLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+                    unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, UnitLogic.Attack);
                     break;
                 default:
-                    logicComponent = unit.AddComponent<BaseUnitLogic>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
+                    unit.GetComponent<UnitController>().Initialize(Owner, (int)parent.position.x, (int)parent.position.z, hitPoints, damagePoints, speedPoints, UnitLogic.Split);
                     break;
             }
         }
-        logicComponent.FightSound = AudioManager.Instance.FightSound.clip;
-    }
 
-
-    // TODO: DRY
-    // TODO: Refactor and remove this from here
-    /*
-    if (Owner == Player.Human)
-    {
-        BaseUnitController controller;
-        switch (PlayerSelection.Instance.SelectedLogic)
-        {
-            case UnitLogic.Attack:
-                controller = unit.AddComponent<AttackerController>().Initialize(Player.Human, parent);
-                break;
-            case UnitLogic.Defend:
-                controller = unit.AddComponent<DefenderController>().Initialize(Player.Human, parent);
-                unit.AddComponent<RandomMeander>();
-                break;
-            case UnitLogic.Hunt:
-                controller = unit.AddComponent<HunterController>().Initialize(Player.Human, parent);
-                break;
-            case UnitLogic.Intercept:
-                controller = unit.AddComponent<WizardController>().Initialize(Player.Human, parent);
-                break;
-            case UnitLogic.Random:
-            default:
-                controller = unit.AddComponent<BaseUnitController>().Initialize(Player.Human, parent);
-                break;
-        }
-        controller.FightSound = AudioManager.Instance.FightSound.clip;
-        controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
-        controller.PreGoal = parent;
+        // This adds the unit to the player's set of resources for tracking.
+        playerResources.AddUnit();
     }
-    else
-    {
-        BaseUnitController controller = unit.GetComponent<BaseUnitController>();
-        controller.SetUnitStats(hitPoints, attackPoints, magicPoints, armorPoints, resistPoints, speedPoints);
-        controller.PreGoal = parent;
-    }*/
 }
