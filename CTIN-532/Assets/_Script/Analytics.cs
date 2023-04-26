@@ -5,9 +5,9 @@ using UnityEngine.Networking;
 
 public class Analytics : MonoBehaviour
 {
-    private string districtAnalyticsFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSebIN4Ar6_UmES-rdJAYE1zjNuoApQSxyFkZczH1mVYTIczcg/formResponse";
+    private string districtAnalyticsFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf23ItIVi6N6CkXMO_IgpsusFLgu-C4ehvR8OP40OPNiHOJLA/formResponse";
 
-    private string unitAnalyticsFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdAJTULFPQTS3NR21Kyu6x8lpCSwlaakdoBjMqZztTlkwIacA/formResponse";
+    private string unitAnalyticsFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSchexWQSzBb45n-LWVOOi9hT6FHZ7ub3oefT9KL3XHmOACsAQ/formResponse";
 
     public static Analytics Instance;
 
